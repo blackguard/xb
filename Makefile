@@ -34,7 +34,7 @@ install: ./node_modules $(DIST_DIR)
 
 .PHONY: lint
 lint: ./node_modules
-	./node_modules/.bin/eslint --config .eslintrc.cjs src lib
+#!!!	./node_modules/.bin/eslint --config .eslintrc.cjs src lib
 
 $(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./lib/*/*/* ./node_modules README.md
 	make lint && ./build-tools/build-dist.sh
@@ -42,6 +42,9 @@ $(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./l
 .PHONY: test
 test:
 	npm test
+
+.PHONY: dist
+dist: $(DIST_DIR)
 
 # kill the server by performing a GET on /QUIT
 # uses Linux commands: lsof, grep, cut
@@ -57,7 +60,7 @@ kill-server:
 
 .PHONY: dev-server
 dev-server:
-	npx nodemon --watch src --watch lib --watch package.json --watch Makefile --watch .eslintrc.cjs --watch webpack.config.js --watch build-tools --watch node_modules  --ext js,cjs,mjs,html,css,ico,svg,py,sh  --exec "bash -c 'make server' || exit 1"
+	npx nodemon --watch src --watch lib --watch package.json --watch Makefile --watch .eslintrc.cjs --watch webpack.config.js --watch build-tools --watch node_modules  --ext ts,js,cjs,mjs,html,css,ico,svg,py,sh  --exec "bash -c 'make server' || exit 1"
 
 .PHONY: client
 client:

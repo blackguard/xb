@@ -1,14 +1,66 @@
+test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
+fix dialog/settings-dialog #ui hack
+review XbManager.#update_menu_state()
+how does parent ActivityManager get notified if a child stops?  necessary?
+beforeunload warning not working (but works after interacting with menu...)
+markdown renderer: is there a way to keep a computation running (keepalive).  Maybe not: it is building static markup....
+CellElement.outerHTML does not correctly translate attribute values that contain a " character
+rationalize data-type and data-media-type
+KeySpec.#is_on_macos needs to be fixed
+tsconfig: module, moduleResolution
+
+
+--- DONE ---
+* fix console.{error,warn} usages
+* implement CellElement.stop()
+* rationalize running jobs: XbManager.#multi_eval_manager, ocx, renderer (isa ActivityManager), etc
+* menu sometimes opens with everything text-selected
+* fix keepalive for renderer/ocx
+* menu separators are not showing up
+* make ActivityManager extend Activity so that one ActivityManager can control another (Q: how does parent manager get notified if a child stops?)
+
+
+
+========================================================================================================================
+
 === XB DESIGN NOTES ===
 
 editor
-evaluator (translator?)
+renderer
 ocx (output context)
 
 document_manager
-process_manager
+activity_manager
 command_manager
 
 settings
+
+---
+locus of activity management candidates:
+- XbManager.singleton
+- ocx
+- renderer
+- cell
+- output_element
+choose: XbManager.singleton and ocx
+
+---
+"cell" elements
+- id
+- css class: "cell"
+- dataset attributes:
+  -- type: media-type, e.g., "text/plain", "text/html", "text/javascipt", "text/typescript", "application/json", "text/x-tex", "text/x-latex", ...
+
+"output" elements
+- class: "output" (necessary?)
+- dataset attributes:
+  -- source-element: source element (cell) id
+  -- source-media-type
+
+see: https://www.iana.org/assignments/media-types/media-types.xhtml
+
+---
+alternative terms: renderer, translator, converter, interpreter, compiler, evaluator
 
 ---
 reactive?

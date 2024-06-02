@@ -1,21 +1,21 @@
 import {
     generate_uuid,
-} from '../../lib/sys/uuid.js';
+} from 'lib/sys/uuid';
 
 import {
-    StoppableObjectsManager,
-} from '../../lib/sys/stoppable.js';
+    ActivityManager,
+} from 'lib/sys/activity-manager';
 
 import {
     OutputContext,
-} from '../output-context.js';
+} from 'src/output-context';
 
 import {
     get_evaluator_classes,
-} from './_.js';
+} from './_';
 
 
-export class Evaluator extends StoppableObjectsManager {
+export class Evaluator extends ActivityManager {
     /** Call this function instead of constructing an instance with new.
      *  @param {HTMLElement} input_element the source element
      *  @param {HTMLElement} output_element the destination element
@@ -84,10 +84,10 @@ export class Evaluator extends StoppableObjectsManager {
 
     // === RECOGNIZER ===
 
-    /** array of input_type strings for input types handled by this evaluator
+    /** array of media_type strings for media types handled by this evaluator
      *  must be overridden in subclasses
      */
-    static handled_input_types = [];
+    static handled_media_types = [];
 
     /** return an evauluator class for a given input_element
      *  @param {Element} input_element
@@ -102,13 +102,13 @@ export class Evaluator extends StoppableObjectsManager {
 
         const default_evaluator_class = evaluator_classes[0];
 
-        // check if there is an evaluator that handles the input_element input_type
-        const input_type = input_element.input_type;
-        if (input_type) {
+        // check if there is an evaluator that handles the input_element media_type
+        const media_type = input_element.media_type;
+        if (media_type) {
             // use the first evaluator that handles a specifically-set
-            // input_type on the input_element
+            // media_type on the input_element
             for (const evaluator_class of evaluator_classes) {
-                if (evaluator_class.handled_input_types.includes(input_type)) {
+                if (evaluator_class.handled_media_types.includes(media_type)) {
                     return evaluator_class;
                 }
             }

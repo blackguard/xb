@@ -1,11 +1,11 @@
 import {
     safe_setAttributeNS,
     set_selection_focus,
-} from './dom-tools.js';
+} from 'lib/sys/dom-tools';
 
 import {
-    Subscribable,
-} from '../sys/subscribable.js';
+    SerialDataSource,
+} from 'lib/sys/serial-data-source';
 
 
 export class ChangeManager {
@@ -48,7 +48,7 @@ export class ChangeManager {
                 enumerable: true,
             },
             neutral_changes: {  // fires when neutral status changes; emits { neutral, change_manager }
-                value: new Subscribable(),
+                value: new SerialDataSource(),
                 enumerable: true,
             },
         });

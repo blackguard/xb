@@ -1,0 +1,387 @@
+/* all other stylesheets have been incorporated into this one */
+
+/* See settings/theme-settings.js for definition of --theme-* properties */
+
+:root {
+    --input-output-split: 50vw;  /* must specify absolute amount, not %, otherwise .resize-handle will be misaligned */
+
+    --is-stacked: ;  /* is input/output displayed stacked or side-by-side (default) */
+
+    --resize-handle-size:          8px;   /* handle is a downward-pointing triangle with this height and twice this width */
+    --resize-handle-hairline-size: 1px;   /* (half) width of hairline displayed when dragging resize-handle */
+
+    --resize-handle-center-h: calc(var(--input-output-split) + (2 * var(--theme-cl-bdw)));
+}
+
+body {
+    overflow: hidden;  /* inhibit scrolling for body */
+    margin: 0;
+    background-color: var(--theme-by-bgc);
+}
+
+header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    height: var(--theme-hd-h);
+    background-color: var(--theme-hd-bgc);
+}
+
+main {
+    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */
+
+    /* enable scrolling for main element */
+    overflow: auto;
+    max-height: calc(100vh - var(--theme-hd-h));
+    max-width:  100vw;
+}
+main > :first-child {
+    padding-top: 0;
+}
+main > :not(:first-child) {
+    padding-top: var(--theme-cl-p-inter);
+}
+
+.eval-cell-output {
+    display: block;
+    overflow: auto;  /* enable h/v scrolling */
+
+    height: fit-content;
+
+    padding: var(--theme-ou-p);
+    color:            var(--theme-ou-fgc);
+    background-color: var(--theme-ou-bgc);
+}
+.eval-cell-output:empty,
+.eval-cell-output:not(:has(> *:not(:empty))) {
+    display: none;
+}
+
+.plain-text {
+    white-space: pre-wrap;  /* display white-space properly */
+    line-height: 140%;
+}
+
+cell- {
+    --content-color: lightgray;
+
+    overflow: hidden;
+
+    display: block;
+    margin:  0;
+
+    caret-color: var(--theme-cl-ctc);
+    outline: 0px solid transparent;  /* disable default contenteditable outline */
+
+    white-space: pre-wrap;  /* properly display white-space */
+    font-family: var(--theme-cl-ff);
+    line-height: var(--theme-cl-lh);
+
+    color: var(--theme-cl-fgc);
+
+    max-height:   fit-content;
+    padding:      0.2rem;
+    border: 2px solid var(--content-color);
+    border-radius: var(--theme-cl-bdr);
+    border-style:  var(--theme-cl-bds);
+
+    background-color: var(--content-color);
+}
+cell- > * {
+    /* make sure --content-color is restricted to border and padding,
+     * and does not bleed through transparent children
+     */
+    background-color: var(--theme-cl-bgc);
+}
+cell-[data-active] {
+    padding-top: 0;
+    border-top-width: 0;
+}
+
+cell-[data-active]::before {
+    content: "[default]";
+}
+cell-[data-type][data-active]::before {
+    content: attr(data-type);
+}
+
+cell-[data-type="markdown"] {
+    --content-color: var(--theme-ty-bgc-markdown);
+}
+cell-[data-type="javascript"] {
+    --content-color: var(--theme-ty-bgc-javascript);
+}
+cell-[data-type="tex"] {
+    --content-color: var(--theme-ty-bgc-tex);
+}
+cell- > textarea {
+    color:            var(--theme-cl-fgc);
+    background-color: var(--theme-cl-bgc);
+    resize: none;  /* remove resize control */
+    outline: none;  /* handled by parent cell- */
+    width: 100%;
+    padding: 0 0 1px 0;  /* 1px on bottom to prevent "_" from being hidden on bottom line */
+    border: 0;
+    margin: 0;
+}
+
+
+/* theme-aware graphics */
+
+[data-type="graphviz"] svg polygon {
+    fill:   var(--theme-gr-bgc);
+    stroke: var(--theme-gr-fgc);
+}
+[data-type="graphviz"] svg path,
+[data-type="graphviz"] svg ellipse {
+    stroke: var(--theme-gr-fgc);
+}
+[data-type="graphviz"] svg text {
+    fill: var(--theme-gr-fgc);
+}
+
+
+/* === menu === */
+
+.menu:not(.active) {
+    display: none;
+}
+
+.menubar {
+    user-select: none;
+    margin: 0;
+    padding: 0.1rem 0 0.1rem 0;
+    background-color: var(--theme-mu-bgc);
+}
+
+.menubar > li {
+    user-select: none;
+    display: inline;  /* horizontal orientation for top-level items of menubar */
+    padding: 0 0.5rem 0 0.5rem;
+}
+
+.menubar .menuitem {
+    user-select: none;
+    list-style-type: none;
+    min-width: max-content;
+}
+
+.menuitem * {
+    user-select: none;
+}
+
+.menuitem .menuitem-label {
+    font-family: sans-serif;
+    font-size: 90%;
+}
+
+.menubar .menuitem.checked::before {
+    content: "\2713";  /* unicode check mark */
+    position: absolute;
+    left: 0.5em;
+}
+
+.menubar div {
+    display: inline;
+}
+
+.menu {
+    position: absolute;
+    z-index: 999;
+    background-color: var(--theme-mu-bgc);
+    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */
+    border-radius: 0.25rem;
+    border: 1px solid var(--theme-mu-bdc);
+    box-shadow: 3px 3px 16px var(--theme-mu-shc);
+
+    /* eliminate default styling for menu elements */
+    margin-block-start:   0;
+    margin-block-end:     0;
+    margin-inline-start:  0;
+    margin-inline-end:    0;
+    padding-inline-start: 0;
+}
+
+.menuitem {
+    color: var(--theme-mi-fgc);
+}
+
+.menuitem.disabled {
+    color: var(--theme-mi-fgc-disabled);
+}
+
+.menuitem.selected {
+    background-color: var(--theme-mi-bgc-selected);
+}
+
+.menu .menuitem:not(.menuitem-separator) {
+    padding: 0 0.5rem 0 1.5rem;
+}
+
+.menu .menuitem.menuitem-separator {
+    margin: 0.2rem 0 0.2rem 0;
+    height: 0px;
+    color: transparent;
+    border-bottom: 1px solid var(--theme-ms-bgc);
+}
+
+.menu .menuitem .menuitem-annotation {
+    margin-left: 2rem;
+    float: right;
+}
+
+.menu .menuitem kbd {
+    margin: 0 0 0 0.5rem;
+}
+
+
+/* === dialog === */
+
+dialog {
+    border-radius: 0.5em;
+    box-shadow: 3px 3px 16px var(--theme-dg-shc);
+}
+
+dialog button,
+dialog input[type="button"] {
+    margin: 1.75em 0 0 0;
+}
+
+dialog .dialog_decline {
+    display: inline;
+}
+
+dialog .dialog_accept {
+    display: inline;
+}
+
+
+/* === settings-dialog === */
+
+.settings-dialog {
+    background-color: var(--theme-st-bgc);
+}
+
+.settings-dialog .dialog-text {
+    font-style: italic;
+}
+
+.settings-dialog [data-section] {
+    position: relative;
+    display: grid;
+    grid-template-columns: min-content min-content;
+    min-width: max-content;
+    margin: 1.75em 0 0 0;
+    padding: 1em 0.5em 0.5em;
+    border-radius: 8px;
+    border: 1px solid var(--theme-st-bdc-section);
+    color:            var(--theme-st-fgc-section);
+    background-color: var(--theme-st-bgc-section);
+}
+
+.settings-dialog [data-section]::before {  /* named section heading */
+    position: absolute;
+    content: attr(data-section);
+    left: 0.8em;
+    top: -0.7em;
+    padding: 0 1em;
+    border-radius: 4px;
+    border: 1px solid var(--theme-st-bdc-section-heading);
+    color:            var(--theme-st-fgc-section-heading);
+    background-color: var(--theme-st-bgc-section-heading);
+    font-style: italic;
+}
+
+.settings-dialog [data-section] label {
+    align-self: center;
+    justify-self: end;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.settings-dialog [data-section] input,
+.settings-dialog [data-section] select {
+    align-self: center;
+    justify-self: start;
+    color:            var(--theme-st-fgc-section-setting);
+    background-color: var(--theme-st-bgc-section-setting);
+    margin: 0.25em;
+}
+
+.settings-dialog [data-section] input[type="text"] {
+    width: 5em;
+}
+
+.settings-dialog .warning {
+    display: none;
+    width: 13em;
+    margin: 1.75em 0 0 1em;
+    padding: 0.5em;
+    border-radius: 8px;
+    border: 1px solid var(--theme-st-bdc-warning);
+    color:            var(--theme-st-fgc-warning);
+    background-color: var(--theme-st-bgc-warning);
+}
+.settings-dialog .warning p:first-child {
+    margin-block-start: 0;
+}
+.settings-dialog .warning p:last-child {
+    margin-block-end: 0;
+}
+.settings-dialog .show-emacs-warning .emacs-warning {
+    display: block;
+}
+
+.settings-dialog .error-message {
+    display: none;
+    width: 13em;
+    margin: 1.75em 0 0 1em;
+    padding: 0.5em;
+    border-radius: 5pt;
+    border: 1px solid var(--theme-st-bdc-error);
+    color:            var(--theme-st-fgc-error);
+    background-color: var(--theme-st-bgc-error);
+}
+.settings-dialog .error-message.active {
+    display: block;
+}
+
+
+/* === codemirror === */
+
+.codemirror-hide-line-numbers .cm-lineNumbers {
+    display: none !important;  /* must use !important to override codemirror's !important setting */
+}
+
+
+/* === global error messages === */
+
+body > .error-message {
+    display: block;
+    margin: 1.75em;
+    padding: 0.5em;
+    border-radius: 3pt;
+    border: 1px solid var(--theme-by-bdc-error);
+    color:            var(--theme-by-fgc-error);
+    background-color: var(--theme-by-bgc-error);
+}
+
+
+/* === print media queries === */
+
+@media not print {
+    /* nothing for now */
+}
+
+@media print {
+
+    header {
+        display: none;
+    }
+
+    main {
+        overflow: visible;
+    }
+
+}

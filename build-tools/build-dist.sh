@@ -10,8 +10,9 @@ declare DIST_DIR="${ROOT_DIR}/dist"
 
 declare -a FILES_TO_COPY=(
     'src/index.html'
+    'src/help-window/help.html'
     'src/favicon.ico'
-    'src/renderer/javascript-renderer/eval-worker/web-worker.js'
+    'src/renderer/text/javascript-renderer/eval-worker/web-worker.js'
     'node_modules/sprintf-js/dist/sprintf.min.js'
     'node_modules/sprintf-js/dist/sprintf.min.js.map'
     'node_modules/marked/marked.min.js'
@@ -23,6 +24,7 @@ declare -a FILES_TO_COPY=(
     'node_modules/@hpcc-js/wasm/dist/graphviz.umd.js'
     'node_modules/@hpcc-js/wasm/dist/graphviz.umd.js.map'
     'node_modules/d3-graphviz/build/d3-graphviz.min.js'
+    'node_modules/algebrite/dist/algebrite.bundle-for-browser.js'
 )
 
 declare -a DIRECTORIES_TO_COPY=(
