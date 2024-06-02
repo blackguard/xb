@@ -4,8 +4,8 @@ const assets_server_script = document.querySelector('script');
 if (!assets_server_script || !assets_server_script.src) {
     throw new Error('no script for assets server found in document');
 }
-const assets_server_root = new URL('../..', assets_server_script.src);  // assumes script src points to is two directory levels below the server root
-const local_server_root  = new URL('../..', current_script_url);        // assumes this script is located two directory levels below server root
+const assets_server_root = new URL('..', assets_server_script.src);  // assumes script src points to is one directory level below the server root
+const local_server_root  = new URL('../..', current_script_url);     // assumes this script is located two directory levels below server root
 
 
 /** @return {URL} url resolved against the running server url

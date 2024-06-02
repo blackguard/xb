@@ -1154,7 +1154,7 @@ class Activity {
                 this.target?.stop();
             }
             catch (error) {
-                console.warn('error while stopping', this.target, error);
+                console.error('error while stopping', this.target, error);
             }
             this.#stop_count++;
         }
@@ -1255,7 +1255,7 @@ const assets_server_script = document.querySelector('script');
 if (!assets_server_script || !assets_server_script.src) {
     throw new Error('no script for assets server found in document');
 }
-const assets_server_root = new URL('../..', assets_server_script.src); // assumes script src points to is two directory levels below the server root
+const assets_server_root = new URL('..', assets_server_script.src); // assumes script src points to is one directory level below the server root
 const local_server_root = new URL('../..', current_script_url); // assumes this script is located two directory levels below server root
 /** @return {URL} url resolved against the running server url
  */
@@ -5804,7 +5804,7 @@ async function command_handler__eval(command_context) {
             await src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.invoke_renderer_for_type(cell.type, undefined, cell);
         }
         catch (error) {
-            console.warn('error rendering cell', error, cell);
+            console.error('error rendering cell', error, cell);
             return false;
         }
         return true;
@@ -5847,7 +5847,7 @@ async function multi_eval_helper(command_context, eval_all = false) {
                     await src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.invoke_renderer_for_type(iter_cell.type, undefined, iter_cell);
                 }
                 catch (error) {
-                    console.warn('error rendering cell', error, iter_cell);
+                    console.error('error rendering cell', error, iter_cell);
                     return false;
                 }
             }
