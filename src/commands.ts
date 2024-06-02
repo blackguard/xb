@@ -196,14 +196,15 @@ function move_helper(command_context: CommandContext, move_down: boolean): boole
         return false;
     } else {
         const cell = command_context.target;
-        let following_cell = XbManager.singleton.adjacent_cell(cell, move_down);
-        if (!following_cell) {
+        let before = XbManager.singleton.adjacent_cell(cell, move_down);
+        if (!before) {
             return false;
         } else {
             if (move_down) {
-                following_cell = XbManager.singleton.adjacent_cell(following_cell, move_down);
+                before = XbManager.singleton.adjacent_cell(before, move_down);
             }
-            move_node(cell, { parent: cell.parentElement, before: following_cell });
+            const parent = before ? before.parentElement : XbManager.singleton.cell_parent;
+            move_node(cell, { parent, before });
             cell.focus();
             cell.scroll_into_view();
             return true;

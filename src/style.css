@@ -79,14 +79,13 @@ cell- {
     line-height: var(--theme-cl-lh);
 
     color: var(--theme-cl-fgc);
+    background-color: var(--content-color);
 
     max-height:   fit-content;
     padding:      0.2rem;
     border: 2px solid var(--content-color);
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
-
-    background-color: var(--content-color);
 }
 cell- > * {
     /* make sure --content-color is restricted to border and padding,
@@ -94,16 +93,21 @@ cell- > * {
      */
     background-color: var(--theme-cl-bgc);
 }
-cell-[data-active] {
+
+cell- {
     padding-top: 0;
     border-top-width: 0;
 }
-
-cell-[data-active]::before {
+cell-::before {
     content: "[default]";
+    display: inline-block;
+    max-width: fit-content;
 }
-cell-[data-type][data-active]::before {
+cell-[data-type]::before {
     content: attr(data-type);
+}
+cell-[data-active][data-type]::before {
+    font-weight: bold;
 }
 
 cell-[data-type="markdown"] {
@@ -115,6 +119,7 @@ cell-[data-type="javascript"] {
 cell-[data-type="tex"] {
     --content-color: var(--theme-ty-bgc-tex);
 }
+
 cell- > textarea {
     color:            var(--theme-cl-fgc);
     background-color: var(--theme-cl-bgc);

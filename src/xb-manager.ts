@@ -367,6 +367,7 @@ export class XbManager {
         }
 
         cell.ensure_id();
+        const cell_id = cell.id;
 
         options ??= {};
         options.global_state ??= this.global_state;
@@ -380,6 +381,20 @@ export class XbManager {
                 'data-source-media-type': renderer.media_type,
             },
         });
+
+//!!! maybe leaks event listener if output_element is passed in
+        // The following event listener is never explicitly removed.
+        // Instead, if the element is removed, we rely on the event listener
+        // resources to be cleaned up, too.
+        const event_listener = (event: Event) => {
+            // use querySelector() to re-find the cell in case it is no longer present
+            const refound_cell = document.querySelector(`#${cell_id}`);
+            if (refound_cell instanceof CellElement && refound_cell !== XbManager.singleton.active_cell) {
+                XbManager.singleton.set_active_cell(refound_cell);
+            }
+        };
+        output_element.addEventListener('focus', event_listener, { capture: true });
+        output_element.addEventListener('click', event_listener, { capture: true });
 
         const ocx = new OutputContext(output_element);
         this.activity_manager.add_activity(ocx);

@@ -68,8 +68,8 @@ export function get_global_initial_key_map_bindings() {
         'eval-before':         [ 'CmdOrCtrl-Shift-Enter' ],
         'eval-all':            [ 'CmdOrCtrl-Shift-Alt-Enter' ],
 
-        'stop':                [ 'CmdOrCtrl-Alt-!' ],
-        'stop-all':            [ 'CmdOrCtrl-Shift-Alt-!' ],
+        'stop':                [ 'CmdOrCtrl-Shift-$' ],
+        'stop-all':            [ 'CmdOrCtrl-Shift-Alt-$' ],
 
         'focus-up':            [ 'Alt-Up' ],
         'focus-down':          [ 'Alt-Down' ],
