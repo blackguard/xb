@@ -172,7 +172,8 @@ export class OutputContext extends OutputContextLike {
 
     async render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Promise<Element> {
         // don't call this.abort_if_stopped() for render_error() so that errors can still be rendered
-        return new ErrorRenderer().render(this, error, options);
+        // also, call the synchronous ErrorRenderer,render_sync() method.
+        return ErrorRenderer.render_sync(this, error, options);
     }
 
     async render_value(value: any, options?: TextOrientedRendererOptionsType): Promise<Element> {

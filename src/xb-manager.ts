@@ -426,6 +426,7 @@ export class XbManager {
 
         return ocx._invoke_renderer(renderer, cell.get_text(), options)
             .then((element) => ({ element, remove_event_handlers }))
+            .catch((error) => { ocx.render_error(error); throw error; })//!!! improve
             .finally(() => {
                 if (!ocx.keepalive) {
                     ocx.stop();  // stop anything that may have been started

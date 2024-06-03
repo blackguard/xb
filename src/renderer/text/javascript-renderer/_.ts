@@ -170,8 +170,15 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         //     }
         // }
 
+        eval_loop:
         for (;;) {
-            const { value, done } = await result_stream.next();
+            let value, done;
+            try {
+                ({ value, done } = await result_stream.next());
+            } catch (error) {
+                ocx.render_error(error);
+                break eval_loop;
+            }
 
             // output any non-undefined values that were received either from
             // a return or a yield statement in the code
@@ -200,7 +207,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         }
 
         function _internal_render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
-            return ErrorRenderer.render_directly(ocx, error, options);
+            return ErrorRenderer.render_sync(ocx, error, options);
         }
 
         function keepalive(keepalive: boolean = true) {

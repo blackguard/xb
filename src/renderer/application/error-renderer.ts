@@ -11,6 +11,10 @@ import {
     OutputContextLike,
 } from 'src/output-context/types';
 
+import {
+    create_element,
+} from 'lib/ui/dom-tools';
+
 
 export class ErrorRenderer extends ApplicationOrientedRenderer<ErrorRendererValueType, ErrorRendererOptionsType> {
     get CLASS () { return this.constructor as typeof ErrorRenderer; }
@@ -30,13 +34,14 @@ export class ErrorRenderer extends ApplicationOrientedRenderer<ErrorRendererValu
      * @throws {Error} if error occurs
      */
     async _render(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Promise<Element> {
-        return this.CLASS.render_directly(ocx, error_object, options);
+        return this.CLASS.render_sync(ocx, error_object, options);
     }
 
     /** Non-async; used internally to render errors without abort_if_stopped() checks.
      *  Also used by MarkdownRenderer.
+     *  No ocx methods are called to avoid tripping over an abort_if_stopped error.
      */
-    static render_directly(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
+    static render_sync(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
 console.log(error_object);//!!! for debugging from console
         const style = options?.style;
 
@@ -51,7 +56,10 @@ console.log(error_object);//!!! for debugging from console
         }
         const text = text_segments.join('\n');
 
-        const parent = ocx.create_child({
+        // create the parent element using the dom-tools interface, not the ocx,
+        // to avoid triggering an abort_if_stopped error.
+        const parent = create_element({
+            parent: ocx.element,
             tag: 'pre',
             attrs: {
                 'data-type': this.type,

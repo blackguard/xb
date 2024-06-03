@@ -6455,7 +6455,8 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
     }
     async render_error(error, options) {
         // don't call this.abort_if_stopped() for render_error() so that errors can still be rendered
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj().render(this, error, options);
+        // also, call the synchronous ErrorRenderer,render_sync() method.
+        return src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj.render_sync(this, error, options);
     }
     async render_value(value, options) {
         this.abort_if_stopped();
@@ -6930,6 +6931,8 @@ async function load_d3() {
 /* harmony export */   F: () => (/* binding */ ErrorRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
+
 
 class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationOrientedRenderer */ .T2 {
     get CLASS() { return this.constructor; }
@@ -6946,12 +6949,13 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
      * @throws {Error} if error occurs
      */
     async _render(ocx, error_object, options) {
-        return this.CLASS.render_directly(ocx, error_object, options);
+        return this.CLASS.render_sync(ocx, error_object, options);
     }
     /** Non-async; used internally to render errors without abort_if_stopped() checks.
      *  Also used by MarkdownRenderer.
+     *  No ocx methods are called to avoid tripping over an abort_if_stopped error.
      */
-    static render_directly(ocx, error_object, options) {
+    static render_sync(ocx, error_object, options) {
         console.log(error_object); //!!! for debugging from console
         const style = options?.style;
         const text_segments = [];
@@ -6965,7 +6969,10 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
             text_segments.push(error_object ?? 'error');
         }
         const text = text_segments.join('\n');
-        const parent = ocx.create_child({
+        // create the parent element using the dom-tools interface, not the ocx,
+        // to avoid triggering an abort_if_stopped error.
+        const parent = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+            parent: ocx.element,
             tag: 'pre',
             attrs: {
                 'data-type': this.type,
@@ -7500,8 +7507,15 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         //         await eval_environment.render_value(result);
         //     }
         // }
-        for (;;) {
-            const { value, done } = await result_stream.next();
+        eval_loop: for (;;) {
+            let value, done;
+            try {
+                ({ value, done } = await result_stream.next());
+            }
+            catch (error) {
+                ocx.render_error(error);
+                break eval_loop;
+            }
             // output any non-undefined values that were received either from
             // a return or a yield statement in the code
             if (typeof value !== 'undefined') {
@@ -7523,7 +7537,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             return ocx.stopped;
         }
         function _internal_render_error(error, options) {
-            return src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__/* .ErrorRenderer */ .F.render_directly(ocx, error, options);
+            return src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__/* .ErrorRenderer */ .F.render_sync(ocx, error, options);
         }
         function keepalive(keepalive = true) {
             ocx.keepalive = keepalive;
@@ -26522,7 +26536,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2_
                         }
                         catch (error) {
                             const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
-                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(error_ocx, error);
+                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(error_ocx, error);
                             token.markup = error_ocx.element.innerHTML;
                         }
                         break;
@@ -26541,14 +26555,14 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2_
             const output_element = document.getElementById(output_element_id);
             if (!output_element) {
                 // unexpected...
-                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
             }
             else {
                 const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                 await renderer.render(sub_ocx, text, renderer_options)
                     .catch((error) => {
                     sub_ocx.keepalive = false; // in case this got set prior to the error
-                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(sub_ocx, error);
+                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(sub_ocx, error);
                 });
                 if (!sub_ocx.keepalive) {
                     sub_ocx.stop(); // stop background processing, if any
@@ -28266,6 +28280,7 @@ class XbManager {
         });
         return ocx._invoke_renderer(renderer, cell.get_text(), options)
             .then((element) => ({ element, remove_event_handlers }))
+            .catch((error) => { ocx.render_error(error); throw error; }) //!!! improve
             .finally(() => {
             if (!ocx.keepalive) {
                 ocx.stop(); // stop anything that may have been started

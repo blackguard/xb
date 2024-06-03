@@ -127,7 +127,7 @@ export class MarkdownRenderer extends TextOrientedRenderer {
 
                     } catch (error: unknown) {
                         const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx);  // temporary, for renderering error
-                        ErrorRenderer.render_directly(error_ocx, error);
+                        ErrorRenderer.render_sync(error_ocx, error);
                         token.markup = error_ocx.element.innerHTML;
                     }
                     break;
@@ -148,13 +148,13 @@ export class MarkdownRenderer extends TextOrientedRenderer {
             const output_element = document.getElementById(output_element_id);
             if (!output_element) {
                 // unexpected...
-                ErrorRenderer.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+                ErrorRenderer.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
             } else {
                 const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                 await renderer.render(sub_ocx, text, renderer_options)
                     .catch((error: unknown) => {
                         sub_ocx.keepalive = false;  // in case this got set prior to the error
-                        ErrorRenderer.render_directly(sub_ocx, error);
+                        ErrorRenderer.render_sync(sub_ocx, error);
                     });
                 if (!sub_ocx.keepalive) {
                     sub_ocx.stop();  // stop background processing, if any
