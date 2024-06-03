@@ -1,4 +1,12 @@
 import {
+    _initial_text_renderer_factories,
+} from 'src/renderer/factories';
+
+import {
+    XbManager,
+} from 'src/xb-manager';
+
+import {
     RendererFactory,
     TextOrientedRenderer,
 } from 'src/renderer/renderer';
@@ -6,10 +14,6 @@ import {
 import {
     TextOrientedRendererOptionsType,
 } from 'src/renderer/text/types';
-
-import {
-    _initial_text_renderer_factories,
-} from 'src/renderer/factories';
 
 import {
     ErrorRenderer,
@@ -20,24 +24,16 @@ import {
 } from 'src/renderer/text/tex-renderer';
 
 import {
-    XbManager,
-} from 'src/xb-manager';
+    OutputContextLike,
+} from 'src/output-context/types';
 
 import {
     marked,
 } from './marked';
 
 import {
-    OutputContextLike,
-} from 'src/output-context/types';
-
-import {
     generate_object_id,
 } from 'lib/sys/uuid';
-
-import {
-    Activity,
-} from 'lib/sys/activity-manager';
 
 
 // TeX handling adapted from: marked-katex-extension/index.js
@@ -241,7 +237,7 @@ marked.use({
                 }
             },
             renderer(token: walkTokens_token_type) {
-                return token.markup;
+                return token.markup;  // now already filled in by walkTokens
             },
         },
     ],

@@ -26443,15 +26443,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   $: () => (/* binding */ MarkdownRenderer)
 /* harmony export */ });
-/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
-/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4464);
-/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9284);
-/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7286);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5006);
+/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
+/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3947);
+/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9284);
+/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7286);
 /* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8121);
 /* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1517);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_xb_manager__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
-([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_xb_manager__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
+([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -26465,11 +26465,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 const extension_name__inline_tex = 'inline-tex';
 const extension_name__block_tex = 'block-tex';
 const extension_name__eval_code = 'eval-code';
-class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld {
+class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld {
     static get type() { return 'markdown'; }
     static {
         // required for all TextOrientedRenderer extensions
-        src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__/* ._initial_text_renderer_factories */ .U0.push(this);
+        src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     /** Render by evaluating the given markdown and outputting to ocx.
      * @param {OutputContextLike} ocx,
@@ -26480,7 +26480,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
      */
     async _render(ocx, markdown, options) {
         markdown ??= '';
-        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_4__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
+        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
         const parent = ocx.create_child({
             attrs: {
                 'data-type': this.type,
@@ -26504,7 +26504,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                             if (!source_type) {
                                 throw new Error('no source_type present');
                             }
-                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
+                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
                             if (!renderer_factory) {
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
@@ -26522,7 +26522,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                         }
                         catch (error) {
                             const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
-                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(error_ocx, error);
+                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(error_ocx, error);
                             token.markup = error_ocx.element.innerHTML;
                         }
                         break;
@@ -26541,14 +26541,14 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
             const output_element = document.getElementById(output_element_id);
             if (!output_element) {
                 // unexpected...
-                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
             }
             else {
                 const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                 await renderer.render(sub_ocx, text, renderer_options)
                     .catch((error) => {
                     sub_ocx.keepalive = false; // in case this got set prior to the error
-                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(sub_ocx, error);
+                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_directly(sub_ocx, error);
                 });
                 if (!sub_ocx.keepalive) {
                     sub_ocx.stop(); // stop background processing, if any
@@ -26579,7 +26579,7 @@ _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.use({
                 }
             },
             renderer(token) {
-                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
                     displayMode: false,
                     throwOnError: false,
                 });
@@ -26604,7 +26604,7 @@ _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.use({
                 }
             },
             renderer(token) {
-                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
                     displayMode: true,
                     throwOnError: false,
                 });
@@ -26632,7 +26632,7 @@ _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.use({
                 }
             },
             renderer(token) {
-                return token.markup;
+                return token.markup; // now already filled in by walkTokens
             },
         },
     ],
