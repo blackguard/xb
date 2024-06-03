@@ -1,5 +1,6 @@
-fix dialog/settings-dialog #ui hack
+OutputContextLike.abort_if_stopped(): these exceptions are uncaught, should catch them and output an appropriate message
 data-type on output divs (vs data-source-media-type, etc) -- rationalize creation of output elements and sub-elements
+fix CodeMirror syntax coloring
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 review XbManager.#update_menu_state()
 how does parent ActivityManager get notified if a child stops?  necessary?
@@ -11,6 +12,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* fix dialog/settings-dialog #ui hack
 * markdown renderer: is there a way to keep a computation running (keepalive).  Yes....
 * fix console.{error,warn} usages
 * implement CellElement.stop()

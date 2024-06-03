@@ -3324,6 +3324,7 @@ class Dialog {
     static _modal_dialog_css_class = 'modal_dialog';
     #promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_2__/* .OpenPromise */ .i();
     #dialog_element_id = `dialog-${(0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_3__/* .uuidv4 */ .k$)()}`;
+    #ui_element = undefined;
     _dialog_element = undefined;
     _dialog_text_container = undefined;
     _dialog_form = undefined;
@@ -3378,24 +3379,26 @@ class Dialog {
         if (typeof this._dialog_element !== 'undefined') {
             throw new Error('this._dialog_element must be undefined when calling this method');
         }
-        const header_element = document.querySelector('header') ??
-            (0,_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({ parent: document.body, tag: 'header' });
-        if (header_element.parentElement !== document.body) {
-            throw new Error('pre-existing header element is not a direct child of document.body');
-        }
-        const ui_element = document.getElementById('ui') ??
-            (0,_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
-                before: header_element.firstChild, // prepend
-                attrs: { id: 'ui' },
-            });
-        if (ui_element.tagName !== 'DIV' || ui_element.parentElement !== header_element) {
-            throw new Error('pre-existing #ui element is not a <div> that is a direct child of the header element');
-        }
         if (document.getElementById(this.#dialog_element_id)) {
             throw new Error(`unexpected: dialog with id ${this.#dialog_element_id} already exists`);
         }
+        if (this.#ui_element) {
+            throw new Error('this.#ui_element is already set');
+        }
+        if (!document.body) {
+            document.documentElement.appendChild(document.createElement('body'));
+            // document.body is now set
+        }
+        let parent = document.querySelector('header');
+        if (parent?.parentElement !== document.body) {
+            parent = document.body;
+        }
+        this.#ui_element = (0,_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+            parent,
+            before: parent.firstChild, // prepend
+        });
         const dialog_element = (0,_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
-            parent: ui_element,
+            parent: this.#ui_element,
             tag: 'dialog',
             attrs: {
                 id: this.#dialog_element_id,
@@ -3419,12 +3422,9 @@ class Dialog {
         this._dialog_element = dialog_element;
     }
     _destroy_dialog_element() {
-        if (this._dialog_element) {
-            _dialog_element_to_instance_map.delete(this._dialog_element);
-            this._dialog_element.remove();
-            this._dialog_element.oncancel = null;
-            this._dialog_element.onclose = null;
-            this._dialog_element = undefined;
+        if (this.#ui_element) {
+            this.#ui_element.remove();
+            this.#ui_element = undefined;
         }
     }
 }
@@ -26883,17 +26883,7 @@ class SettingsDialog extends lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .Dial
     get CLASS() { return this.constructor; }
     static settings_dialog_css_class = 'settings-dialog';
     static run(message, options) {
-        const pre_existing_element = document.querySelector(`header #ui .${this.settings_dialog_css_class}`); //!!! improve #ui
-        if (pre_existing_element) {
-            const pre_existing_instance = lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .Dialog */ .Vq.instance_from_element(pre_existing_element);
-            if (!pre_existing_instance) {
-                throw new Error(`unexpected: Dialog.instance_from_element() returned null for element with class ${this.settings_dialog_css_class}`);
-            }
-            return pre_existing_instance.promise;
-        }
-        else {
-            return new this().run(message, options);
-        }
+        return new this().run(message, options);
     }
     _populate_dialog_element() {
         const current_settings = (0,_settings__WEBPACK_IMPORTED_MODULE_3__/* .get_settings */ .oj)();

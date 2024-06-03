@@ -59,6 +59,7 @@ export class Dialog {
 
     #promise = new OpenPromise<boolean>();
     #dialog_element_id: string = `dialog-${uuidv4()}`;
+    #ui_element: undefined|Element = undefined;
     _dialog_element: undefined|HTMLDialogElement = undefined;
     _dialog_text_container: undefined|HTMLElement = undefined;
     _dialog_form: undefined|HTMLFormElement = undefined;
@@ -121,24 +122,26 @@ export class Dialog {
         if (typeof this._dialog_element !== 'undefined') {
             throw new Error('this._dialog_element must be undefined when calling this method');
         }
-        const header_element = document.querySelector('header') ??
-              create_element({ parent: document.body, tag: 'header' });
-        if (header_element.parentElement !== document.body) {
-            throw new Error('pre-existing header element is not a direct child of document.body');
-        }
-        const ui_element = document.getElementById('ui') ??
-              create_element({
-                  before: header_element.firstChild,  // prepend
-                  attrs:  { id: 'ui' },
-              });
-        if (ui_element.tagName !== 'DIV' || ui_element.parentElement !== header_element) {
-            throw new Error('pre-existing #ui element is not a <div> that is a direct child of the header element');
-        }
         if (document.getElementById(this.#dialog_element_id)) {
             throw new Error(`unexpected: dialog with id ${this.#dialog_element_id} already exists`);
         }
+        if (this.#ui_element) {
+            throw new Error('this.#ui_element is already set');
+        }
+        if (!document.body) {
+            document.documentElement.appendChild(document.createElement('body'));
+            // document.body is now set
+        }
+        let parent = document.querySelector('header');
+        if (parent?.parentElement !== document.body) {
+            parent = document.body;
+        }
+        this.#ui_element = create_element({
+            parent,
+            before: parent.firstChild,  // prepend
+        });
         const dialog_element = create_element({
-            parent: ui_element,
+            parent: this.#ui_element,
             tag:    'dialog',
             attrs: {
                 id: this.#dialog_element_id,
@@ -163,12 +166,9 @@ export class Dialog {
     }
 
     _destroy_dialog_element() {
-        if (this._dialog_element) {
-            _dialog_element_to_instance_map.delete(this._dialog_element);
-            this._dialog_element.remove();
-            this._dialog_element.oncancel = null;
-            this._dialog_element.onclose = null;
-            this._dialog_element = undefined;
+        if (this.#ui_element) {
+            this.#ui_element.remove();
+            this.#ui_element = undefined;
         }
     }
 }
