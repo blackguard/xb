@@ -6231,6 +6231,12 @@ else {
     }
 }
 async function initialize_document() {
+    window.addEventListener('error', (event) => {
+        console.error('UNHANDLED ERROR', event); // put on separate line to facilitate setting breakpoint
+    }); // event listener never removed
+    window.addEventListener('unhandledrejection', (event) => {
+        console.error('UNHANDLED REJECTION', event); // put on separate line to facilitate setting breakpoint
+    }); // event listener never removed
     try {
         // establish head element if not already present
         if (!document.head) {
@@ -6531,20 +6537,17 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
      *  @return {any} return value from renderer
      */
     async _invoke_renderer(renderer, value, options) {
-        this.abort_if_stopped();
         return renderer._render(this, value, options)
             .catch((error) => {
-            // render error first to avoid abort_if_stopped() errors
-            return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj().render(this, error)
-                .finally(() => {
-                try {
-                    this.stop(); // stop anything that may have been started
-                }
-                catch (ignored_error) {
-                    console.error('ignored second-level error while stopping ocx after render error', ignored_error);
-                    // nothing
-                }
-            });
+            const result = src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj.render_sync(this, error);
+            try {
+                this.stop(); // stop anything that may have been started
+            }
+            catch (ignored_error) {
+                console.error('ignored second-level error while stopping ocx after render error', ignored_error);
+                // nothing
+            }
+            return result;
         });
     }
 }

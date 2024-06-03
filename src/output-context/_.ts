@@ -266,19 +266,16 @@ export class OutputContext extends OutputContextLike {
         value:    ValueType,
         options?: OptionsType ): Promise<Element>
     {
-        this.abort_if_stopped();
         return renderer._render(this, value, options)
             .catch((error: unknown) => {
-                // render error first to avoid abort_if_stopped() errors
-                return new ErrorRenderer().render(this, error)
-                    .finally(() => {
-                        try {
-                            this.stop();  // stop anything that may have been started
-                        } catch (ignored_error: unknown) {
-                            console.error('ignored second-level error while stopping ocx after render error', ignored_error);
-                            // nothing
-                        }
-                    });
+                const result = ErrorRenderer.render_sync(this, error);
+                try {
+                    this.stop();  // stop anything that may have been started
+                } catch (ignored_error: unknown) {
+                    console.error('ignored second-level error while stopping ocx after render error', ignored_error);
+                    // nothing
+                }
+                return result;
             });
     }
 }

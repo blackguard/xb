@@ -34,6 +34,14 @@ if (!bootstrap_script_markup) {
 }
 
 async function initialize_document(): Promise<void> {
+    window.addEventListener('error', (event) => {
+        console.error('UNHANDLED ERROR', event);  // put on separate line to facilitate setting breakpoint
+    });  // event listener never removed
+
+    window.addEventListener('unhandledrejection', (event) => {
+        console.error('UNHANDLED REJECTION', event);  // put on separate line to facilitate setting breakpoint
+    });  // event listener never removed
+
     try {
 
         // establish head element if not already present
