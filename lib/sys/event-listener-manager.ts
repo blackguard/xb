@@ -14,8 +14,8 @@ export class EventListenerManager {
         this.#attached = attached;
     }
 
-    empty    (){ return this.#specs.length <= 0; }
-    attached (){ return this.#attached; }
+    get empty    (){ return this.#specs.length <= 0; }
+    get attached (){ return this.#attached; }
 
     add( target:   EventTarget,
          type:     string,
@@ -64,7 +64,6 @@ export class EventListenerManager {
         if (!this.#attached) {
             for (const spec of this.#specs) {
                 const { target, type, listener, options } = spec;
-                target.removeEventListener(type, listener, options);
                 target.addEventListener(type, listener, options);
             }
             this.#attached = true;
@@ -76,7 +75,6 @@ export class EventListenerManager {
             for (const spec of this.#specs) {
                 const { target, type, listener, options } = spec;
                 target.removeEventListener(type, listener, options);
-                target.addEventListener(type, listener, options);
             }
             this.#attached = false;
         }

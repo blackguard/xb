@@ -48,6 +48,10 @@ import {
 } from 'src/cell-element/_';
 
 import {
+    EventListenerManager,
+} from 'lib/sys/event-listener-manager';
+
+import {
     settings_updated_events,
 } from 'src/settings/_';
 
@@ -348,7 +352,7 @@ export class XbManager {
     invoke_renderer_for_type( type:            string = 'plain',
                               options?:        null|TextOrientedRendererOptionsType,
                               cell?:           null|CellElement,
-                              output_element?: Element ): Promise<Element> {
+                              output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         type ??= 'plain';
         const renderer = TextOrientedRenderer.renderer_for_type(type);
         if (!renderer) {
@@ -360,7 +364,7 @@ export class XbManager {
     invoke_renderer( renderer:        TextOrientedRenderer,
                      options?:        null|TextOrientedRendererOptionsType,
                      cell?:           null|CellElement,
-                     output_element?: Element ): Promise<Element> {
+                     output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         cell ??= this.active_cell;
         if (!cell) {
             throw new Error('cell not specified and no active_cell');
@@ -382,10 +386,13 @@ export class XbManager {
             },
         });
 
-//!!! maybe leaks event listener if output_element is passed in
-        // The following event listener is never explicitly removed.
+        // The following event listeners are not normally explicitly removed.
         // Instead, if the element is removed, we rely on the event listener
-        // resources to be cleaned up, too.
+        // resources to be cleaned up, too.  However, the returned function
+        // remove_event_handlers() can be called to explicitly remove the
+        // handlers.  This is useful if the output_element is passed in
+        // from the outside and that sort of control is desired.
+        const event_listener_manager = new EventListenerManager();
         const event_listener = (event: Event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
@@ -393,8 +400,15 @@ export class XbManager {
                 XbManager.singleton.set_active_cell(refound_cell);
             }
         };
-        output_element.addEventListener('focus', event_listener, { capture: true });
-        output_element.addEventListener('click', event_listener, { capture: true });
+        event_listener_manager.add(output_element, 'focus', event_listener, { capture: true });
+        event_listener_manager.add(output_element, 'click', event_listener, { capture: true });
+        event_listener_manager.attach();
+        const remove_event_handlers = () => {
+            if (event_listener_manager.attached) {
+                event_listener_manager.detach();
+            }
+        };
+(globalThis as any).remove_event_handlers = remove_event_handlers;//!!!
 
         const ocx = new OutputContext(output_element);
         this.activity_manager.add_activity(ocx);
@@ -411,6 +425,7 @@ export class XbManager {
         });
 
         return ocx._invoke_renderer(renderer, cell.get_text(), options)
+            .then((element) => ({ element, remove_event_handlers }))
             .finally(() => {
                 if (!ocx.keepalive) {
                     ocx.stop();  // stop anything that may have been started

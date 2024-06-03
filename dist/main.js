@@ -1296,8 +1296,8 @@ class EventListenerManager {
         this.#specs = [];
         this.#attached = attached;
     }
-    empty() { return this.#specs.length <= 0; }
-    attached() { return this.#attached; }
+    get empty() { return this.#specs.length <= 0; }
+    get attached() { return this.#attached; }
     add(target, type, listener, options = {}) {
         //!!! options is not copied, and yet is used later
         //!!! could use structuredClone(), but would that prevent remove() from finding?
@@ -1336,7 +1336,6 @@ class EventListenerManager {
         if (!this.#attached) {
             for (const spec of this.#specs) {
                 const { target, type, listener, options } = spec;
-                target.removeEventListener(type, listener, options);
                 target.addEventListener(type, listener, options);
             }
             this.#attached = true;
@@ -1347,7 +1346,6 @@ class EventListenerManager {
             for (const spec of this.#specs) {
                 const { target, type, listener, options } = spec;
                 target.removeEventListener(type, listener, options);
-                target.addEventListener(type, listener, options);
             }
             this.#attached = false;
         }
@@ -26513,11 +26511,11 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                         const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                         let renderer_factory = undefined;
                         try {
-                            const output_type = token.output_type;
-                            if (!output_type) {
-                                throw new Error('no output_type present');
+                            const source_type = token.source_type;
+                            if (!source_type) {
+                                throw new Error('no source_type present');
                             }
-                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld.factory_for_type(output_type);
+                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
                         }
                         catch (error) {
                             await sub_ocx.render_error(error);
@@ -26529,7 +26527,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                             const renderer = new renderer_factory();
                             await renderer.render(sub_ocx, token.text ?? '', renderer_options)
                                 .catch((error) => sub_ocx.render_error(error));
-                            ocx.stop(); // stop background processing, if any
+                            sub_ocx.stop(); // stop background processing, if any
                         }
                         token.markup = output_element.innerHTML;
                         break;
@@ -26606,10 +26604,10 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
                     return undefined;
                 }
                 else {
-                    const output_type = (match[1]?.trim() ?? '') || 'javascript';
+                    const source_type = (match[1]?.trim() ?? '') || 'javascript';
                     return {
                         type: extension_name__eval_code,
-                        output_type,
+                        source_type,
                         raw: match[0],
                         text: match[2],
                         markup: undefined, // filled in later by walkTokens
@@ -27934,14 +27932,16 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_output_context___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3732);
 /* harmony import */ var lib_ui_menu___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7827);
 /* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8165);
+/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(871);
 /* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7336);
 /* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9765);
-/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(53);
+/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(53);
 /* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7654);
 /* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7451);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context___WEBPACK_IMPORTED_MODULE_5__, src_cell_element___WEBPACK_IMPORTED_MODULE_7__, src_settings___WEBPACK_IMPORTED_MODULE_8__, src_global_bindings__WEBPACK_IMPORTED_MODULE_9__]);
 ([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context___WEBPACK_IMPORTED_MODULE_5__, src_cell_element___WEBPACK_IMPORTED_MODULE_7__, src_settings___WEBPACK_IMPORTED_MODULE_8__, src_global_bindings__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
+
 
 
 
@@ -28221,10 +28221,13 @@ class XbManager {
                 'data-source-media-type': renderer.media_type,
             },
         });
-        //!!! maybe leaks event listener if output_element is passed in
-        // The following event listener is never explicitly removed.
+        // The following event listeners are not normally explicitly removed.
         // Instead, if the element is removed, we rely on the event listener
-        // resources to be cleaned up, too.
+        // resources to be cleaned up, too.  However, the returned function
+        // remove_event_handlers() can be called to explicitly remove the
+        // handlers.  This is useful if the output_element is passed in
+        // from the outside and that sort of control is desired.
+        const event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_14__/* .EventListenerManager */ .w();
         const event_listener = (event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
@@ -28232,8 +28235,15 @@ class XbManager {
                 XbManager.singleton.set_active_cell(refound_cell);
             }
         };
-        output_element.addEventListener('focus', event_listener, { capture: true });
-        output_element.addEventListener('click', event_listener, { capture: true });
+        event_listener_manager.add(output_element, 'focus', event_listener, { capture: true });
+        event_listener_manager.add(output_element, 'click', event_listener, { capture: true });
+        event_listener_manager.attach();
+        const remove_event_handlers = () => {
+            if (event_listener_manager.attached) {
+                event_listener_manager.detach();
+            }
+        };
+        globalThis.remove_event_handlers = remove_event_handlers; //!!!
         const ocx = new src_output_context___WEBPACK_IMPORTED_MODULE_5__/* .OutputContext */ .l(output_element);
         this.activity_manager.add_activity(ocx);
         this.#associate_cell_ocx(cell, ocx);
@@ -28248,6 +28258,7 @@ class XbManager {
             }
         });
         return ocx._invoke_renderer(renderer, cell.get_text(), options)
+            .then((element) => ({ element, remove_event_handlers }))
             .finally(() => {
             if (!ocx.keepalive) {
                 ocx.stop(); // stop anything that may have been started
@@ -28308,7 +28319,7 @@ class XbManager {
             console.error('error processing command', command_context, error);
         }
         if (!success) {
-            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_14__/* .beep */ .V)();
+            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_15__/* .beep */ .V)();
         }
     }
     inject_command(command) {

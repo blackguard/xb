@@ -1,9 +1,9 @@
-test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 fix dialog/settings-dialog #ui hack
+markdown renderer: is there a way to keep a computation running (keepalive).  Maybe not: it is building static markup....
+test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 review XbManager.#update_menu_state()
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
-markdown renderer: is there a way to keep a computation running (keepalive).  Maybe not: it is building static markup....
 CellElement.outerHTML does not correctly translate attribute values that contain a " character
 rationalize data-type and data-media-type
 KeySpec.#is_on_macos needs to be fixed

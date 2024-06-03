@@ -50,7 +50,7 @@ type walkTokens_token_type = {
     text?:         string,
     markup?:       string,
     global_state?: object,
-    output_type?:  string,
+    source_type?:  string,
 };
 
 export class MarkdownRenderer extends TextOrientedRenderer {
@@ -113,11 +113,11 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                     const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                     let renderer_factory: undefined|RendererFactory = undefined;
                     try {
-                        const output_type = token.output_type;
-                        if (!output_type) {
-                            throw new Error('no output_type present');
+                        const source_type = token.source_type;
+                        if (!source_type) {
+                            throw new Error('no source_type present');
                         }
-                        renderer_factory = TextOrientedRenderer.factory_for_type(output_type);
+                        renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
                     } catch (error: unknown) {
                         await sub_ocx.render_error(error);
                     }
@@ -129,7 +129,7 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                         await renderer.render(sub_ocx, token.text ?? '', renderer_options)
                             .catch((error: unknown) => sub_ocx.render_error(error));
 
-                        ocx.stop();  // stop background processing, if any
+                        sub_ocx.stop();  // stop background processing, if any
                     }
                     token.markup = output_element.innerHTML;
                     break;
@@ -207,10 +207,10 @@ marked.use({
                 if (!match) {
                     return undefined;
                 } else {
-                    const output_type = (match[1]?.trim() ?? '') || 'javascript';
+                    const source_type = (match[1]?.trim() ?? '') || 'javascript';
                     return {
                         type: extension_name__eval_code,
-                        output_type,
+                        source_type,
                         raw:  match[0],
                         text: match[2],
                         markup: undefined,  // filled in later by walkTokens
