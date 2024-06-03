@@ -30,12 +30,13 @@ export class ErrorRenderer extends ApplicationOrientedRenderer<ErrorRendererValu
      * @throws {Error} if error occurs
      */
     async _render(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Promise<Element> {
-        return this.render_directly(ocx, error_object, options);
+        return this.CLASS.render_directly(ocx, error_object, options);
     }
 
-    /** non-async; used internally to render errors without abort_if_stopped() checks
+    /** Non-async; used internally to render errors without abort_if_stopped() checks.
+     *  Also used by MarkdownRenderer.
      */
-    render_directly(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
+    static render_directly(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
 console.log(error_object);//!!! for debugging from console
         const style = options?.style;
 
@@ -57,7 +58,7 @@ console.log(error_object);//!!! for debugging from console
             },
             style: {
                 ...(style ?? {}),
-                color: this.CLASS.error_element_text_color,
+                color: this.error_element_text_color,
             }
         }) as HTMLElement;
         parent.innerText = text;  // innerText sanitizes text

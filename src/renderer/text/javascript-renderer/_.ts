@@ -200,7 +200,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         }
 
         function _internal_render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
-            return new ErrorRenderer().render_directly(ocx, error, options);
+            return ErrorRenderer.render_directly(ocx, error, options);
         }
 
         function keepalive(keepalive: boolean = true) {

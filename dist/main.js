@@ -6946,11 +6946,12 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
      * @throws {Error} if error occurs
      */
     async _render(ocx, error_object, options) {
-        return this.render_directly(ocx, error_object, options);
+        return this.CLASS.render_directly(ocx, error_object, options);
     }
-    /** non-async; used internally to render errors without abort_if_stopped() checks
+    /** Non-async; used internally to render errors without abort_if_stopped() checks.
+     *  Also used by MarkdownRenderer.
      */
-    render_directly(ocx, error_object, options) {
+    static render_directly(ocx, error_object, options) {
         console.log(error_object); //!!! for debugging from console
         const style = options?.style;
         const text_segments = [];
@@ -6971,7 +6972,7 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
             },
             style: {
                 ...(style ?? {}),
-                color: this.CLASS.error_element_text_color,
+                color: this.error_element_text_color,
             }
         });
         parent.innerText = text; // innerText sanitizes text
@@ -7522,7 +7523,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             return ocx.stopped;
         }
         function _internal_render_error(error, options) {
-            return new src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__/* .ErrorRenderer */ .F().render_directly(ocx, error, options);
+            return src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__/* .ErrorRenderer */ .F.render_directly(ocx, error, options);
         }
         function keepalive(keepalive = true) {
             ocx.keepalive = keepalive;
@@ -26444,12 +26445,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4464);
-/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7286);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5006);
-/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8121);
-/* harmony import */ var lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5118);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_2__, src_xb_manager__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__]);
-([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_2__, src_xb_manager__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9284);
+/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7286);
+/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5006);
+/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8121);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1517);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_xb_manager__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
+([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_xb_manager__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -26477,29 +26480,17 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
      */
     async _render(ocx, markdown, options) {
         markdown ??= '';
-        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_3__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
+        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_4__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
         const parent = ocx.create_child({
             attrs: {
                 'data-type': this.type,
             },
             style,
         });
-        const main_renderer = this; // used below in extensions code
-        // sequencer_promise is used to evaluate the async walkTokens one
-        // token at a time, in sequence.  Normally, marked runs the
-        // async walkTokens on all tokens in concurrently.
-        // This is important because our renderers may be stateful.
-        let sequencer_promise = undefined;
-        ;
+        const main_renderer = this; // used below in extensions code  //!!! no longer used?
+        let deferred_evaluations = [];
         const marked_options = {
-            async: true, // needed to tell the marked parser operate asynchronously, and to return a promise
-            async walkTokens(token) {
-                const prior_sequencer_promise = sequencer_promise;
-                const new_sequencer_promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_5__/* .OpenPromise */ .i();
-                sequencer_promise = new_sequencer_promise;
-                if (prior_sequencer_promise) {
-                    await prior_sequencer_promise.await();
-                }
+            walkTokens(token) {
                 switch (token.type) {
                     case extension_name__inline_tex:
                     case extension_name__block_tex: {
@@ -26507,8 +26498,6 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                         break;
                     }
                     case extension_name__eval_code: {
-                        const output_element = document.createElement('div');
-                        const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                         let renderer_factory = undefined;
                         try {
                             const source_type = token.source_type;
@@ -26516,32 +26505,60 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0_
                                 throw new Error('no source_type present');
                             }
                             renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
+                            if (!renderer_factory) {
+                                throw new Error(`cannot find renderer for source type "${source_type}"`);
+                            }
+                            const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__/* .generate_object_id */ .pk)();
+                            deferred_evaluations.push({
+                                output_element_id,
+                                text: token.text ?? '',
+                                renderer: new renderer_factory(),
+                                renderer_options: {
+                                    global_state,
+                                },
+                            });
+                            // this is the element we will render to from deferred_evaluations:
+                            token.markup = `<div id="${output_element_id}"></div>`;
                         }
                         catch (error) {
-                            await sub_ocx.render_error(error);
+                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
+                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(error_ocx, error);
+                            token.markup = error_ocx.element.innerHTML;
                         }
-                        if (renderer_factory) { // i.e., no error
-                            const renderer_options = {
-                                global_state,
-                            };
-                            const renderer = new renderer_factory();
-                            await renderer.render(sub_ocx, token.text ?? '', renderer_options)
-                                .catch((error) => sub_ocx.render_error(error));
-                            sub_ocx.stop(); // stop background processing, if any
-                        }
-                        token.markup = output_element.innerHTML;
                         break;
                     }
                 }
-                new_sequencer_promise.resolve(); // permit next token to be processed
             }
         };
-        const markup = await _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
+        const markup = _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
         parent.innerHTML = markup;
+        // now run the deferred_evaluations
+        // by setting up the output elements for each of deferred_evaluations, we
+        // are now free to render asynchronously and in the background
+        // Note: we are assuming that parent (and ocx.element) are already in the DOM
+        // so that we can find the output element through document.getElementById().
+        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
+            const output_element = document.getElementById(output_element_id);
+            if (!output_element) {
+                // unexpected...
+                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+            }
+            else {
+                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
+                await renderer.render(sub_ocx, text, renderer_options)
+                    .catch((error) => {
+                    sub_ocx.keepalive = false; // in case this got set prior to the error
+                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_directly(sub_ocx, error);
+                });
+                if (!sub_ocx.keepalive) {
+                    sub_ocx.stop(); // stop background processing, if any
+                }
+            }
+        }
         return parent;
     }
 }
-_marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
+_marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.use({
     extensions: [
         {
             name: extension_name__inline_tex,
@@ -26562,7 +26579,7 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
                 }
             },
             renderer(token) {
-                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
                     displayMode: false,
                     throwOnError: false,
                 });
@@ -26587,7 +26604,7 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
                 }
             },
             renderer(token) {
-                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
                     displayMode: true,
                     throwOnError: false,
                 });

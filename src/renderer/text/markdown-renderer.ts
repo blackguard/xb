@@ -12,6 +12,10 @@ import {
 } from 'src/renderer/factories';
 
 import {
+    ErrorRenderer,
+} from 'src/renderer/application/error-renderer';
+
+import {
     TeXRenderer,
 } from 'src/renderer/text/tex-renderer';
 
@@ -28,8 +32,8 @@ import {
 } from 'src/output-context/types';
 
 import {
-    OpenPromise,
-} from 'lib/sys/open-promise';
+    generate_object_id,
+} from 'lib/sys/uuid';
 
 import {
     Activity,
@@ -83,24 +87,17 @@ export class MarkdownRenderer extends TextOrientedRenderer {
             style,
         });
 
-        const main_renderer = this;  // used below in extensions code
+        const main_renderer = this;  // used below in extensions code  //!!! no longer used?
 
-        // sequencer_promise is used to evaluate the async walkTokens one
-        // token at a time, in sequence.  Normally, marked runs the
-        // async walkTokens on all tokens in concurrently.
-        // This is important because our renderers may be stateful.
-        let sequencer_promise: undefined|OpenPromise<void> = undefined;;
+        let deferred_evaluations: {
+            output_element_id: string,
+            text:              string,
+            renderer:          TextOrientedRenderer,
+            renderer_options:  TextOrientedRendererOptionsType,
+        }[] = [];
 
         const marked_options = {
-            async: true,  // needed to tell the marked parser operate asynchronously, and to return a promise
-            async walkTokens(token: walkTokens_token_type) {
-                const prior_sequencer_promise = sequencer_promise;
-                const new_sequencer_promise = new OpenPromise<void>();
-                sequencer_promise = new_sequencer_promise;
-                if (prior_sequencer_promise) {
-                    await prior_sequencer_promise.await();
-                }
-
+            walkTokens(token: walkTokens_token_type) {
                 switch (token.type) {
                 case extension_name__inline_tex:
                 case extension_name__block_tex: {
@@ -109,39 +106,65 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                 }
 
                 case extension_name__eval_code: {
-                    const output_element = document.createElement('div');
-                    const sub_ocx = ocx.create_new_ocx(output_element, ocx);
                     let renderer_factory: undefined|RendererFactory = undefined;
                     try {
+
                         const source_type = token.source_type;
                         if (!source_type) {
                             throw new Error('no source_type present');
                         }
                         renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
-                    } catch (error: unknown) {
-                        await sub_ocx.render_error(error);
-                    }
-                    if (renderer_factory) {  // i.e., no error
-                        const renderer_options = {
-                            global_state,
-                        };
-                        const renderer: TextOrientedRenderer = new renderer_factory() as TextOrientedRenderer;
-                        await renderer.render(sub_ocx, token.text ?? '', renderer_options)
-                            .catch((error: unknown) => sub_ocx.render_error(error));
+                        if (!renderer_factory) {
+                            throw new Error(`cannot find renderer for source type "${source_type}"`);
+                        }
+                        const output_element_id = generate_object_id();
+                        deferred_evaluations.push({
+                            output_element_id,
+                            text:             token.text ?? '',
+                            renderer:         new renderer_factory() as TextOrientedRenderer,
+                            renderer_options: {
+                                global_state,
+                            },
+                        });
+                        // this is the element we will render to from deferred_evaluations:
+                        token.markup = `<div id="${output_element_id}"></div>`;
 
-                        sub_ocx.stop();  // stop background processing, if any
+                    } catch (error: unknown) {
+                        const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx);  // temporary, for renderering error
+                        ErrorRenderer.render_directly(error_ocx, error);
+                        token.markup = error_ocx.element.innerHTML;
                     }
-                    token.markup = output_element.innerHTML;
                     break;
                 }
                 }
-
-                new_sequencer_promise.resolve();  // permit next token to be processed
             }
         };
 
-        const markup = await marked.parse(markdown, marked_options);  // using extensions, see below
+        const markup = marked.parse(markdown, marked_options);  // using extensions, see below
         parent.innerHTML = markup;
+
+        // now run the deferred_evaluations
+        // by setting up the output elements for each of deferred_evaluations, we
+        // are now free to render asynchronously and in the background
+        // Note: we are assuming that parent (and ocx.element) are already in the DOM
+        // so that we can find the output element through document.getElementById().
+        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
+            const output_element = document.getElementById(output_element_id);
+            if (!output_element) {
+                // unexpected...
+                ErrorRenderer.render_directly(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+            } else {
+                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
+                await renderer.render(sub_ocx, text, renderer_options)
+                    .catch((error: unknown) => {
+                        sub_ocx.keepalive = false;  // in case this got set prior to the error
+                        ErrorRenderer.render_directly(sub_ocx, error);
+                    });
+                if (!sub_ocx.keepalive) {
+                    sub_ocx.stop();  // stop background processing, if any
+                }
+            }
+        }
 
         return parent;
     }

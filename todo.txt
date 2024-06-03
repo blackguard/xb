@@ -1,5 +1,5 @@
 fix dialog/settings-dialog #ui hack
-markdown renderer: is there a way to keep a computation running (keepalive).  Maybe not: it is building static markup....
+data-type on output divs (vs data-source-media-type, etc) -- rationalize creation of output elements and sub-elements
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 review XbManager.#update_menu_state()
 how does parent ActivityManager get notified if a child stops?  necessary?
@@ -11,6 +11,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* markdown renderer: is there a way to keep a computation running (keepalive).  Yes....
 * fix console.{error,warn} usages
 * implement CellElement.stop()
 * rationalize running jobs: XbManager.#multi_eval_manager, ocx, renderer (isa ActivityManager), etc
