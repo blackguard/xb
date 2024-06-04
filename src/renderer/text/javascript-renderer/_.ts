@@ -156,7 +156,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         // evaluate the code:
         const eval_fn_this = eval_context;
 //        const eval_fn_body = code;
-        const eval_fn_body = `try { ${code} } catch (error) { _internal_render_error(error); }`;
+        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
 
@@ -171,12 +171,12 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         // }
 
         eval_loop:
-        for (;;) {
+        while (!eval_ocx.stopped) {
             let value, done;
             try {
                 ({ value, done } = await result_stream.next());
             } catch (error) {
-                ocx.render_error(error);
+                await eval_ocx.render_error(error);
                 break eval_loop;
             }
 
@@ -196,7 +196,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             }
         }
 
-        return ocx.element;
+        return eval_ocx.element;
     }
 
     async #create_eval_environment(eval_context: object, ocx: OutputContextLike, source_code: string) {
@@ -204,10 +204,6 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
 
         function is_stopped() {
             return ocx.stopped;
-        }
-
-        function _internal_render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
-            return ErrorRenderer.render_sync(ocx, error, options);
         }
 
         function keepalive(keepalive: boolean = true) {
@@ -272,8 +268,6 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             println:         ocx.println.bind(ocx),
             printf:          ocx.printf.bind(ocx),
             print__:         ocx.print__.bind(ocx),
-
-            _internal_render_error,
 
             // code and graphics rendering defined by ocx
             javascript:      ocx.javascript.bind(ocx),

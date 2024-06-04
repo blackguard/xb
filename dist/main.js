@@ -7401,14 +7401,13 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3947);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4464);
-/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9284);
-/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(9638);
-/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(630);
-/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(790);
-/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(117);
-/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3751);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_5__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__]);
-([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_5__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9638);
+/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(630);
+/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(790);
+/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(117);
+/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3751);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_4__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__]);
+([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_4__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/_.ts"; // save for later
 
 const lib_dir_path = '../../../lib/';
@@ -7464,7 +7463,6 @@ const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).con
 
 
 
-
 class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld {
     static get type() { return 'javascript'; }
     static {
@@ -7506,7 +7504,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         // evaluate the code:
         const eval_fn_this = eval_context;
         //        const eval_fn_body = code;
-        const eval_fn_body = `try { ${code} } catch (error) { _internal_render_error(error); }`;
+        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
         // note that using for await ... of misses the return value and we
@@ -7518,13 +7516,13 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         //         await eval_environment.render_value(result);
         //     }
         // }
-        eval_loop: for (;;) {
+        eval_loop: while (!eval_ocx.stopped) {
             let value, done;
             try {
                 ({ value, done } = await result_stream.next());
             }
             catch (error) {
-                ocx.render_error(error);
+                await eval_ocx.render_error(error);
                 break eval_loop;
             }
             // output any non-undefined values that were received either from
@@ -7540,22 +7538,19 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
                 break eval_loop;
             }
         }
-        return ocx.element;
+        return eval_ocx.element;
     }
     async #create_eval_environment(eval_context, ocx, source_code) {
-        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__/* .load_d3 */ .M)();
+        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__/* .load_d3 */ .M)();
         function is_stopped() {
             return ocx.stopped;
-        }
-        function _internal_render_error(error, options) {
-            return src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_4__/* .ErrorRenderer */ .F.render_sync(ocx, error, options);
         }
         function keepalive(keepalive = true) {
             ocx.keepalive = keepalive;
         }
         async function create_worker(options) {
-            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_5__/* .EvalWorker */ .V(options);
-            ocx.add_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_8__/* .Activity */ .R(worker));
+            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options);
+            ocx.add_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_7__/* .Activity */ .R(worker));
             return worker;
         }
         async function import_lib(lib_path) {
@@ -7578,7 +7573,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             TextOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld,
             ApplicationOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ApplicationOrientedRenderer */ .T2,
             d3, // for use with Plotly
-            Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__/* .Algebrite */ .m,
+            Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__/* .Algebrite */ .m,
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
@@ -7601,7 +7596,6 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             println: ocx.println.bind(ocx),
             printf: ocx.printf.bind(ocx),
             print__: ocx.print__.bind(ocx),
-            _internal_render_error,
             // code and graphics rendering defined by ocx
             javascript: ocx.javascript.bind(ocx),
             markdown: ocx.markdown.bind(ocx),
@@ -7610,7 +7604,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             graphviz: ocx.graphviz.bind(ocx),
             plotly: ocx.plotly.bind(ocx),
             canvas_image: ocx.canvas_image.bind(ocx),
-            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__,
+            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_8__,
         };
         return eval_environment;
     }
