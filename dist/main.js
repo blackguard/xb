@@ -7560,7 +7560,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         function keepalive(keepalive = true) {
             ocx.keepalive = keepalive;
         }
-        async function bg(thunk, set_keepalive = false) {
+        async function bg(thunk, set_keepalive = true) {
             try {
                 if (set_keepalive) {
                     keepalive();

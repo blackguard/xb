@@ -211,7 +211,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             ocx.keepalive = keepalive;
         }
 
-        async function bg(thunk: () => any, set_keepalive: boolean = false) {
+        async function bg(thunk: () => any, set_keepalive: boolean = true) {
             try {
                 if (set_keepalive) {
                     keepalive();
