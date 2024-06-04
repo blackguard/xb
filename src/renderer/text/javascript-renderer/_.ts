@@ -156,7 +156,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         // evaluate the code:
         const eval_fn_this = eval_context;
 //        const eval_fn_body = code;
-        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error); }`;
+        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error, { abbreviated: true }); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
 

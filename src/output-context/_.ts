@@ -204,8 +204,7 @@ export class OutputContext extends OutputContextLike {
             }
             text = this.CLASS.sprintf(format, ...args);
         }
-        return this.render_text(text).
-            catch(error => this.render_error(error));
+        return this.render_text(text)
     }
 
     async print__(options?: TextOrientedRendererOptionsType): Promise<Element> {

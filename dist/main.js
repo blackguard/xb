@@ -6501,8 +6501,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
             }
             text = this.CLASS.sprintf(format, ...args);
         }
-        return this.render_text(text).
-            catch(error => this.render_error(error));
+        return this.render_text(text);
     }
     async print__(options) {
         this.abort_if_stopped();
@@ -6968,11 +6967,11 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
      */
     static render_sync(ocx, error_object, options) {
         console.log(error_object); //!!! for debugging from console
-        const style = options?.style;
+        const { style, abbreviated, } = (options || {});
         const text_segments = [];
         if (error_object instanceof Error) {
             text_segments.push(error_object.message ?? 'error');
-            if (error_object.stack) {
+            if (!abbreviated && error_object.stack) {
                 text_segments.push(error_object.stack);
             }
         }
@@ -7504,7 +7503,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         // evaluate the code:
         const eval_fn_this = eval_context;
         //        const eval_fn_body = code;
-        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error); }`;
+        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error, { abbreviated: true }); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
         // note that using for await ... of misses the return value and we

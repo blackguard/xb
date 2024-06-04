@@ -3,7 +3,8 @@
 export type ErrorRendererValueType = unknown;
 
 export type ErrorRendererOptionsType = {
-    style?: object,
+    style?:       object,
+    abbreviated?: boolean,
 };
 
 

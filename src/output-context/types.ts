@@ -8,9 +8,9 @@ import {
     create_element_or_mapping,
     create_element,
     create_element_mapping,
-    delay_ms        as util_delay_ms,
-    next_tick       as util_next_tick,
-    next_micro_tick as util_next_micro_tick,
+    delay_ms        as tools_delay_ms,
+    next_tick       as tools_next_tick,
+    next_micro_tick as tools_next_micro_tick,
 } from 'lib/ui/dom-tools';
 
 import {
@@ -67,19 +67,19 @@ export abstract class OutputContextLike extends ActivityManager {
     }
 
     static async sleep(s: number): Promise<void> {
-        return util_delay_ms(1000*s);
+        return tools_delay_ms(1000*s);
     }
 
     static async delay_ms(ms: number): Promise<void> {
-        return util_delay_ms(ms);
+        return tools_delay_ms(ms);
     }
 
     static async next_tick(): Promise<void> {
-        return util_next_tick();
+        return tools_next_tick();
     }
 
     static async next_micro_tick(): Promise<void> {
-        return util_next_micro_tick();
+        return tools_next_micro_tick();
     }
 
 

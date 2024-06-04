@@ -43,12 +43,15 @@ export class ErrorRenderer extends ApplicationOrientedRenderer<ErrorRendererValu
      */
     static render_sync(ocx: OutputContextLike, error_object: ErrorRendererValueType, options?: ErrorRendererOptionsType): Element {
 console.log(error_object);//!!! for debugging from console
-        const style = options?.style;
+        const {
+            style,
+            abbreviated,
+        } = (options || {});
 
         const text_segments = [];
         if (error_object instanceof Error) {
             text_segments.push(error_object.message ?? 'error');
-            if (error_object.stack) {
+            if (!abbreviated && error_object.stack) {
                 text_segments.push(error_object.stack);
             }
         } else {
