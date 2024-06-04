@@ -113,14 +113,17 @@ cell-[data-active][data-type]::before {
     font-weight: bold;
 }
 
+cell-[data-type="plain"] {
+    --content-color: var(--theme-ty-bgc-plain);
+}
 cell-[data-type="markdown"] {
     --content-color: var(--theme-ty-bgc-markdown);
 }
-cell-[data-type="javascript"] {
-    --content-color: var(--theme-ty-bgc-javascript);
-}
 cell-[data-type="tex"] {
     --content-color: var(--theme-ty-bgc-tex);
+}
+cell-[data-type="javascript"] {
+    --content-color: var(--theme-ty-bgc-javascript);
 }
 
 cell- > textarea {
@@ -137,15 +140,15 @@ cell- > textarea {
 
 /* theme-aware graphics */
 
-[data-type="graphviz"] svg polygon {
+[data-source-media-type="application/graphviz"] svg polygon {
     fill:   var(--theme-gr-bgc);
     stroke: var(--theme-gr-fgc);
 }
-[data-type="graphviz"] svg path,
-[data-type="graphviz"] svg ellipse {
+[data-source-media-type="application/graphviz"] svg path,
+[data-source-media-type="application/graphviz"] svg ellipse {
     stroke: var(--theme-gr-fgc);
 }
-[data-type="graphviz"] svg text {
+[data-source-media-type="application/graphviz"] svg text {
     fill: var(--theme-gr-fgc);
 }
 

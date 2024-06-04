@@ -38,7 +38,10 @@ export function get_menubar_spec() {
             { label: 'Add before',      item: { command: 'add-before'          }, id: 'add-before' },
             { label: 'Add after',       item: { command: 'add-after'           }, id: 'add-after' },
             { label: 'Delete',          item: { command: 'delete'              }, id: 'delete' },
-            '---',
+        ] },
+
+        { label: 'Mode', collection: [
+            { label: 'Plain text',      item: { command: 'set-mode-plain'      }, id: 'set-mode-plain' },
             { label: 'Markdown',        item: { command: 'set-mode-markdown'   }, id: 'set-mode-markdown' },
             { label: 'TeX',             item: { command: 'set-mode-tex'        }, id: 'set-mode-tex' },
             { label: 'JavaScript',      item: { command: 'set-mode-javascript' }, id: 'set-mode-javascript' },
@@ -80,8 +83,9 @@ export function get_global_initial_key_map_bindings() {
         'add-after':           [ 'CmdOrCtrl-Alt-Shift-Down' ],
         'delete':              [ 'CmdOrCtrl-Alt-Backspace' ],
 
+        'set-mode-plain':      [ 'Alt-M t', 'Alt-M p' ],
         'set-mode-markdown':   [ 'Alt-M m' ],
-        'set-mode-tex':        [ 'Alt-M t' ],
+        'set-mode-tex':        [ 'Alt-M x' ],
         'set-mode-javascript': [ 'Alt-M j' ],
 
         'settings':            [ 'CmdOrCtrl-,' ],
@@ -119,6 +123,7 @@ export function get_global_command_bindings() {
         'add-after':           commands.command_handler__add_after,
         'delete':              commands.command_handler__delete,
 
+        'set-mode-plain':      commands.command_handler__set_mode_plain,
         'set-mode-markdown':   commands.command_handler__set_mode_markdown,
         'set-mode-tex':        commands.command_handler__set_mode_tex,
         'set-mode-javascript': commands.command_handler__set_mode_javascript,

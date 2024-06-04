@@ -176,6 +176,8 @@ const standard_themes_spec = {
     "--theme-ty-bgc-tex":              [ 'hsl( 45deg  55%  80% / 100%)',  'hsl( 45deg  35%  30% / 100%)' ],
     "--theme-ty-fgc-javascript":       [ 'black',                         'white' ],
     "--theme-ty-bgc-javascript":       [ 'hsl( 85deg  55%  80% / 100%)',  'hsl(120deg  45%  25% / 100%)' ],
+    "--theme-ty-fgc-plain":            [ 'black',                         'white' ],
+    "--theme-ty-bgc-plain":            [ 'hsl( 135deg  55%  80% / 100%)', 'hsl(135deg  45%  25% / 100%)' ],
 
     "--theme-ts-w":                    [ '1.5rem',                        '1.5rem' ],
     "--theme-ts-h":                    [ '1.5rem',                        '1.5rem' ],

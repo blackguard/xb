@@ -269,43 +269,42 @@ export async function command_handler__delete(command_context: CommandContext): 
     }
 }
 
+function set_mode_helper(command_context: CommandContext, type: string) {
+    const cell = command_context.target;
+    if (!(cell instanceof CellElement)) {
+        return false;
+    } else {
+        cell.type = type;
+        return true;
+    }
+}
+
 /** set the active cell's type to "markdown".
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__set_mode_markdown(command_context: CommandContext): boolean {
-    const cell = command_context.target;
-    if (!cell || !(cell instanceof CellElement)) {
-        return false;
-    } else {
-        cell.type = 'markdown';
-        return true;
-    }
+    return set_mode_helper(command_context, 'markdown');
 }
 
 /** set the active cell's type to "tex".
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__set_mode_tex(command_context: CommandContext): boolean {
-    const cell = command_context.target;
-    if (!cell || !(cell instanceof CellElement)) {
-        return false;
-    } else {
-        cell.type = 'tex';
-        return true;
-    }
+    return set_mode_helper(command_context, 'tex');
 }
 
 /** set the active cell's type to "javascript".
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__set_mode_javascript(command_context: CommandContext): boolean {
-    const cell = command_context.target;
-    if (!cell || !(cell instanceof CellElement)) {
-        return false;
-    } else {
-        cell.type = 'javascript';
-        return true;
-    }
+    return set_mode_helper(command_context, 'javascript');
+}
+
+/** set the active cell's type to "plain".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_mode_plain(command_context: CommandContext): boolean {
+    return set_mode_helper(command_context, 'plain');
 }
 
 export function command_handler__show_settings_dialog(command_context: CommandContext): boolean {

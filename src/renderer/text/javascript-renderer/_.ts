@@ -136,7 +136,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             eval_ocx = ocx.create_child_ocx({
                 tag: inline ? 'span' : 'div',
                 attrs: {
-                    'data-type': this.type,
+                    'data-source-media-type': this.media_type,
                 },
                 style,
             });

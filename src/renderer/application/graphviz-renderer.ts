@@ -24,7 +24,7 @@ export class GraphvizRenderer extends ApplicationOrientedRenderer<GraphvizRender
 
         const element = ocx.create_child({
             attrs: {
-                'data-type': this.type,
+                'data-source-media-type': this.media_type,
             },
             style,
             set_id: true,  // required for selector below

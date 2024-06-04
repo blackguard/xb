@@ -25,8 +25,8 @@ export class CanvasImageRenderer extends ApplicationOrientedRenderer<CanvasImage
         if (typeof (options as any).tag !== 'undefined') {
             console.warn('overriding options.tag value', (options as any).tag);
         }
-        if (typeof (options as any).attrs?.['data-type'] !== 'undefined') {
-            console.warn('overriding options.attrs["data-type"] value', (options as any).attrs['data-type']);
+        if (typeof (options as any).attrs?.['data-source-media-type'] !== 'undefined') {
+            console.warn('overriding options.attrs["data-source-media-type"] value', (options as any).attrs['data-source-media-type']);
         }
         if (typeof (options as any).attrs?.['src'] !== 'undefined') {
             console.warn('overriding options.src value', (options as any).attrs.src);
@@ -37,7 +37,7 @@ export class CanvasImageRenderer extends ApplicationOrientedRenderer<CanvasImage
             tag: 'img',
             attrs: {
                 ...((options as any).attrs ?? {}),
-                'data-type': this.type,
+                'data-source-media-type': this.media_type,
                 // "src" set below
             },
         };

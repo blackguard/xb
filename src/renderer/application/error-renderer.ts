@@ -65,7 +65,7 @@ console.log(error_object);//!!! for debugging from console
             parent: ocx.element,
             tag: 'pre',
             attrs: {
-                'data-type': this.type,
+                'data-source-media-type': this.media_type,
             },
             style: {
                 ...(style ?? {}),

@@ -1,4 +1,6 @@
 data-type on output elements (vs data-source-media-type, etc) -- rationalize creation of output elements and sub-elements
+rationalize data-type and data-media-type
+menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
 display unhandled rejections and errors
 fix CodeMirror syntax coloring
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
@@ -6,7 +8,6 @@ review XbManager.#update_menu_state()
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
 CellElement.outerHTML does not correctly translate attribute values that contain a " character
-rationalize data-type and data-media-type
 KeySpec.#is_on_macos needs to be fixed
 tsconfig: module, moduleResolution
 
