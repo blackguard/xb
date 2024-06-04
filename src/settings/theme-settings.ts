@@ -83,7 +83,7 @@ const theme_property_name_documentation = `\
   ts -- tool-bar toggle-switch
   ty -- tool-bar type selector
   ti -- tool-bar indicator
-  cl -- eval-cell/editor-cell
+  cl -- cell
   ou -- output element
   mb -- menubar
   mu -- menu
@@ -142,6 +142,7 @@ const standard_themes_spec = {
 
     "--theme-hd-h":                    [ '1.5rem',                        '1.5rem' ],
     "--theme-hd-bgc":                  [ '#f8f8f8',                       '#2e2e2e' ],
+    "--theme-hd-bdc":                  [ '#ccc',                          '#4a4a4a' ],
 
     "--theme-rh-bgc":                  [ 'grey',                          'grey' ],
     "--theme-rh-bgc-hover":            [ 'black',                         'lightgrey' ],

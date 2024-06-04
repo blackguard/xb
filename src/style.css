@@ -26,6 +26,9 @@ header {
 
     height: var(--theme-hd-h);
     background-color: var(--theme-hd-bgc);
+
+    border: 0px solid var(--theme-hd-bdc);
+    border-bottom-width: 1px;
 }
 
 main {
