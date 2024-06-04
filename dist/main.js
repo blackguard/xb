@@ -7561,6 +7561,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             ocx.keepalive = keepalive;
         }
         async function bg(thunk, set_keepalive = true) {
+            const error_handler = (error) => { ocx.render_error(error); };
             try {
                 if (set_keepalive) {
                     keepalive();
@@ -7572,11 +7573,14 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
                 else if (thunk instanceof Function) {
                     promise = (async () => thunk())();
                 }
+                else {
+                    throw new Error('thunk must be a function or an async function');
+                }
                 // it is important to catch errors here to prevent unhandled rejections
-                return promise?.catch((error) => { ocx.render_error(error); });
+                return promise?.catch(error_handler);
             }
             catch (error) {
-                ocx.render_error(error);
+                error_handler(error);
             }
         }
         async function create_worker(options) {

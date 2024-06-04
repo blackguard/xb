@@ -212,6 +212,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         }
 
         async function bg(thunk: () => any, set_keepalive: boolean = true) {
+            const error_handler = (error: unknown) => { ocx.render_error(error); }
             try {
                 if (set_keepalive) {
                     keepalive();
@@ -221,11 +222,13 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
                     promise = thunk();
                 } else if (thunk instanceof Function) {
                     promise = (async () => thunk())();
+                } else {
+                    throw new Error('thunk must be a function or an async function');
                 }
                 // it is important to catch errors here to prevent unhandled rejections
-                return promise?.catch((error: unknown) => { ocx.render_error(error); });
+                return promise?.catch(error_handler);
             } catch (error: unknown) {
-                ocx.render_error(error);
+                error_handler(error);
             }
         }
 
