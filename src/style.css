@@ -359,6 +359,14 @@ dialog .dialog_accept {
     display: none !important;  /* must use !important to override codemirror's !important setting */
 }
 
+/* scroll long content */
+/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
+.cm-editor {
+    max-height: 50vh;
+}
+.cm-scroller {
+    overflow: auto;
+}
 
 /* === global error messages === */
 

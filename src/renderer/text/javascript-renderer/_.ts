@@ -192,7 +192,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             }
 
             if (done) {
-                break;
+                break eval_loop;
             }
         }
 
