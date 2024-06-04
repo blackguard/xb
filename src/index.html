@@ -6,6 +6,15 @@
 </head>
 <body>
 <h1>XB Test</h1>
+<cell- data-type="javascript">
+keepalive();
+bg(async () => {
+    for (let i = 0; i < 1000; i++) {
+        await printf(' %d', i);
+        await sleep(0.3);
+    }
+});
+</cell->
 <cell- data-type="markdown">
 $$
 a x^2 + b x + c = 0
@@ -22,13 +31,5 @@ $$
     }
 ```
 </cell->
-<cell- data-type="javascript">
-keepalive();
-(async () => {
-for (let i = 0; i < 1000; i++) {
-    await printf(' %d', i);
-    await sleep(0.3);
-}
-})();</cell->
 </body>
 </html>

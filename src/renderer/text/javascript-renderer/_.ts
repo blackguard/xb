@@ -52,6 +52,7 @@ const dynamic_import = new Function('path', 'return import(path);');
 // See the method #create_eval_environment().
 // ======================================================================
 
+const AsyncFunction          = Object.getPrototypeOf(async function () {}).constructor;
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () {}).constructor;
 
 import {
@@ -210,6 +211,24 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             ocx.keepalive = keepalive;
         }
 
+        async function bg(thunk: () => any, set_keepalive: boolean = false) {
+            try {
+                if (set_keepalive) {
+                    keepalive();
+                }
+                let promise: undefined|Promise<any> = undefined;
+                if (thunk instanceof AsyncFunction) {
+                    promise = thunk();
+                } else if (thunk instanceof Function) {
+                    promise = (async () => thunk())();
+                }
+                // it is important to catch errors here to prevent unhandled rejections
+                return promise?.catch((error: unknown) => { ocx.render_error(error); });
+            } catch (error: unknown) {
+                ocx.render_error(error);
+            }
+        }
+
         async function create_worker(options?: object) {
             const worker = new EvalWorker(options);
             ocx.add_activity(new Activity(worker));
@@ -246,6 +265,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             // utility functions defined above
             is_stopped,  // no abort_if_stopped()....
             keepalive:       ocx.AIS(keepalive),
+            bg:              bg,  // don't wrap with AIS because that will cause an unhandled rejection if stopped
             create_worker:   ocx.AIS(create_worker),
             import_lib:      ocx.AIS(import_lib),
             import_src:      ocx.AIS(import_src),

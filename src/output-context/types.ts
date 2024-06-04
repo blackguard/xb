@@ -43,6 +43,10 @@ import {
 } from 'src/renderer/application/types';
 
 
+// This is a recognizable error representing a stopped condition
+export class StoppedError extends Error {};
+
+
 export abstract class OutputContextLike extends ActivityManager {
     get CLASS (){ return this.constructor as typeof OutputContextLike; }
 
@@ -224,8 +228,9 @@ export abstract class OutputContextLike extends ActivityManager {
      */
     abort_if_stopped(operation?: string): void {
         if (this.stopped) {
-            operation ??= 'operation';
-            throw new Error(`${operation} invoked on stopped output context`);
+            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive = false)';
+            const message = operation ? `${operation}: ${stopped_message}` : stopped_message;
+            throw new StoppedError(message);
         }
     }
 

@@ -1,5 +1,6 @@
 import {
     OutputContextLike,
+    StoppedError,
 } from './types';
 
 import {
@@ -173,6 +174,9 @@ export class OutputContext extends OutputContextLike {
     async render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Promise<Element> {
         // don't call this.abort_if_stopped() for render_error() so that errors can still be rendered
         // also, call the synchronous ErrorRenderer,render_sync() method.
+        if (error instanceof StoppedError) {
+            options = { ...(options ?? {}), abbreviated: true };
+        }
         return ErrorRenderer.render_sync(this, error, options);
     }
 

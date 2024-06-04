@@ -1,3 +1,4 @@
+display unhandled rejections and errors
 data-type on output divs (vs data-source-media-type, etc) -- rationalize creation of output elements and sub-elements
 fix CodeMirror syntax coloring
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?

@@ -6473,6 +6473,9 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
     async render_error(error, options) {
         // don't call this.abort_if_stopped() for render_error() so that errors can still be rendered
         // also, call the synchronous ErrorRenderer,render_sync() method.
+        if (error instanceof _types__WEBPACK_IMPORTED_MODULE_0__/* .StoppedError */ .R) {
+            options = { ...(options ?? {}), abbreviated: true };
+        }
         return src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj.render_sync(this, error, options);
     }
     async render_value(value, options) {
@@ -6572,6 +6575,7 @@ __webpack_async_result__();
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   R: () => (/* binding */ StoppedError),
 /* harmony export */   i: () => (/* binding */ OutputContextLike)
 /* harmony export */ });
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
@@ -6583,6 +6587,10 @@ lib_sys_sprintf__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.t
 
 
 
+// This is a recognizable error representing a stopped condition
+class StoppedError extends Error {
+}
+;
 class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_2__/* .ActivityManager */ .c {
     get CLASS() { return this.constructor; }
     #keepalive = false;
@@ -6738,8 +6746,9 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
      */
     abort_if_stopped(operation) {
         if (this.stopped) {
-            operation ??= 'operation';
-            throw new Error(`${operation} invoked on stopped output context`);
+            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive = false)';
+            const message = operation ? `${operation}: ${stopped_message}` : stopped_message;
+            throw new StoppedError(message);
         }
     }
     /** wrap the given function so that when it is called,
@@ -7456,6 +7465,7 @@ const dynamic_import = new Function('path', 'return import(path);');
 // returned if there are any async operations still active.
 // See the method #create_eval_environment().
 // ======================================================================
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).constructor;
 
 
@@ -7550,6 +7560,25 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         function keepalive(keepalive = true) {
             ocx.keepalive = keepalive;
         }
+        async function bg(thunk, set_keepalive = false) {
+            try {
+                if (set_keepalive) {
+                    keepalive();
+                }
+                let promise = undefined;
+                if (thunk instanceof AsyncFunction) {
+                    promise = thunk();
+                }
+                else if (thunk instanceof Function) {
+                    promise = (async () => thunk())();
+                }
+                // it is important to catch errors here to prevent unhandled rejections
+                return promise?.catch((error) => { ocx.render_error(error); });
+            }
+            catch (error) {
+                ocx.render_error(error);
+            }
+        }
         async function create_worker(options) {
             const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options);
             ocx.add_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_7__/* .Activity */ .R(worker));
@@ -7579,6 +7608,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
+            bg: bg, // don't wrap with AIS because that will cause an unhandled rejection if stopped
             create_worker: ocx.AIS(create_worker),
             import_lib: ocx.AIS(import_lib),
             import_src: ocx.AIS(import_src),
