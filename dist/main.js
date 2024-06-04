@@ -6746,7 +6746,7 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
      */
     abort_if_stopped(operation) {
         if (this.stopped) {
-            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive = false)';
+            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive not set)';
             const message = operation ? `${operation}: ${stopped_message}` : stopped_message;
             throw new StoppedError(message);
         }

@@ -228,7 +228,7 @@ export abstract class OutputContextLike extends ActivityManager {
      */
     abort_if_stopped(operation?: string): void {
         if (this.stopped) {
-            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive = false)';
+            const stopped_message = this.keepalive ? 'stopped' : 'stopped (keepalive not set)';
             const message = operation ? `${operation}: ${stopped_message}` : stopped_message;
             throw new StoppedError(message);
         }
