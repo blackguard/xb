@@ -3,14 +3,7 @@
 /* See settings/theme-settings.js for definition of --theme-* properties */
 
 :root {
-    --input-output-split: 50vw;  /* must specify absolute amount, not %, otherwise .resize-handle will be misaligned */
-
-    --is-stacked: ;  /* is input/output displayed stacked or side-by-side (default) */
-
-    --resize-handle-size:          8px;   /* handle is a downward-pointing triangle with this height and twice this width */
-    --resize-handle-hairline-size: 1px;   /* (half) width of hairline displayed when dragging resize-handle */
-
-    --resize-handle-center-h: calc(var(--input-output-split) + (2 * var(--theme-cl-bdw)));
+    --cell-max-height-scrolling: 50vh;
 }
 
 body {
@@ -141,6 +134,10 @@ html[data-cell-view="hide"] cell-:not([data-active]) {
     border-width: 0.25rem;
     padding: 0;
 }
+cell- {
+    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
+    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+}
 
 
 /* === codemirror === */
@@ -148,7 +145,7 @@ html[data-cell-view="hide"] cell-:not([data-active]) {
 /* scroll long content unless html[data-cell-view="full"] */
 /* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
 .cm-editor {
-    max-height: 50vh;
+    max-height: var(--cell-max-height-scrolling);
 }
 .cm-scroller {
     overflow-y: auto;

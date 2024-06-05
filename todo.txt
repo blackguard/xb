@@ -1,4 +1,3 @@
-animate data-cell-view transitions
 validate data-cell-view during init
 preserve data-cell-view in save_serializer()
 during document init, repsect 'data-active' on loaded cells
@@ -16,6 +15,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* animate data-cell-view transitions
 * can't click to select a collapsed (via hide) cell
 * make cells collapsed from data-cell-view="hide" look better
 * data-source-element is not set for all outputs [not fixing; the top-level output does have this set--by XbManager.singleton.invoke_renderer()]
