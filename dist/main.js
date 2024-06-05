@@ -5524,6 +5524,9 @@ class CellElement extends HTMLElement {
     stop() {
         src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.stop_cell(this);
     }
+    get can_stop() {
+        return src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.can_stop_cell(this);
+    }
     scroll_into_view() {
         //!!! this needs improvement
         //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
@@ -28170,6 +28173,7 @@ class XbManager {
         }
         return el;
     }
+    get cell_view_mode() { return document.documentElement.getAttribute('data-cell-view'); }
     get cell_parent() { return this.main_element; }
     get activity_manager() { return this.#activity_manager; }
     get editable() { return this.#editable; }
@@ -28243,6 +28247,15 @@ class XbManager {
                 console.error('error while stopping ocx', error, ocx);
             }
         });
+    }
+    can_stop_cell(cell) {
+        const ocxs = this.#cell_ocx_map.get(cell);
+        if (!ocxs) {
+            return false;
+        }
+        else {
+            return [...ocxs.values()].some(ocx => !ocx.stopped);
+        }
     }
     async #initialize() {
         if (this.#initialize_called) {
@@ -28506,6 +28519,8 @@ class XbManager {
             const active_cell = this.active_cell;
             const active_index = active_cell ? cells.indexOf(active_cell) : -1;
             const editable = this.editable;
+            const cell_mode = active_cell?.type;
+            const cell_view_mode = this.cell_view_mode;
             menubar.set_menu_state('reset', { enabled: editable });
             menubar.set_menu_state('reset-all', { enabled: editable });
             menubar.set_menu_state('clear-all', { enabled: editable });
@@ -28520,8 +28535,16 @@ class XbManager {
             menubar.set_menu_state('eval', { enabled: !!(editable && active_cell) });
             menubar.set_menu_state('eval-before', { enabled: !!(editable && active_cell) });
             menubar.set_menu_state('eval-all', { enabled: !!(editable && active_cell) });
-            //!!!            menubar.set_menu_state('stop',             { enabled: active_cell?.can_stop });
-            //!!!            menubar.set_menu_state('stop-all',         { enabled: cells.some(cell => cell.can_stop) });
+            menubar.set_menu_state('stop', { enabled: active_cell?.can_stop });
+            menubar.set_menu_state('stop-all', { enabled: cells.some(cell => cell.can_stop) });
+            menubar.set_menu_state('set-mode-plain', { checked: (cell_mode === 'plain') });
+            menubar.set_menu_state('set-mode-markdown', { checked: (cell_mode === 'markdown') });
+            menubar.set_menu_state('set-mode-tex', { checked: (cell_mode === 'tex') });
+            menubar.set_menu_state('set-mode-javascript', { checked: (cell_mode === 'javascript') });
+            menubar.set_menu_state('set-view-normal', { checked: (cell_view_mode === 'normal') });
+            menubar.set_menu_state('set-view-hide', { checked: (cell_view_mode === 'hide') });
+            menubar.set_menu_state('set-view-full', { checked: (cell_view_mode === 'full') });
+            menubar.set_menu_state('set-view-none', { checked: (cell_view_mode === 'none') });
             const neutral = true; //!!! until we figure out how to detect a changed document
             menubar.set_menu_state('save', { enabled: !neutral });
             /*

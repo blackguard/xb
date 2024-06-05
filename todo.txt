@@ -1,7 +1,6 @@
-review XbManager.#update_menu_state(); also: put check marks on items appropriately
 fix save-as, etc...
 display unhandled rejections and errors
-fix CodeMirror syntax coloring
+fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
@@ -11,6 +10,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* review XbManager.#update_menu_state(); also: put check marks on items appropriately
 * menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
 * during document init, repsect 'data-active' on loaded cells
 * validate data-cell-view during init

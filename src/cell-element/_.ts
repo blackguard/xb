@@ -179,8 +179,12 @@ export class CellElement extends HTMLElement {
 
     /** stop any running activities for this cell
      */
-    stop() {
+    stop(): void {
         XbManager.singleton.stop_cell(this);
+    }
+
+    get can_stop (): boolean {
+        return XbManager.singleton.can_stop_cell(this);
     }
 
     scroll_into_view(): void {
