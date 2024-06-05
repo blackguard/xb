@@ -4878,6 +4878,7 @@ class MenuBar {
     get CLASS() { return this.constructor; }
     static menu_element_tag_name = 'menu';
     static menuitem_element_tag_name = 'li';
+    static small_right_triangle = '\u25B8'; // separator between keys in multiple key sequence glyph
     static find_previous_menuitem(menuitem) {
         let mi = menuitem.previousElementSibling;
         while (mi && (!mi.classList.contains('menuitem') || mi.classList.contains('disabled'))) {
@@ -5236,7 +5237,10 @@ class MenuBar {
                     });
                     // create <kbd>...</kbd> elements
                     kbd_bindings.forEach(binding => {
-                        const binding_glyphs = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7(binding).glyphs;
+                        const keys = binding.split(lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7.canonical_key_string_separator);
+                        const binding_glyphs = keys
+                            .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7(key).glyphs)
+                            .join(this.CLASS.small_right_triangle);
                         (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
                     });
                 }
@@ -6178,7 +6182,7 @@ function get_menubar_spec() {
 function get_global_initial_key_map_bindings() {
     return {
         'reset': ['CmdOrCtrl-Shift-#'],
-        'reset-all': ['CmdOrCtrl-Alt-Shift-#'],
+        'reset-all': ['CmdOrCtrl-Alt-Shift-#', 'CmdOrCtrl-K Alt-B CmdOrCtrl-8'],
         'clear-all': ['CmdOrCtrl-Shift-!'],
         'save': ['CmdOrCtrl-S'],
         'save-as': ['CmdOrCtrl-Shift-S'],
