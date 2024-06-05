@@ -1,9 +1,8 @@
-menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
+review XbManager.#update_menu_state(); also: put check marks on items appropriately
 fix save-as, etc...
 display unhandled rejections and errors
 fix CodeMirror syntax coloring
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
-review XbManager.#update_menu_state(); put check marks on items appropriately
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
 CellElement.outerHTML does not correctly translate attribute values that contain a " character
@@ -12,6 +11,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
 * during document init, repsect 'data-active' on loaded cells
 * validate data-cell-view during init
 * preserve data-cell-view in save_serializer()
