@@ -1,8 +1,5 @@
-validate data-cell-view during init
-preserve data-cell-view in save_serializer()
-during document init, repsect 'data-active' on loaded cells
-fix save-as, etc...
 menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
+fix save-as, etc...
 display unhandled rejections and errors
 fix CodeMirror syntax coloring
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
@@ -15,6 +12,9 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* during document init, repsect 'data-active' on loaded cells
+* validate data-cell-view during init
+* preserve data-cell-view in save_serializer()
 * animate data-cell-view transitions
 * can't click to select a collapsed (via hide) cell
 * make cells collapsed from data-cell-view="hide" look better

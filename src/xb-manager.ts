@@ -246,6 +246,7 @@ export class XbManager {
 
             this.#setup_csp();
             this.#setup_header();
+            this.#set_initial_active_cell();
 
             // add "changes may not be saved" prompt for when document is being closed while modified
             window.addEventListener('beforeunload', (event: Event) => {
@@ -318,6 +319,18 @@ export class XbManager {
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
         this.#menubar_selects_subscription = this.#menubar.selects.subscribe(this.#update_menu_state.bind(this));
+    }
+
+    #set_initial_active_cell() {
+        const active_cell = (
+            document.querySelector(`${CellElement.custom_element_name}[data-active]`) ??  // cell currently set as active
+            document.querySelector(`${CellElement.custom_element_name}`)              ??  // first cell
+            this.create_cell()                                                            // new cell
+        ) as CellElement;
+        active_cell.focus();
+        // this.set_active_cell() will establish the active cell correctly,
+        // and reset "active" on all other cells.
+        this.set_active_cell(active_cell);
     }
 
 

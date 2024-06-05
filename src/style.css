@@ -131,8 +131,10 @@ html[data-cell-view="none"] cell- {
 }
 html[data-cell-view="hide"] cell-:not([data-active]) {
     max-height: 0.2rem;
-    border-width: 0.25rem;
+    border-width: 1px;
+    border-color: black;
     padding: 0;
+    margin: 0.2rem;
 }
 cell- {
     max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */

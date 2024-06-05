@@ -17,6 +17,10 @@ import {
 } from 'src/cell-element/_';
 
 
+const cell_view_attribute_name   = 'data-cell-view';
+const allowable_cell_view_values = ['normal', 'hide', 'full', 'none'];
+
+
 // this script is itself the bootstrap script, so we can go ahead and grab its markup now...
 const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
 if (!bootstrap_script_markup) {
@@ -43,6 +47,12 @@ async function initialize_document(): Promise<void> {
     });  // event listener never removed
 
     try {
+
+        // validate html[data-cell-view]
+        const cell_view = document.documentElement.getAttribute(cell_view_attribute_name);
+        if (cell_view && !allowable_cell_view_values.includes(cell_view)) {
+            throw new Error(`<html> attribute data-cell-view must be unset or one of: "${allowable_cell_view_values.join('", "')}"`);
+        }
 
         // establish head element if not already present
         if (!document.head) {
@@ -88,9 +98,6 @@ async function initialize_document(): Promise<void> {
         // initialize renderer factories after all the TextOrientedRenderer factories have been registered...
         reset_to_initial_text_renderer_factories();
 
-        // focus first cell
-        XbManager.singleton.get_cells()[0]?.focus();
-
     } catch (error: unknown) {
         show_initialization_failed(error);
     }
@@ -118,6 +125,10 @@ export function save_serializer() {
     if (!main_element) {
         throw new Error('bad format for document: <main> element not found');
     }
+    let cell_view: undefined|null|string = document.documentElement.getAttribute(cell_view_attribute_name);
+    if (cell_view && !allowable_cell_view_values.includes(cell_view)) {
+        cell_view = undefined;  // just skip if not valid
+    }
     const contents_segments = [];
     for (const node of main_element.childNodes) {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -131,7 +142,7 @@ export function save_serializer() {
     const contents = contents_segments.join('');
     return `\
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"${cell_view ? ` ${cell_view_attribute_name}="${cell_view}"` : ''}>
 <head>
     <meta charset="utf-8">
     ${bootstrap_script_markup}
