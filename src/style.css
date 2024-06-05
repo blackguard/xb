@@ -126,15 +126,45 @@ cell-[data-type="javascript"] {
     --content-color: var(--theme-ty-bgc-javascript);
 }
 
-cell- > textarea {
-    color:            var(--theme-cl-fgc);
-    background-color: var(--theme-cl-bgc);
-    resize: none;  /* remove resize control */
-    outline: none;  /* handled by parent cell- */
-    width: 100%;
-    padding: 0 0 1px 0;  /* 1px on bottom to prevent "_" from being hidden on bottom line */
-    border: 0;
-    margin: 0;
+/* html[data-cell-view]: none|hide|normal|full
+ * - none: cells are not displayed
+ * - hide: cells auto-hide; focused cell scrolls, other cells minimized
+ * - <empty>|normal: all cells scroll (default)
+ * - full: all cells shown completely
+*/
+
+html[data-cell-view="none"] cell- {
+    display: none;
+}
+html[data-cell-view="hide"] cell-:not([data-active]) {
+    max-height: 0.2rem;
+    border-width: 0.25rem;
+    padding: 0;
+}
+
+
+/* === codemirror === */
+
+/* scroll long content unless html[data-cell-view="full"] */
+/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
+.cm-editor {
+    max-height: 50vh;
+}
+.cm-scroller {
+    overflow-y: auto;
+}
+
+/* show full content if html[data-cell-view="full"] */
+html[data-cell-view="full"] .cm-editor {
+    max-height: unset;
+}
+html[data-cell-view="full"] .cm-scroller {
+    overflow-y: auto;
+}
+
+/* line number switch */
+.codemirror-hide-line-numbers .cm-lineNumbers {
+    display: none !important;  /* must use !important to override codemirror's !important setting */
 }
 
 
@@ -358,21 +388,6 @@ dialog .dialog_accept {
     display: block;
 }
 
-
-/* === codemirror === */
-
-.codemirror-hide-line-numbers .cm-lineNumbers {
-    display: none !important;  /* must use !important to override codemirror's !important setting */
-}
-
-/* scroll long content */
-/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
-.cm-editor {
-    max-height: 50vh;
-}
-.cm-scroller {
-    overflow: auto;
-}
 
 /* === global error messages === */
 

@@ -353,15 +353,45 @@ cell-[data-type="javascript"] {
     --content-color: var(--theme-ty-bgc-javascript);
 }
 
-cell- > textarea {
-    color:            var(--theme-cl-fgc);
-    background-color: var(--theme-cl-bgc);
-    resize: none;  /* remove resize control */
-    outline: none;  /* handled by parent cell- */
-    width: 100%;
-    padding: 0 0 1px 0;  /* 1px on bottom to prevent "_" from being hidden on bottom line */
-    border: 0;
-    margin: 0;
+/* html[data-cell-view]: none|hide|normal|full
+ * - none: cells are not displayed
+ * - hide: cells auto-hide; focused cell scrolls, other cells minimized
+ * - <empty>|normal: all cells scroll (default)
+ * - full: all cells shown completely
+*/
+
+html[data-cell-view="none"] cell- {
+    display: none;
+}
+html[data-cell-view="hide"] cell-:not([data-active]) {
+    max-height: 0.2rem;
+    border-width: 0.25rem;
+    padding: 0;
+}
+
+
+/* === codemirror === */
+
+/* scroll long content unless html[data-cell-view="full"] */
+/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
+.cm-editor {
+    max-height: 50vh;
+}
+.cm-scroller {
+    overflow-y: auto;
+}
+
+/* show full content if html[data-cell-view="full"] */
+html[data-cell-view="full"] .cm-editor {
+    max-height: unset;
+}
+html[data-cell-view="full"] .cm-scroller {
+    overflow-y: auto;
+}
+
+/* line number switch */
+.codemirror-hide-line-numbers .cm-lineNumbers {
+    display: none !important;  /* must use !important to override codemirror's !important setting */
 }
 
 
@@ -586,21 +616,6 @@ dialog .dialog_accept {
 }
 
 
-/* === codemirror === */
-
-.codemirror-hide-line-numbers .cm-lineNumbers {
-    display: none !important;  /* must use !important to override codemirror's !important setting */
-}
-
-/* scroll long content */
-/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */
-.cm-editor {
-    max-height: 50vh;
-}
-.cm-scroller {
-    overflow: auto;
-}
-
 /* === global error messages === */
 
 body > .error-message {
@@ -631,7 +646,7 @@ body > .error-message {
     }
 
 }
-`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --input-output-split: 50vw;  /* must specify absolute amount, not %, otherwise .resize-handle will be misaligned */\n\n    --is-stacked: ;  /* is input/output displayed stacked or side-by-side (default) */\n\n    --resize-handle-size:          8px;   /* handle is a downward-pointing triangle with this height and twice this width */\n    --resize-handle-hairline-size: 1px;   /* (half) width of hairline displayed when dragging resize-handle */\n\n    --resize-handle-center-h: calc(var(--input-output-split) + (2 * var(--theme-cl-bdw)));\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    padding-top: 0;\n}\nmain > :not(:first-child) {\n    padding-top: var(--theme-cl-p-inter);\n}\n\n.eval-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.eval-cell-output:empty,\n.eval-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\ncell- {\n    --content-color: lightgray;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    outline: 0px solid transparent;  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n    background-color: var(--content-color);\n\n    max-height:   fit-content;\n    padding:      0.2rem;\n    border: 2px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\ncell- > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\ncell- {\n    padding-top: 0;\n    border-top-width: 0;\n}\ncell-::before {\n    content: \"[default]\";\n    display: inline-block;\n    max-width: fit-content;\n}\ncell-[data-type]::before {\n    content: attr(data-type);\n}\ncell-[data-active][data-type]::before {\n    font-weight: bold;\n}\n\ncell-[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\ncell-[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\ncell-[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\ncell-[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\ncell- > textarea {\n    color:            var(--theme-cl-fgc);\n    background-color: var(--theme-cl-bgc);\n    resize: none;  /* remove resize control */\n    outline: none;  /* handled by parent cell- */\n    width: 100%;\n    padding: 0 0 1px 0;  /* 1px on bottom to prevent \"_\" from being hidden on bottom line */\n    border: 0;\n    margin: 0;\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px var(--theme-dg-shc);\n}\n\ndialog button,\ndialog input[type=\"button\"] {\n    margin: 1.75em 0 0 0;\n}\n\ndialog .dialog_decline {\n    display: inline;\n}\n\ndialog .dialog_accept {\n    display: inline;\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === codemirror === */\n\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* scroll long content */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: 50vh;\n}\n.cm-scroller {\n    overflow: auto;\n}\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --input-output-split: 50vw;  /* must specify absolute amount, not %, otherwise .resize-handle will be misaligned */\n\n    --is-stacked: ;  /* is input/output displayed stacked or side-by-side (default) */\n\n    --resize-handle-size:          8px;   /* handle is a downward-pointing triangle with this height and twice this width */\n    --resize-handle-hairline-size: 1px;   /* (half) width of hairline displayed when dragging resize-handle */\n\n    --resize-handle-center-h: calc(var(--input-output-split) + (2 * var(--theme-cl-bdw)));\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    padding-top: 0;\n}\nmain > :not(:first-child) {\n    padding-top: var(--theme-cl-p-inter);\n}\n\n.eval-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.eval-cell-output:empty,\n.eval-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\ncell- {\n    --content-color: lightgray;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    outline: 0px solid transparent;  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n    background-color: var(--content-color);\n\n    max-height:   fit-content;\n    padding:      0.2rem;\n    border: 2px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\ncell- > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\ncell- {\n    padding-top: 0;\n    border-top-width: 0;\n}\ncell-::before {\n    content: \"[default]\";\n    display: inline-block;\n    max-width: fit-content;\n}\ncell-[data-type]::before {\n    content: attr(data-type);\n}\ncell-[data-active][data-type]::before {\n    font-weight: bold;\n}\n\ncell-[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\ncell-[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\ncell-[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\ncell-[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full\n * - none: cells are not displayed\n * - hide: cells auto-hide; focused cell scrolls, other cells minimized\n * - <empty>|normal: all cells scroll (default)\n * - full: all cells shown completely\n*/\n\nhtml[data-cell-view=\"none\"] cell- {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] cell-:not([data-active]) {\n    max-height: 0.2rem;\n    border-width: 0.25rem;\n    padding: 0;\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: 50vh;\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] .cm-editor {\n    max-height: unset;\n}\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: auto;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px var(--theme-dg-shc);\n}\n\ndialog button,\ndialog input[type=\"button\"] {\n    margin: 1.75em 0 0 0;\n}\n\ndialog .dialog_decline {\n    display: inline;\n}\n\ndialog .dialog_accept {\n    display: inline;\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -5496,15 +5511,10 @@ class CellElement extends HTMLElement {
     reset() {
         //!!! should stop any running renderer, however running ocx is not stored here....
         if (this.id) {
-            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"`)) {
+            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
                 output_element.remove();
             }
         }
-    }
-    /** clear the cell, removing content
-     */
-    clear() {
-        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .clear_element */ .gX)(this);
     }
     /** stop any running activities for this cell
      */
@@ -5513,7 +5523,7 @@ class CellElement extends HTMLElement {
     }
     scroll_into_view() {
         //!!! this needs improvement
-        //!!! when repositioning the viewport, try to ensure that the entire cell-container is visible and not just the editor portion
+        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
         if (this.#has_text_container()) {
             this.#codemirror?.scroll_into_view();
         }
@@ -5544,7 +5554,7 @@ class CellElement extends HTMLElement {
     }
     // === FOCUS LISTENERS / ACTIVE ===
     #connect_focus_listeners() {
-        function focus_handler(event) {
+        function select_handler(event) {
             const target = event.target;
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name);
@@ -5554,7 +5564,8 @@ class CellElement extends HTMLElement {
                 }
             }
         }
-        this.#event_listener_manager.add(this, 'focus', focus_handler, { capture: true });
+        this.#event_listener_manager.add(this, 'focus', select_handler, { capture: true });
+        this.#event_listener_manager.add(this, 'click', select_handler, { capture: true });
     }
     // === WEB COMPONENT LIFECYCLE ===
     #update_for_connected() {
@@ -5750,11 +5761,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   C2: () => (/* binding */ command_handler__add_before),
 /* harmony export */   CV: () => (/* binding */ command_handler__set_mode_plain),
 /* harmony export */   Ey: () => (/* binding */ command_handler__eval_and_refocus),
+/* harmony export */   Lm: () => (/* binding */ command_handler__set_view_normal),
 /* harmony export */   MB: () => (/* binding */ command_handler__eval_all),
 /* harmony export */   N2: () => (/* binding */ command_handler__clear_all),
 /* harmony export */   Nr: () => (/* binding */ command_handler__set_mode_tex),
 /* harmony export */   On: () => (/* binding */ command_handler__save_as),
+/* harmony export */   Pp: () => (/* binding */ command_handler__set_view_none),
 /* harmony export */   QK: () => (/* binding */ command_handler__move_down),
+/* harmony export */   Qj: () => (/* binding */ command_handler__set_view_full),
 /* harmony export */   Se: () => (/* binding */ command_handler__move_up),
 /* harmony export */   _g: () => (/* binding */ command_handler__focus_down),
 /* harmony export */   aB: () => (/* binding */ command_handler__stop),
@@ -5766,6 +5780,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   n: () => (/* binding */ command_handler__show_help),
 /* harmony export */   pv: () => (/* binding */ command_handler__save),
 /* harmony export */   qO: () => (/* binding */ command_handler__add_after),
+/* harmony export */   rj: () => (/* binding */ command_handler__set_view_hide),
 /* harmony export */   w_: () => (/* binding */ command_handler__delete),
 /* harmony export */   wq: () => (/* binding */ command_handler__reset_all)
 /* harmony export */ });
@@ -6048,6 +6063,34 @@ function command_handler__set_mode_javascript(command_context) {
 function command_handler__set_mode_plain(command_context) {
     return set_mode_helper(command_context, 'plain');
 }
+function set_view_helper(command_context, view) {
+    document.documentElement.setAttribute('data-cell-view', view);
+    return true;
+}
+/** set the document view to "normal".
+ *  @return {Boolean} true iff command successfully handled
+ */
+function command_handler__set_view_normal(command_context) {
+    return set_view_helper(command_context, 'normal');
+}
+/** set the document view to "hide".
+ *  @return {Boolean} true iff command successfully handled
+ */
+function command_handler__set_view_hide(command_context) {
+    return set_view_helper(command_context, 'hide');
+}
+/** set the document view to "full".
+ *  @return {Boolean} true iff command successfully handled
+ */
+function command_handler__set_view_full(command_context) {
+    return set_view_helper(command_context, 'full');
+}
+/** set the document view to "none".
+ *  @return {Boolean} true iff command successfully handled
+ */
+function command_handler__set_view_none(command_context) {
+    return set_view_helper(command_context, 'none');
+}
 function command_handler__show_settings_dialog(command_context) {
     src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_4__/* .SettingsDialog */ .D.run();
     return true;
@@ -6119,6 +6162,12 @@ function get_menubar_spec() {
                 { label: 'TeX', item: { command: 'set-mode-tex' }, id: 'set-mode-tex' },
                 { label: 'JavaScript', item: { command: 'set-mode-javascript' }, id: 'set-mode-javascript' },
             ] },
+        { label: 'View', collection: [
+                { label: 'Normal', item: { command: 'set-view-normal' }, id: 'set-view-normal' },
+                { label: 'Hide', item: { command: 'set-view-hide' }, id: 'set-view-hide' },
+                { label: 'Full', item: { command: 'set-view-full' }, id: 'set-view-full' },
+                { label: 'None', item: { command: 'set-view-none' }, id: 'set-view-none' },
+            ] },
         { label: 'Help', collection: [
                 { label: 'Help...', item: { command: 'help', } },
             ] },
@@ -6151,6 +6200,10 @@ function get_global_initial_key_map_bindings() {
         'set-mode-markdown': ['Alt-M m'],
         'set-mode-tex': ['Alt-M x'],
         'set-mode-javascript': ['Alt-M j'],
+        'set-view-normal': ['Alt-V n'],
+        'set-view-hide': ['Alt-V h'],
+        'set-view-full': ['Alt-V f'],
+        'set-view-none': ['Alt-V x'],
         'settings': ['CmdOrCtrl-,'],
         'help': ['F1'],
     };
@@ -6183,6 +6236,10 @@ function get_global_command_bindings() {
         'set-mode-markdown': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_mode_markdown */ .ml,
         'set-mode-tex': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_mode_tex */ .Nr,
         'set-mode-javascript': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_mode_javascript */ .cO,
+        'set-view-normal': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_view_normal */ .Lm,
+        'set-view-hide': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_view_hide */ .rj,
+        'set-view-full': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_view_full */ .Qj,
+        'set-view-none': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__set_view_none */ .Pp,
         'settings': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__show_settings_dialog */ .et,
         'help': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__show_help */ .n,
     };

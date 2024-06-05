@@ -47,6 +47,13 @@ export function get_menubar_spec() {
             { label: 'JavaScript',      item: { command: 'set-mode-javascript' }, id: 'set-mode-javascript' },
         ] },
 
+        { label: 'View', collection: [
+            { label: 'Normal',          item: { command: 'set-view-normal'     }, id: 'set-view-normal' },
+            { label: 'Hide',            item: { command: 'set-view-hide'       }, id: 'set-view-hide' },
+            { label: 'Full',            item: { command: 'set-view-full'       }, id: 'set-view-full' },
+            { label: 'None',            item: { command: 'set-view-none'       }, id: 'set-view-none' },
+        ] },
+
         { label: 'Help', collection: [
             { label: 'Help...',         item: { command: 'help',               } },
         ] },
@@ -88,6 +95,11 @@ export function get_global_initial_key_map_bindings() {
         'set-mode-tex':        [ 'Alt-M x' ],
         'set-mode-javascript': [ 'Alt-M j' ],
 
+        'set-view-normal':     [ 'Alt-V n' ],
+        'set-view-hide':       [ 'Alt-V h' ],
+        'set-view-full':       [ 'Alt-V f' ],
+        'set-view-none':       [ 'Alt-V x' ],
+
         'settings':            [ 'CmdOrCtrl-,' ],
         'help':                [ 'F1' ],
     };
@@ -127,6 +139,11 @@ export function get_global_command_bindings() {
         'set-mode-markdown':   commands.command_handler__set_mode_markdown,
         'set-mode-tex':        commands.command_handler__set_mode_tex,
         'set-mode-javascript': commands.command_handler__set_mode_javascript,
+
+        'set-view-normal':     commands.command_handler__set_view_normal,
+        'set-view-hide':       commands.command_handler__set_view_hide,
+        'set-view-full':       commands.command_handler__set_view_full,
+        'set-view-none':       commands.command_handler__set_view_none,
 
         'settings':            commands.command_handler__show_settings_dialog,
         'help':                commands.command_handler__show_help,

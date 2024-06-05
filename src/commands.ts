@@ -307,6 +307,39 @@ export function command_handler__set_mode_plain(command_context: CommandContext)
     return set_mode_helper(command_context, 'plain');
 }
 
+function set_view_helper(command_context: CommandContext, view: string): boolean {
+    document.documentElement.setAttribute('data-cell-view', view);
+    return true;
+}
+
+/** set the document view to "normal".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_view_normal(command_context: CommandContext): boolean {
+    return set_view_helper(command_context, 'normal');
+}
+
+/** set the document view to "hide".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_view_hide(command_context: CommandContext): boolean {
+    return set_view_helper(command_context, 'hide');
+}
+
+/** set the document view to "full".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_view_full(command_context: CommandContext): boolean {
+    return set_view_helper(command_context, 'full');
+}
+
+/** set the document view to "none".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_view_none(command_context: CommandContext): boolean {
+    return set_view_helper(command_context, 'none');
+}
+
 export function command_handler__show_settings_dialog(command_context: CommandContext): boolean {
     SettingsDialog.run();
     return true;

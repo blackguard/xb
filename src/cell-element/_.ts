@@ -171,16 +171,10 @@ export class CellElement extends HTMLElement {
     reset(): void {
         //!!! should stop any running renderer, however running ocx is not stored here....
         if (this.id) {
-            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"`)) {
+            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
                 output_element.remove();
             }
         }
-    }
-
-    /** clear the cell, removing content
-     */
-    clear(): void {
-        clear_element(this);
     }
 
     /** stop any running activities for this cell
@@ -191,7 +185,7 @@ export class CellElement extends HTMLElement {
 
     scroll_into_view(): void {
         //!!! this needs improvement
-        //!!! when repositioning the viewport, try to ensure that the entire cell-container is visible and not just the editor portion
+        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
         if (this.#has_text_container()) {
             this.#codemirror?.scroll_into_view();
         } else {
@@ -224,7 +218,7 @@ export class CellElement extends HTMLElement {
     // === FOCUS LISTENERS / ACTIVE ===
 
     #connect_focus_listeners(): void {
-        function focus_handler(event: Event) {
+        function select_handler(event: Event) {
             const target = event.target;
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name) as CellElement;
@@ -234,7 +228,8 @@ export class CellElement extends HTMLElement {
                 }
             }
         }
-        this.#event_listener_manager.add(this, 'focus', focus_handler, { capture: true });
+        this.#event_listener_manager.add(this, 'focus', select_handler, { capture: true });
+        this.#event_listener_manager.add(this, 'click', select_handler, { capture: true });
     }
 
 
