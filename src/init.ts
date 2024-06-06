@@ -38,13 +38,8 @@ if (!bootstrap_script_markup) {
 }
 
 async function initialize_document(): Promise<void> {
-    window.addEventListener('error', (event) => {
-        console.error('UNHANDLED ERROR', event);  // put on separate line to facilitate setting breakpoint
-    });  // event listener never removed
-
-    window.addEventListener('unhandledrejection', (event) => {
-        console.error('UNHANDLED REJECTION', event);  // put on separate line to facilitate setting breakpoint
-    });  // event listener never removed
+    window.addEventListener('error',              (event) => _show_unhandled_event(event, false));  // event listener never removed
+    window.addEventListener('unhandledrejection', (event) => _show_unhandled_event(event, true));   // event listener never removed
 
     try {
 
@@ -93,13 +88,21 @@ async function initialize_document(): Promise<void> {
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
         await XbManager._initialize_singleton();
-        (globalThis as any).xb_manager = XbManager.singleton;//!!!
+(globalThis as any).xb_manager = XbManager.singleton;//!!!
 
         // initialize renderer factories after all the TextOrientedRenderer factories have been registered...
         reset_to_initial_text_renderer_factories();
 
     } catch (error: unknown) {
         show_initialization_failed(error);
+    }
+}
+
+function _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): void {
+    const message = is_unhandled_rejection ? 'UNHANDLED REJECTION' : 'UNHANDLED ERROR';
+    console.error(message, event);
+    if (XbManager.ready) {
+        XbManager.singleton._show_unhandled_event(event, is_unhandled_rejection);
     }
 }
 

@@ -26,6 +26,10 @@ import {
 } from 'lib/ui/key/_';
 
 import {
+    AlertDialog,
+} from 'lib/ui/dialog/_';
+
+import {
     create_element,
     clear_element,
 } from 'lib/ui/dom-tools';
@@ -88,6 +92,8 @@ export class XbManager {
     get CLASS (){ return this.constructor as typeof XbManager; }
 
     static #singleton: XbManager;
+
+    static get ready (){ return !!this.#singleton; }
 
     static get singleton (){
         if (!this.#singleton) {
@@ -542,6 +548,9 @@ export class XbManager {
                                 if (!success) {
                                     beep();
                                 }
+                            })
+                            .catch((error: unknown) => {
+                                console.error('error while performing command', error, command_context);
                             });
                         return;  // beep() handled asynchronously
                     } else {
@@ -686,5 +695,12 @@ export class XbManager {
         }) as CellElement;
         cell.set_editable(true);
         return cell;
+    }
+
+
+    // === SHOW UNHANDLED EVENT ===
+
+    _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): void {
+        AlertDialog.run(`Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${(event as any)?.reason?.message}`);
     }
 }

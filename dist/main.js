@@ -6311,12 +6311,8 @@ else {
     }
 }
 async function initialize_document() {
-    window.addEventListener('error', (event) => {
-        console.error('UNHANDLED ERROR', event); // put on separate line to facilitate setting breakpoint
-    }); // event listener never removed
-    window.addEventListener('unhandledrejection', (event) => {
-        console.error('UNHANDLED REJECTION', event); // put on separate line to facilitate setting breakpoint
-    }); // event listener never removed
+    window.addEventListener('error', (event) => _show_unhandled_event(event, false)); // event listener never removed
+    window.addEventListener('unhandledrejection', (event) => _show_unhandled_event(event, true)); // event listener never removed
     try {
         // validate html[data-cell-view]
         const cell_view = document.documentElement.getAttribute(cell_view_attribute_name);
@@ -6361,6 +6357,13 @@ async function initialize_document() {
     }
     catch (error) {
         show_initialization_failed(error);
+    }
+}
+function _show_unhandled_event(event, is_unhandled_rejection) {
+    const message = is_unhandled_rejection ? 'UNHANDLED REJECTION' : 'UNHANDLED ERROR';
+    console.error(message, event);
+    if (src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.ready) {
+        src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton._show_unhandled_event(event, is_unhandled_rejection);
     }
 }
 function show_initialization_failed(reason) {
@@ -28065,23 +28068,25 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var src_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6178);
 /* harmony import */ var lib_sys_fs_interface__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9979);
-/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6318);
-/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(9638);
+/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6318);
+/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9638);
 /* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2636);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8401);
-/* harmony import */ var src_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8416);
-/* harmony import */ var src_output_context___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3732);
-/* harmony import */ var lib_ui_menu___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7827);
-/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8165);
-/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(871);
-/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7336);
-/* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9765);
-/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(53);
-/* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7654);
-/* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7451);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context___WEBPACK_IMPORTED_MODULE_5__, src_cell_element___WEBPACK_IMPORTED_MODULE_7__, src_settings___WEBPACK_IMPORTED_MODULE_8__, src_global_bindings__WEBPACK_IMPORTED_MODULE_9__]);
-([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context___WEBPACK_IMPORTED_MODULE_5__, src_cell_element___WEBPACK_IMPORTED_MODULE_7__, src_settings___WEBPACK_IMPORTED_MODULE_8__, src_global_bindings__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6490);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8401);
+/* harmony import */ var src_renderer___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8416);
+/* harmony import */ var src_output_context___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3732);
+/* harmony import */ var lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7827);
+/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8165);
+/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(871);
+/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7336);
+/* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(9765);
+/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(53);
+/* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7654);
+/* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7451);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
+([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
+
 
 
 
@@ -28113,6 +28118,7 @@ const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 class XbManager {
     get CLASS() { return this.constructor; }
     static #singleton;
+    static get ready() { return !!this.#singleton; }
     static get singleton() {
         if (!this.#singleton) {
             // this._initialize_singleton() is async and will run after this function exits (not ideal)
@@ -28131,8 +28137,8 @@ class XbManager {
         return this.#singleton;
     }
     #initialize_called = false;
-    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_12__/* .ActivityManager */ .c(true); // true --> multiple_stops
-    #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_13__/* .SerialDataSource */ .B();
+    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_13__/* .ActivityManager */ .c(true); // true --> multiple_stops
+    #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_14__/* .SerialDataSource */ .B();
     #eval_states_subscription;
     #command_bindings;
     #key_event_manager;
@@ -28149,14 +28155,14 @@ class XbManager {
         this.reset_global_state();
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
         // listen for settings changed events and trigger update in cells
-        src_settings___WEBPACK_IMPORTED_MODULE_8__/* .settings_updated_events */ .Ll.subscribe(() => {
+        src_settings___WEBPACK_IMPORTED_MODULE_9__/* .settings_updated_events */ .Ll.subscribe(() => {
             for (const cell of this.get_cells()) {
                 cell.update_from_settings();
             }
         }); //!!! never unsubscribed
-        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_9__/* .get_global_command_bindings */ .$R)();
+        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_command_bindings */ .$R)();
         this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(window, this.#command_observer.bind(this));
-        const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_9__/* .get_global_initial_key_map_bindings */ .ZD)());
+        const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD)());
         this.push_key_map(key_map);
         this.#key_event_manager.attach();
         this.set_editable(true);
@@ -28209,7 +28215,7 @@ class XbManager {
         catch (error) {
             console.error('error calling this.stop()', error, this);
         }
-        src_renderer___WEBPACK_IMPORTED_MODULE_4__/* .TextOrientedRenderer */ .ld.reset_renderer_factories();
+        src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextOrientedRenderer */ .ld.reset_renderer_factories();
         this.reset_global_state();
         this.#file_handle = undefined;
         for (const cell of this.get_cells()) {
@@ -28227,7 +28233,7 @@ class XbManager {
     clear() {
         this.reset();
         if (this.main_element) {
-            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .clear_element */ .gX)(this.main_element);
+            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .clear_element */ .gX)(this.main_element);
         }
         const first_cell = this.create_cell();
         first_cell.focus();
@@ -28308,7 +28314,7 @@ class XbManager {
                 "media-src   'self' data: blob: *",
                 "connect-src data:",
             ].join('; ');
-            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .create_element */ .T1)({
+            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
                 parent: document.head,
                 tag: 'meta',
                 attrs: {
@@ -28323,15 +28329,15 @@ class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null; //!!! implement this
-        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_6__/* .MenuBar */ .j.create(this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_9__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_9__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
+        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .MenuBar */ .j.create(this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
         //!!! this.#menubar_commands_subscription is never unsubscribed
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
         this.#menubar_selects_subscription = this.#menubar.selects.subscribe(this.#update_menu_state.bind(this));
     }
     #set_initial_active_cell() {
-        const active_cell = (document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_7__/* .CellElement */ .E.custom_element_name}[data-active]`) ?? // cell currently set as active
-            document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_7__/* .CellElement */ .E.custom_element_name}`) ?? // first cell
+        const active_cell = (document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name}[data-active]`) ?? // cell currently set as active
+            document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name}`) ?? // first cell
             this.create_cell() // new cell
         );
         active_cell.focus();
@@ -28360,7 +28366,7 @@ class XbManager {
     // === RENDER INTERFACE ===
     invoke_renderer_for_type(type = 'plain', options, cell, output_element) {
         type ??= 'plain';
-        const renderer = src_renderer___WEBPACK_IMPORTED_MODULE_4__/* .TextOrientedRenderer */ .ld.renderer_for_type(type);
+        const renderer = src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextOrientedRenderer */ .ld.renderer_for_type(type);
         if (!renderer) {
             throw new Error('no renderer found for type "${type}"');
         }
@@ -28375,7 +28381,7 @@ class XbManager {
         const cell_id = cell.id;
         options ??= {};
         options.global_state ??= this.global_state;
-        output_element ??= (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .create_element */ .T1)({
+        output_element ??= (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
             tag: 'output',
             parent: cell.parentElement,
             before: cell.nextSibling,
@@ -28390,11 +28396,11 @@ class XbManager {
         // remove_event_handlers() can be called to explicitly remove the
         // handlers.  This is useful if the output_element is passed in
         // from the outside and that sort of control is desired.
-        const event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_14__/* .EventListenerManager */ .w();
+        const event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_15__/* .EventListenerManager */ .w();
         const event_listener = (event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_7__/* .CellElement */ .E && refound_cell !== XbManager.singleton.active_cell) {
+            if (refound_cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E && refound_cell !== XbManager.singleton.active_cell) {
                 XbManager.singleton.set_active_cell(refound_cell);
             }
         };
@@ -28407,7 +28413,7 @@ class XbManager {
             }
         };
         globalThis.remove_event_handlers = remove_event_handlers; //!!!
-        const ocx = new src_output_context___WEBPACK_IMPORTED_MODULE_5__/* .OutputContext */ .l(output_element);
+        const ocx = new src_output_context___WEBPACK_IMPORTED_MODULE_6__/* .OutputContext */ .l(output_element);
         this.activity_manager.add_activity(ocx);
         this.#associate_cell_ocx(cell, ocx);
         const ocx_stop_subscription = ocx.stop_states.subscribe((state) => {
@@ -28501,8 +28507,11 @@ class XbManager {
                         return bindings_fn(updated_command_context)
                             .then((success) => {
                             if (!success) {
-                                (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_15__/* .beep */ .V)();
+                                (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__/* .beep */ .V)();
                             }
+                        })
+                            .catch((error) => {
+                            console.error('error while performing command', error, command_context);
                         });
                         return; // beep() handled asynchronously
                     }
@@ -28513,7 +28522,7 @@ class XbManager {
             }
         }
         if (!success) {
-            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_15__/* .beep */ .V)();
+            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__/* .beep */ .V)();
         }
     }
     #update_menu_state() {
@@ -28574,7 +28583,7 @@ class XbManager {
     /** return an ordered list of the CellElement (cell-) cells in the document
      */
     get_cells() {
-        return [...document.getElementsByTagName(src_cell_element___WEBPACK_IMPORTED_MODULE_7__/* .CellElement */ .E.custom_element_name)];
+        return [...document.getElementsByTagName(src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name)];
     }
     /** return the cell that is adjacent to the given cell, either forward (or
      *  alternately backward) from the reference.
@@ -28622,13 +28631,17 @@ class XbManager {
                 parent: this.main_element,
                 ...options,
             };
-        const cell = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .create_element */ .T1)({
-            tag: src_cell_element___WEBPACK_IMPORTED_MODULE_7__/* .CellElement */ .E.custom_element_name,
+        const cell = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
+            tag: src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name,
             set_id: true,
             ...extended_options,
         });
         cell.set_editable(true);
         return cell;
+    }
+    // === SHOW UNHANDLED EVENT ===
+    _show_unhandled_event(event, is_unhandled_rejection) {
+        lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .AlertDialog */ .aR.run(`Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${event?.reason?.message}`);
     }
 }
 

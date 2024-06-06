@@ -1,7 +1,7 @@
-display unhandled rejections and errors
 fix save-as, etc; fs-interface needs a rewrite
 make help document
 update README.md
+improve appearance of AlertDialog and ConfirmDialog
 fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 how does parent ActivityManager get notified if a child stops?  necessary?
@@ -12,6 +12,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* display unhandled rejections and errors
 * save-as does not work in Chromium
 * async command handlers do not trigger error (beep) when they return false (indicating failure)
 * review XbManager.#update_menu_state(); also: put check marks on items appropriately
