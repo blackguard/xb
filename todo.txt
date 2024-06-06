@@ -1,4 +1,7 @@
+save-as does not work in Chromium
 fix save-as, etc...
+make help document
+update README.md
 display unhandled rejections and errors
 fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
@@ -10,6 +13,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* async command handlers do not trigger error (beep) when they return false (indicating failure)
 * review XbManager.#update_menu_state(); also: put check marks on items appropriately
 * menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
 * during document init, repsect 'data-active' on loaded cells

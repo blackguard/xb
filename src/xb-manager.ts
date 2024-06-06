@@ -81,6 +81,9 @@ import 'src/style.css';        // webpack implementation
 import 'src/style-hacks.css';  // webpack implementation
 
 
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
+
 export class XbManager {
     get CLASS (){ return this.constructor as typeof XbManager; }
 
@@ -363,7 +366,7 @@ export class XbManager {
             //!!!
             this.#file_handle = file_handle ?? undefined;
         }
-        return true;
+        return !canceled;
     }
 
     #get_suggested_file_name(): string {
@@ -512,12 +515,9 @@ export class XbManager {
     #command_observer(command_context: CommandContext): void {
         let success = false;
         try {
-            success = this.#perform_command(command_context);
+            this.#perform_command(command_context);
         } catch (error) {
             console.error('error processing command', command_context, error);
-        }
-        if (!success) {
-            beep();
         }
     }
 
@@ -525,25 +525,33 @@ export class XbManager {
         return this.#perform_command({ command, target: this.active_cell });
     }
 
-    #perform_command(command_context: CommandContext) {
-        if (!command_context) {
-            return false;  // indicate: command not handled
-        } else {
+    #perform_command(command_context: CommandContext): void {
+        let success: boolean = false;  // for now...
+        if (command_context) {
             const target = command_context.target;
-            if (!target) {
-                return false;  // indicate: command not handled
-            } else {
+            if (target) {
                 const updated_command_context = {
                     ...command_context,
                     target: this.active_cell,
                 };
                 const bindings_fn = this.#command_bindings[updated_command_context.command];
-                if (!bindings_fn) {
-                    return false;  // indicate: command not handled
-                } else {
-                    return bindings_fn(updated_command_context);
+                if (bindings_fn) {
+                    if (bindings_fn instanceof AsyncFunction) {
+                        return bindings_fn(updated_command_context)
+                            .then((success: boolean) => {
+                                if (!success) {
+                                    beep();
+                                }
+                            });
+                        return;  // beep() handled asynchronously
+                    } else {
+                        success = bindings_fn(updated_command_context);
+                    }
                 }
             }
+        }
+        if (!success) {
+            beep();
         }
     }
 

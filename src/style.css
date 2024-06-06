@@ -95,7 +95,7 @@ cell- {
     border-top-width: 0;
 }
 cell-::before {
-    content: "[default]";
+    content: "markdown";  /* markdown is the default */
     display: inline-block;
     max-width: fit-content;
 }
