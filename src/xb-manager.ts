@@ -559,32 +559,38 @@ export class XbManager {
         //!!! review this !!!
         const menubar = this.#menubar;
         if (menubar) {
-            const cells          = this.get_cells();
-            const active_cell    = this.active_cell;
-            const active_index   = active_cell ? cells.indexOf(active_cell) : -1;
-            const editable       = this.editable;
-            const cell_mode      = active_cell?.type;
-            const cell_view_mode = this.cell_view_mode;
+            const cells           = this.get_cells();
+            const active_cell     = this.active_cell;
+            const active_index    = active_cell ? cells.indexOf(active_cell) : -1;
+            const editable        = this.editable;
+            const cell_mode       = active_cell?.type;
+            const cell_view_mode  = this.cell_view_mode;
+            const has_save_handle = !!this.#file_handle;
 
             menubar.set_menu_state('reset',               { enabled: editable });
             menubar.set_menu_state('reset-all',           { enabled: editable });
             menubar.set_menu_state('clear-all',           { enabled: editable });
 
-            menubar.set_menu_state('focus-up',            { enabled: !!(active_cell && active_index > 0) });
-            menubar.set_menu_state('focus-down',          { enabled: !!(active_cell && active_index < cells.length-1) });
-            menubar.set_menu_state('move-up',             { enabled: !!(active_cell && active_index > 0) });
-            menubar.set_menu_state('move-down',           { enabled: !!(active_cell && active_index < cells.length-1) });
-            menubar.set_menu_state('add-before',          { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('add-after',           { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('delete',              { enabled: !!(editable && active_cell) });
+            const neutral = false;  //!!! until we figure out how to detect a changed document
+            menubar.set_menu_state('save', { enabled: !neutral && has_save_handle });
+            // no update to command 'save-as'
 
-            menubar.set_menu_state('eval-and-refocus',    { enabled: !!(editable && active_cell) });
             menubar.set_menu_state('eval',                { enabled: !!(editable && active_cell) });
+            menubar.set_menu_state('eval-and-refocus',    { enabled: !!(editable && active_cell) });
             menubar.set_menu_state('eval-before',         { enabled: !!(editable && active_cell) });
             menubar.set_menu_state('eval-all',            { enabled: !!(editable && active_cell) });
 
             menubar.set_menu_state('stop',                { enabled: active_cell?.can_stop });
             menubar.set_menu_state('stop-all',            { enabled: cells.some(cell => cell.can_stop) });
+
+            menubar.set_menu_state('focus-up',            { enabled: !!(active_cell && active_index > 0) });
+            menubar.set_menu_state('focus-down',          { enabled: !!(active_cell && active_index < cells.length-1) });
+
+            menubar.set_menu_state('move-up',             { enabled: !!(active_cell && active_index > 0) });
+            menubar.set_menu_state('move-down',           { enabled: !!(active_cell && active_index < cells.length-1) });
+            menubar.set_menu_state('add-before',          { enabled: !!(editable && active_cell) });
+            menubar.set_menu_state('add-after',           { enabled: !!(editable && active_cell) });
+            menubar.set_menu_state('delete',              { enabled: !!(editable && active_cell) });
 
             menubar.set_menu_state('set-mode-plain',      { checked: (cell_mode === 'plain')      });
             menubar.set_menu_state('set-mode-markdown',   { checked: (cell_mode === 'markdown')   });
@@ -596,8 +602,8 @@ export class XbManager {
             menubar.set_menu_state('set-view-full',       { checked: (cell_view_mode === 'full')   });
             menubar.set_menu_state('set-view-none',       { checked: (cell_view_mode === 'none')   });
 
-            const neutral = true;  //!!! until we figure out how to detect a changed document
-            menubar.set_menu_state('save', { enabled: !neutral });
+            // no update to command 'settings'
+            // no update to command 'help'
 
             /*
               recents
