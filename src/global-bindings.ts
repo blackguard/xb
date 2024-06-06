@@ -67,7 +67,7 @@ export function get_menubar_spec() {
 export function get_global_initial_key_map_bindings() {
     return {
         'reset':               [ 'CmdOrCtrl-Shift-#' ],
-        'reset-all':           [ 'CmdOrCtrl-Alt-Shift-#', 'CmdOrCtrl-K Alt-B CmdOrCtrl-8' ],
+        'reset-all':           [ 'CmdOrCtrl-Alt-Shift-#' ],
         'clear-all':           [ 'CmdOrCtrl-Shift-!' ],
 
         'save':                [ 'CmdOrCtrl-S' ],

@@ -161,9 +161,9 @@ class FsInterface {
      */
     async prompt_for_save(options?: object) {
         this.CLASS.ensure_fsaapi_available();
-        const result = await this._prompt((globalThis as any).showSaveFilePicker, options);
-        return result && result[0]
-            ? { file_handle: result[0] }
+        const result = await this._prompt<FileSystemFileHandle>((globalThis as any).showSaveFilePicker, options);
+        return result
+            ? { file_handle: result }
             : { canceled: true };
     }
 
@@ -174,22 +174,23 @@ class FsInterface {
     async prompt_for_open(options?: object) {
         this.CLASS.ensure_fsaapi_available();
         options = options ?? {};
-        const result = await this._prompt((globalThis as any).showOpenFilePicker, { ...options, multiple: false });
+        const result = await this._prompt<FileSystemFileHandle[]>((globalThis as any).showOpenFilePicker, { ...options, multiple: false });
         return result
             ? { file_handle: result[0] }
             : { canceled: true };
     }
 
-    async _prompt(picker: ((options?: object) => Promise<FileSystemFileHandle[]>), options?: object) {
+    async _prompt<ResultType>(picker: ((options?: object) => Promise<ResultType>), options?: object): Promise<undefined|ResultType> {
         options = options ?? {};
         let result;
         try {
-            return await picker(options);
+            result = picker(options);
         } catch (err) {
             // Chromium no longer throws AbortError, instead it throws
             // a DOMException, so just count any exception as "canceled"
-            return undefined;  // indicate: canceled
+            result = undefined;  // indicate: canceled
         }
+        return result;
     }
 
     // === LEGACY ===

@@ -1574,8 +1574,8 @@ class FsInterface {
     async prompt_for_save(options) {
         this.CLASS.ensure_fsaapi_available();
         const result = await this._prompt(globalThis.showSaveFilePicker, options);
-        return result && result[0]
-            ? { file_handle: result[0] }
+        return result
+            ? { file_handle: result }
             : { canceled: true };
     }
     /** Show a file picker for the user to select a file for loading
@@ -1594,13 +1594,14 @@ class FsInterface {
         options = options ?? {};
         let result;
         try {
-            return await picker(options);
+            result = picker(options);
         }
         catch (err) {
             // Chromium no longer throws AbortError, instead it throws
             // a DOMException, so just count any exception as "canceled"
-            return undefined; // indicate: canceled
+            result = undefined; // indicate: canceled
         }
+        return result;
     }
     // === LEGACY ===
     /** Save text to a file chosen by the user with the legacy File API.
@@ -6185,7 +6186,7 @@ function get_menubar_spec() {
 function get_global_initial_key_map_bindings() {
     return {
         'reset': ['CmdOrCtrl-Shift-#'],
-        'reset-all': ['CmdOrCtrl-Alt-Shift-#', 'CmdOrCtrl-K Alt-B CmdOrCtrl-8'],
+        'reset-all': ['CmdOrCtrl-Alt-Shift-#'],
         'clear-all': ['CmdOrCtrl-Shift-!'],
         'save': ['CmdOrCtrl-S'],
         'save-as': ['CmdOrCtrl-Shift-S'],
