@@ -1457,7 +1457,6 @@ class FsInterface {
             throw new Error('unexpected: File System API is not available');
         }
     }
-    get fsaapi_available() { return this.CLASS.fsaapi_available; }
     /** Verify permission to access the given FileSystemHandle, prompting the user if necessary
      *  @param {FileSystemHandle} file_handle
      *  @param {boolean} for_writing
@@ -1487,7 +1486,7 @@ class FsInterface {
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async save(get_text, options) {
-        if (!this.fsaapi_available) {
+        if (!this.CLASS.fsaapi_available) {
             return this.legacy_save(get_text, options);
         }
         options ??= {};
@@ -1519,7 +1518,7 @@ class FsInterface {
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async open(options) {
-        if (!this.fsaapi_available) {
+        if (!this.CLASS.fsaapi_available) {
             return this.legacy_open(options);
         }
         options ??= {};
@@ -1616,8 +1615,8 @@ class FsInterface {
         return new Promise((resolve, reject) => {
             const text = get_text();
             const a_el = document.createElement('a');
-            a_el.download = options?.name ?? 'Untitled.xb';
-            a_el.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+            a_el.download = this.#get_filename_for_legacy_from_options(options);
+            a_el.href = URL.createObjectURL(new Blob([text], { type: 'text/html' }));
             // document.body.addEventListener('focus', ...) does not get activated, even if capture is set, so must use onfocus property
             document.body.onfocus = (event) => {
                 document.body.onfocus = null;
@@ -1637,7 +1636,7 @@ class FsInterface {
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async legacy_open(options) {
-        const accept = this.#convert_options_for_legacy(options);
+        const accept = this.#get_accept_string_for_legacy_from_options(options);
         // For browsers that do not support the File System Access API (e.g., Firefox)
         // opening files is implemented by a file-type input element.  There is a
         // problem with that, though: if the user activates the file open panel and
@@ -1685,11 +1684,15 @@ class FsInterface {
         return op.promise;
     }
     static legacy_file_input_element_id = 'legacy_file_input_element_id';
-    #convert_options_for_legacy(options) {
+    #get_accept_string_for_legacy_from_options(options) {
         options ??= {};
         const options_accept = options?.prompt_options?.types?.[0]?.accept;
         const accept = !options_accept ? '' : Object.keys(options_accept).join(',');
         return accept;
+    }
+    #get_filename_for_legacy_from_options(options) {
+        options ??= {};
+        return options?.prompt_options?.suggestedName ?? 'Untitled.html';
     }
 }
 const fs_interface = new FsInterface();

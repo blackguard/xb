@@ -20,8 +20,6 @@ class FsInterface {
         }
     }
 
-    get fsaapi_available (){ return this.CLASS.fsaapi_available; }
-
     /** Verify permission to access the given FileSystemHandle, prompting the user if necessary
      *  @param {FileSystemHandle} file_handle
      *  @param {boolean} for_writing
@@ -56,7 +54,7 @@ class FsInterface {
                     file_handle?:    FileSystemFileHandle,  // if given, then open from file_handle without dialog
                     prompt_options?: object,                // if given, then options for showSaveFilePicker() dialog
                 } ) {
-        if (!this.fsaapi_available) {
+        if (!this.CLASS.fsaapi_available) {
             return this.legacy_save(get_text, options);
         }
 
@@ -93,7 +91,7 @@ class FsInterface {
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async open(options?: object) {
-        if (!this.fsaapi_available) {
+        if (!this.CLASS.fsaapi_available) {
             return this.legacy_open(options);
         }
 
@@ -207,8 +205,8 @@ class FsInterface {
         return new Promise((resolve, reject) => {
             const text = get_text();
             const a_el = document.createElement('a') as HTMLAnchorElement;
-            a_el.download = (options as any)?.name ?? 'Untitled.xb';
-            a_el.href = URL.createObjectURL(new Blob([text], { type: 'text/plain'}));
+            a_el.download = this.#get_filename_for_legacy_from_options(options);
+            a_el.href = URL.createObjectURL(new Blob([text], { type: 'text/html'}));
             // document.body.addEventListener('focus', ...) does not get activated, even if capture is set, so must use onfocus property
             document.body.onfocus = (event) => {
                 document.body.onfocus = null;
@@ -229,7 +227,7 @@ class FsInterface {
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async legacy_open(options?: object) {
-        const accept = this.#convert_options_for_legacy(options);
+        const accept = this.#get_accept_string_for_legacy_from_options(options);
 
         // For browsers that do not support the File System Access API (e.g., Firefox)
         // opening files is implemented by a file-type input element.  There is a
@@ -283,11 +281,16 @@ class FsInterface {
 
     static legacy_file_input_element_id = 'legacy_file_input_element_id';
 
-    #convert_options_for_legacy(options?: object): string {
+    #get_accept_string_for_legacy_from_options(options?: object): string {
         options ??= {};
         const options_accept = (options as any)?.prompt_options?.types?.[0]?.accept;
         const accept = !options_accept ? '' : Object.keys(options_accept).join(',');
         return accept;
+    }
+
+    #get_filename_for_legacy_from_options(options?: object): string {
+        options ??= {};
+        return (options as any)?.prompt_options?.suggestedName ?? 'Untitled.html'
     }
 }
 
