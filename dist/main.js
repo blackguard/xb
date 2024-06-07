@@ -1479,18 +1479,18 @@ class FsInterface {
     /** Save text to the file associated with a FileSystemFileHandle,
      *  with the FileSystemFileHandle possibly gotten from prompting user.
      *  @param {function} get_text nullary function to obtain text to be saved
-     *  @param {Object} options?: {
+     *  @param {object} options?: {
      *             file_handle?:    FileSystemFileHandle,  // if given, then open from file_handle without dialog
      *             prompt_options?: object,                // if given, then options for showSaveFilePicker() dialog
      *         }
-     *  @return {Promise} resolves to { canceled: true }|{ file_handle: FileSystemFileHandle, stats: Object }
+     *  @return {Promise} resolves to { canceled: true }|{ file_handle: FileSystemFileHandle, stats: object }
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async save(get_text, options) {
         if (!this.fsaapi_available) {
             return this.legacy_save(get_text, options);
         }
-        options = options ?? {};
+        options ??= {};
         let file_handle = options.file_handle;
         if (!file_handle) {
             const prompt_result = await this.prompt_for_save(options.prompt_options);
@@ -1511,18 +1511,18 @@ class FsInterface {
     }
     /** Load text from the file associated with a FileSystemFileHandle,
      *  with the FileSystemFileHandle possibly gotten from prompting user.
-     *  @param {Object} options?: {
+     *  @param {object} options?: {
      *             file_handle?:    FileSystemFileHandle,  // if given, then open from file_handle without dialog
-     *             prompt_options?: Object,                // if given, then options for showOpenFilePicker() dialog
+     *             prompt_options?: object,                // if given, then options for showOpenFilePicker() dialog
      *         }
-     *  @return {Promise} resolves to { canceled: true }|{ file_handle: FileSystemFileHandle, text: string, stats: Object }
+     *  @return {Promise} resolves to { canceled: true }|{ file_handle: FileSystemFileHandle, text: string, stats: object }
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async open(options) {
         if (!this.fsaapi_available) {
             return this.legacy_open(options);
         }
-        options = options ?? {};
+        options ??= {};
         let file_handle = options.file_handle;
         if (!file_handle) {
             const prompt_result = await this.prompt_for_open(options.prompt_options);
@@ -1573,7 +1573,7 @@ class FsInterface {
      */
     async prompt_for_save(options) {
         this.CLASS.ensure_fsaapi_available();
-        const result = await this._prompt(globalThis.showSaveFilePicker, options);
+        const result = await this.#prompt(globalThis.showSaveFilePicker, options);
         return result
             ? { file_handle: result }
             : { canceled: true };
@@ -1584,14 +1584,14 @@ class FsInterface {
      */
     async prompt_for_open(options) {
         this.CLASS.ensure_fsaapi_available();
-        options = options ?? {};
-        const result = await this._prompt(globalThis.showOpenFilePicker, { ...options, multiple: false });
+        options ??= {};
+        const result = await this.#prompt(globalThis.showOpenFilePicker, { ...options, multiple: false });
         return result
             ? { file_handle: result[0] }
             : { canceled: true };
     }
-    async _prompt(picker, options) {
-        options = options ?? {};
+    async #prompt(picker, options) {
+        options ??= {};
         let result;
         try {
             result = picker(options);
@@ -1606,10 +1606,10 @@ class FsInterface {
     // === LEGACY ===
     /** Save text to a file chosen by the user with the legacy File API.
      *  @param {function} get_text nullary function to obtain text to be saved
-     *  @param {Object} options {
-     *             prompt_options?: Object,  // if given, then options for showSaveFilePicker() dialog (will be converted)
+     *  @param {object} options {
+     *             prompt_options?: object,  // if given, then options for showSaveFilePicker() dialog (will be converted)
      *         }
-     *  @return {Promise} resolves to { canceled: true }|{ stats: Object }
+     *  @return {Promise} resolves to { canceled: true }|{ stats: object }
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async legacy_save(get_text, options) {
@@ -1630,14 +1630,14 @@ class FsInterface {
     }
     /** Load text from the file associated with a FileSystemFileHandle,
      *  with the FileSystemFileHandle possibly gotten from prompting user.
-     *  @param {Object} options {
-     *             prompt_options?: Object,  // if given, then options for showOpenFilePicker() dialog (will be converted)
+     *  @param {object} options {
+     *             prompt_options?: object,  // if given, then options for showOpenFilePicker() dialog (will be converted)
      *         }
-     *  @return {Promise} resolves to { canceled: true }|{ text: string, stats: Object }
+     *  @return {Promise} resolves to { canceled: true }|{ text: string, stats: object }
      *          where stats is as returned by get_fs_stats_for_file()
      */
     async legacy_open(options) {
-        const accept = this._convert_options_for_legacy(options);
+        const accept = this.#convert_options_for_legacy(options);
         // For browsers that do not support the File System Access API (e.g., Firefox)
         // opening files is implemented by a file-type input element.  There is a
         // problem with that, though: if the user activates the file open panel and
@@ -1685,8 +1685,8 @@ class FsInterface {
         return op.promise;
     }
     static legacy_file_input_element_id = 'legacy_file_input_element_id';
-    _convert_options_for_legacy(options) {
-        options = options ?? {};
+    #convert_options_for_legacy(options) {
+        options ??= {};
         const options_accept = options?.prompt_options?.types?.[0]?.accept;
         const accept = !options_accept ? '' : Object.keys(options_accept).join(',');
         return accept;

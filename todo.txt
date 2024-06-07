@@ -2,6 +2,7 @@ fix save-as, etc; fs-interface needs a rewrite
 make help document
 update README.md
 improve appearance of AlertDialog and ConfirmDialog
+review the way global_eval_context is used
 fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 how does parent ActivityManager get notified if a child stops?  necessary?
