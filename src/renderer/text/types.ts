@@ -3,5 +3,5 @@
 export type TextOrientedRendererOptionsType = {
     style?:        object,   // css style to be applied to output element
     inline?:       boolean,  // render inline vs block?
-    global_state?: object,   // global_state for evaluation; default: XbManager.singleton.global_state
+    global_state?: object,   // global_state for evaluation; default: ocx.xb.global_state using ocx passed to render()
 };

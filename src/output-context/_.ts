@@ -1,4 +1,8 @@
 import {
+    XbManager,
+} from 'src/xb-manager';
+
+import {
     OutputContextLike,
     StoppedError,
 } from './types';
@@ -45,11 +49,13 @@ export class OutputContext extends OutputContextLike {
 
     // sprintf(), sleep(), delay_ms(), next_tick(), next_micro_tick() are defined in OutputContextLike
 
-    readonly #parent:  undefined|OutputContext;
+    readonly #xb:      XbManager;
     readonly #element: Element;
+    readonly #parent:  undefined|OutputContext;
 
-    get parent  (){ return this.#parent; }
+    get xb      (){ return this.#xb; }
     get element (){ return this.#element; }
+    get parent  (){ return this.#parent; }
 
     /** construct a new OutputContext for the given element and with an optional parent.
      *  @param {Element} element controlled by this new OutputContext
@@ -58,13 +64,17 @@ export class OutputContext extends OutputContextLike {
      * If parent is given, then this new OutputContext will be added as a new
      * activity to parent.
      */
-    constructor(element: Element, parent?: OutputContext) {
+    constructor(xb: XbManager, element: Element, parent?: OutputContext) {
         super();
+        if (!(xb instanceof XbManager)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
-        this.#parent = parent;
+        this.#xb      = xb;
         this.#element = element;
+        this.#parent  = parent;
 
         parent?.add_activity(this);
     }
@@ -137,7 +147,7 @@ export class OutputContext extends OutputContextLike {
      *  @return {OutputContextLike} the new OutputContextLike object
      */
     create_new_ocx(element: Element, parent?: OutputContext): OutputContext {
-        return new OutputContext(element, parent);
+        return new OutputContext(this.xb, element, parent);
     }
 
     /** create a new OutputContext from a new child element of this.element created via this.create_child()
@@ -155,7 +165,7 @@ export class OutputContext extends OutputContextLike {
                 style: parent_style_attr,  // inherit parent's style attribute (vs style)
             };
         }
-        const child_ocx = new OutputContext(this.create_child(options), this);
+        const child_ocx = new OutputContext(this.xb, this.create_child(options), this);
         return child_ocx;
     }
 

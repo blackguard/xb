@@ -132,6 +132,11 @@ export class XbManager {
     #cell_ocx_map = new WeakMap<CellElement, Set<OutputContext>>();
 
     constructor() {
+        // must set xb on all incoming cells
+        for (const cell of this.get_cells()) {
+            cell._set_xb(this);
+        }
+
         this.reset_global_state();
 
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! this.#eval_states_subscription is never unsubscribed
@@ -145,7 +150,7 @@ export class XbManager {
 
         this.#command_bindings = get_global_command_bindings();
 
-        this.#key_event_manager = new KeyEventManager(window, this.#command_observer.bind(this));
+        this.#key_event_manager = new KeyEventManager(this, window, this.#command_observer.bind(this));
         const key_map = new KeyMap(get_global_initial_key_map_bindings());
         this.push_key_map(key_map);
         this.#key_event_manager.attach();
@@ -234,7 +239,7 @@ export class XbManager {
         try {
             this.activity_manager.stop();
         } catch (error) {
-            console.error('error while stopping XbManager.activity_manager', error, this.activity_manager);
+            console.error('error while stopping XbManager.singleton.activity_manager', error, this.activity_manager);
         }
     }
 
@@ -335,7 +340,7 @@ export class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null;//!!! implement this
-        this.#menubar = MenuBar.create(this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
+        this.#menubar = MenuBar.create(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
         //!!! this.#menubar_commands_subscription is never unsubscribed
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
@@ -430,8 +435,8 @@ export class XbManager {
         const event_listener = (event: Event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof CellElement && refound_cell !== XbManager.singleton.active_cell) {
-                XbManager.singleton.set_active_cell(refound_cell);
+            if (refound_cell instanceof CellElement && refound_cell !== this.active_cell) {
+                this.set_active_cell(refound_cell);
             }
         };
         event_listener_manager.add(output_element, 'focus', event_listener, { capture: true });
@@ -444,7 +449,7 @@ export class XbManager {
         };
 (globalThis as any).remove_event_handlers = remove_event_handlers;//!!!
 
-        const ocx = new OutputContext(output_element);
+        const ocx = new OutputContext(this, output_element);
         this.activity_manager.add_activity(ocx);
         this.#associate_cell_ocx(cell, ocx);
         const ocx_stop_subscription = ocx.stop_states.subscribe((state: StopState) => {
@@ -529,7 +534,7 @@ export class XbManager {
     }
 
     inject_command(command: string) {
-        return this.#perform_command({ command, target: this.active_cell });
+        return this.#perform_command({ xb: this, command, target: this.active_cell });
     }
 
     #perform_command(command_context: CommandContext): void {
@@ -694,6 +699,7 @@ export class XbManager {
             set_id: true,
             ...extended_options,
         }) as CellElement;
+        cell._set_xb(this);
         cell.set_editable(true);
         return cell;
     }

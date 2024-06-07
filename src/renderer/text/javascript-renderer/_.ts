@@ -56,10 +56,6 @@ const AsyncFunction          = Object.getPrototypeOf(async function () {}).const
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () {}).constructor;
 
 import {
-    XbManager,
-} from 'src/xb-manager';
-
-import {
     ApplicationOrientedRenderer,
     TextOrientedRenderer,
 } from 'src/renderer/renderer';
@@ -123,7 +119,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
         const {
             style,
             inline,
-            global_state = XbManager.singleton.global_state,
+            global_state = ocx.xb.global_state,
         } = (options ?? {});
 
         const eval_context = ((global_state as any)[this.type] ??= {});

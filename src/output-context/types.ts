@@ -1,6 +1,10 @@
 // subordinate types for circularly-dependent Renderer and OutputContext types
 
 import {
+    XbManager,
+} from 'src/xb-manager';
+
+import {
     clear_element,
     scroll_element_into_view,
     set_element_attrs,
@@ -50,8 +54,9 @@ export class StoppedError extends Error {};
 export abstract class OutputContextLike extends ActivityManager {
     get CLASS (){ return this.constructor as typeof OutputContextLike; }
 
-    abstract get parent  (): undefined|OutputContextLike;
+    abstract get xb      (): XbManager;
     abstract get element (): Element;
+    abstract get parent  (): undefined|OutputContextLike;
 
     #keepalive: boolean = false;
     get keepalive (){ return this.#keepalive; }

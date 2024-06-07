@@ -15,10 +15,6 @@ import {
 } from 'src/output-context/types';
 
 import {
-    XbManager,
-} from 'src/xb-manager';
-
-import {
     katex,
 } from './katex/_';
 
@@ -45,7 +41,7 @@ export class TeXRenderer extends TextOrientedRenderer {
 
         const {
             style,
-            global_state = XbManager.singleton.global_state,
+            global_state = ocx.xb.global_state,
         } = (options ?? {});
 
         const markup = this.CLASS.render_to_string(tex, global_state, {

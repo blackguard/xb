@@ -4703,9 +4703,14 @@ var beep = __webpack_require__(53);
 
 
 class KeyEventManager {
-    event_target;
-    command_observer;
-    commands;
+    #xb;
+    #event_target;
+    #command_observer;
+    #commands;
+    get xb() { return this.#xb; }
+    get event_target() { return this.#event_target; }
+    get command_observer() { return this.#command_observer; }
+    get commands() { return this.#commands; }
     #event_listener_manager;
     #commands_subscription;
     #key_map_stack;
@@ -4715,11 +4720,12 @@ class KeyEventManager {
      *  @param {EventTarget} event_target the source of events
      *  @param {Function} command_observer function to handle command events
      */
-    constructor(event_target, command_observer) {
-        this.event_target = event_target;
-        this.command_observer = command_observer;
+    constructor(xb, event_target, command_observer) {
+        this.#xb = xb;
+        this.#event_target = event_target;
+        this.#command_observer = command_observer;
         this.#event_listener_manager = new event_listener_manager/* EventListenerManager */.w();
-        this.commands = new serial_data_source/* SerialDataSource */.B();
+        this.#commands = new serial_data_source/* SerialDataSource */.B();
         this.#commands_subscription = this.commands.subscribe(command_observer); //!!! note: we do not unsubscribe
         this.#key_map_stack = []; // stack grows from the front, i.e., the first item is the last pushed
         this.#key_mapper = null; // set iff attached
@@ -4822,7 +4828,7 @@ class KeyEventManager {
                         event.preventDefault();
                         if (typeof mapping_result === 'string') {
                             const command = mapping_result;
-                            const command_context = { command, event, target: event.target, key_spec };
+                            const command_context = { xb: this.xb, command, event, target: event.target, key_spec };
                             this.commands.dispatch(command_context);
                             reset();
                         }
@@ -4878,17 +4884,22 @@ class KeyEventManager {
 /***/ }),
 
 /***/ 7827:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   j: () => (/* binding */ MenuBar)
 /* harmony export */ });
 /* unused harmony export load_stylesheet */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
-/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6318);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
-/* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2636);
+/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
+/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6318);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8401);
+/* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2636);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__]);
+src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/lib/ui/menu/_.ts")); // save for later
+
 
 
 
@@ -4927,25 +4938,31 @@ class MenuBar {
      *  @param {Function|null|undefined} get_command_bindings
      *  @return {MenuBar} menu bar instance
      */
-    static create(parent, menubar_spec, get_command_bindings) {
-        const menubar = new this(parent, menubar_spec, get_command_bindings);
+    static create(xb, parent, menubar_spec, get_command_bindings) {
+        const menubar = new this(xb, parent, menubar_spec, get_command_bindings);
         return menubar;
     }
-    #commands = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__/* .SerialDataSource */ .B;
+    #xb;
+    get xb() { return this.#xb; }
+    #commands = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__/* .SerialDataSource */ .B;
     get commands() { return this.#commands; }
-    #selects = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__/* .SerialDataSource */ .B(); // select: true is sent before, select: false is sent after
+    #selects = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__/* .SerialDataSource */ .B(); // select: true is sent before, select: false is sent after
     get selects() { return this.#selects; }
     #get_command_bindings; // set in constructor
     get get_command_bindings() { return this.#get_command_bindings; }
     #menu_id_to_element = new Map();
     #menubar_container; // set in constructor
-    constructor(parent, menubar_spec, get_command_bindings) {
+    constructor(xb, parent, menubar_spec, get_command_bindings) {
+        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
         if (get_command_bindings !== null && typeof get_command_bindings !== 'undefined' && typeof get_command_bindings !== 'function') {
             throw new Error('get_command_bindings must be null, undefined, or a function');
         }
+        this.#xb = xb;
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
         this.#menubar_container = this.#build_menubar(parent, menubar_spec);
@@ -5122,7 +5139,7 @@ class MenuBar {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
-        const element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+        const element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
             parent,
             tag: this.CLASS.menuitem_element_tag_name,
         });
@@ -5173,13 +5190,13 @@ class MenuBar {
         else {
             // collection
             element.classList.add('collection');
-            const collection_element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+            const collection_element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
                 parent: element,
                 tag: this.CLASS.menu_element_tag_name,
             });
             collection_element.classList.add('menu');
             if (!toplevel) {
-                const el = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+                const el = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
                     parent: element,
                     attrs: {
                         class: ['menuitem-annotation', 'collection-arrow'],
@@ -5223,7 +5240,7 @@ class MenuBar {
     }
     #build_menuitem(label, toplevel = false) {
         // both items and collections are menuitem elements, but the collection also has children...
-        const menuitem = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+        const menuitem = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
             tag: this.CLASS.menuitem_element_tag_name,
             attrs: {
                 set_id: true,
@@ -5231,7 +5248,7 @@ class MenuBar {
             },
         });
         // add the label
-        const lbl = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+        const lbl = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
             parent: menuitem,
             attrs: {
                 class: 'menuitem-label',
@@ -5255,7 +5272,7 @@ class MenuBar {
             if (command_bindings) {
                 const kbd_bindings = command_bindings[command];
                 if (kbd_bindings) {
-                    const kbd_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+                    const kbd_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
                         parent: menuitem,
                         attrs: {
                             class: 'menuitem-annotation',
@@ -5263,11 +5280,11 @@ class MenuBar {
                     });
                     // create <kbd>...</kbd> elements
                     kbd_bindings.forEach(binding => {
-                        const keys = binding.split(lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7.canonical_key_string_separator);
+                        const keys = binding.split(lib_ui_key___WEBPACK_IMPORTED_MODULE_3__/* .KeySpec */ .k7.canonical_key_string_separator);
                         const binding_glyphs = keys
-                            .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7(key).glyphs)
+                            .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_3__/* .KeySpec */ .k7(key).glyphs)
                             .join(this.CLASS.small_right_triangle);
-                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
+                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
                     });
                 }
             }
@@ -5277,14 +5294,14 @@ class MenuBar {
             if (closest_menubar instanceof HTMLElement) {
                 this.#deactivate_menu(closest_menubar);
             }
-            const command_context = { command, event, target: event.target };
+            const command_context = { xb: this.xb, command, event, target: event.target };
             this.commands.dispatch(command_context);
             event.stopPropagation();
             event.preventDefault();
         });
     }
     #build_menubar(parent, menubar_spec) {
-        const menubar_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+        const menubar_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
             parent,
             tag: this.CLASS.menu_element_tag_name,
             attrs: {
@@ -5401,6 +5418,8 @@ class MenuBar {
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -5442,6 +5461,16 @@ class CellElement extends HTMLElement {
     static default_type = 'markdown';
     #codemirror = undefined;
     #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__/* .EventListenerManager */ .w();
+    #xb = undefined;
+    get() { return this.#xb; }
+    /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
+     */
+    _set_xb(xb) {
+        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
+        this.#xb = xb;
+    }
     constructor() {
         super();
         this.#connect_focus_listeners();
@@ -5454,6 +5483,9 @@ class CellElement extends HTMLElement {
     }
     // === TEXT CONTENT ===
     get_text() {
+        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb not set!');
+        }
         const text = this.#has_text_container()
             ? this.#codemirror?.get_text()
             : this.textContent;
@@ -5461,6 +5493,9 @@ class CellElement extends HTMLElement {
     }
     // this works even if the cell is not editable
     set_text(text) {
+        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb not set!');
+        }
         if (this.#has_text_container()) {
             this.#codemirror?.set_text(text);
         }
@@ -5861,7 +5896,7 @@ async function command_handler__save_as(command_context) {
 }
 async function command_handler__eval(command_context) {
     const cell = command_context.target;
-    if (!cell || !(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
         return false;
     }
     else {
@@ -6455,21 +6490,25 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   l: () => (/* binding */ OutputContext)
 /* harmony export */ });
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8003);
-/* harmony import */ var src_renderer___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8416);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_types__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_1__]);
-([_types__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5006);
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8003);
+/* harmony import */ var src_renderer___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8416);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _types__WEBPACK_IMPORTED_MODULE_1__, src_renderer___WEBPACK_IMPORTED_MODULE_2__]);
+([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _types__WEBPACK_IMPORTED_MODULE_1__, src_renderer___WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
-class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContextLike */ .i {
+
+class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .i {
     // static utility methods are defined in OutputContextLike
     // get/set keepalive are defined in OutputContextLike
     // abort_if_stopped() and AIS() are defined in OutputContextLike
     // sprintf(), sleep(), delay_ms(), next_tick(), next_micro_tick() are defined in OutputContextLike
-    #parent;
+    #xb;
     #element;
-    get parent() { return this.#parent; }
+    #parent;
+    get xb() { return this.#xb; }
     get element() { return this.#element; }
+    get parent() { return this.#parent; }
     /** construct a new OutputContext for the given element and with an optional parent.
      *  @param {Element} element controlled by this new OutputContext
      *  @param {undefined|OutputContext} parent for this new OutputContext
@@ -6477,13 +6516,17 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
      * If parent is given, then this new OutputContext will be added as a new
      * activity to parent.
      */
-    constructor(element, parent) {
+    constructor(xb, element, parent) {
         super();
+        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
-        this.#parent = parent;
+        this.#xb = xb;
         this.#element = element;
+        this.#parent = parent;
         parent?.add_activity(this);
     }
     // === BASIC OPERATIONS ===
@@ -6545,7 +6588,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
      *  @return {OutputContextLike} the new OutputContextLike object
      */
     create_new_ocx(element, parent) {
-        return new OutputContext(element, parent);
+        return new OutputContext(this.xb, element, parent);
     }
     /** create a new OutputContext from a new child element of this.element created via this.create_child()
      *  @param {undefined|object} options to be passed to create_element()
@@ -6562,7 +6605,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
                 style: parent_style_attr, // inherit parent's style attribute (vs style)
             };
         }
-        const child_ocx = new OutputContext(this.create_child(options), this);
+        const child_ocx = new OutputContext(this.xb, this.create_child(options), this);
         return child_ocx;
     }
     // === ADVANCED OPERATIONS ===
@@ -6572,15 +6615,15 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
         if (typeof text !== 'string') {
             text = text?.toString?.() ?? '';
         }
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .TextRenderer */ .tV().render(this, text, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .TextRenderer */ .tV().render(this, text, options);
     }
     async render_error(error, options) {
         // don't call this.abort_if_stopped() for render_error() so that errors can still be rendered
         // also, call the synchronous ErrorRenderer,render_sync() method.
-        if (error instanceof _types__WEBPACK_IMPORTED_MODULE_0__/* .StoppedError */ .R) {
+        if (error instanceof _types__WEBPACK_IMPORTED_MODULE_1__/* .StoppedError */ .R) {
             options = { ...(options ?? {}), abbreviated: true };
         }
-        return src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj.render_sync(this, error, options);
+        return src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .Fj.render_sync(this, error, options);
     }
     async render_value(value, options) {
         this.abort_if_stopped();
@@ -6619,31 +6662,31 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
     }
     async javascript(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .JavaScriptRenderer */ .f0().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .JavaScriptRenderer */ .f0().render(this, code, options);
     }
     async markdown(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .MarkdownRenderer */ .$8().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .MarkdownRenderer */ .$8().render(this, code, options);
     }
     async tex(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .TeXRenderer */ ._T().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .TeXRenderer */ ._T().render(this, code, options);
     }
     async image_data(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ImageDataRenderer */ .Ih().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .ImageDataRenderer */ .Ih().render(this, code, options);
     }
     async graphviz(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .GraphvizRenderer */ .LT().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .GraphvizRenderer */ .LT().render(this, code, options);
     }
     async plotly(code, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .PlotlyRenderer */ .GG().render(this, code, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .PlotlyRenderer */ .GG().render(this, code, options);
     }
     async canvas_image(canvas_renderer, options) {
         this.abort_if_stopped();
-        return new src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .CanvasImageRenderer */ .bi().render(this, canvas_renderer, options);
+        return new src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .CanvasImageRenderer */ .bi().render(this, canvas_renderer, options);
     }
     // === RENDERER INTERFACE ===
     /** Run the given renderer with the given arguments in this ocx.
@@ -6656,7 +6699,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_0__/* .OutputContext
     async _invoke_renderer(renderer, value, options) {
         return renderer._render(this, value, options)
             .catch((error) => {
-            const result = src_renderer___WEBPACK_IMPORTED_MODULE_1__/* .ErrorRenderer */ .Fj.render_sync(this, error);
+            const result = src_renderer___WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .Fj.render_sync(this, error);
             try {
                 this.stop(); // stop anything that may have been started
             }
@@ -6944,7 +6987,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 /* harmony import */ var _text_text_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6308);
 /* harmony import */ var _text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9465);
-/* harmony import */ var _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7286);
+/* harmony import */ var _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8092);
 /* harmony import */ var _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3633);
 /* harmony import */ var _application_error_renderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9284);
 /* harmony import */ var _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(258);
@@ -6952,8 +6995,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(157);
 /* harmony import */ var _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5087);
 /* harmony import */ var _factories__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4464);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__]);
-([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__]);
+([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // === RE-EXPORTS ===
 
 
@@ -7492,7 +7535,7 @@ class ApplicationOrientedRenderer extends Renderer {
      * @param {OptionsType} options?: {
      *     style?:        Object,   // css style to be applied to output element
      *     inline?:       Boolean,  // render inline vs block?
-     *     global_state?: Object,   // global_state for evaluation; default: XbManager.singleton.global_state
+     *     global_state?: Object,   // global_state for evaluation; default: ocx.xb.global_state using ocx passed to render()
      * }
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
@@ -7513,16 +7556,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   f: () => (/* binding */ JavaScriptRenderer)
 /* harmony export */ });
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
-/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3947);
-/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4464);
-/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9638);
-/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(630);
-/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(790);
-/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(117);
-/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3751);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_4__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__]);
-([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, _eval_worker___WEBPACK_IMPORTED_MODULE_4__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3947);
+/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4464);
+/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9638);
+/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(630);
+/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(790);
+/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(117);
+/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3751);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_3__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_5__]);
+([_eval_worker___WEBPACK_IMPORTED_MODULE_3__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/_.ts"; // save for later
 
 const lib_dir_path = '../../../lib/';
@@ -7578,12 +7620,11 @@ const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).con
 
 
 
-
-class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld {
+class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld {
     static get type() { return 'javascript'; }
     static {
         // required for all TextOrientedRenderer extensions
-        src_renderer_factories__WEBPACK_IMPORTED_MODULE_3__/* ._initial_text_renderer_factories */ .U0.push(this);
+        src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     /** Render by evaluating the given code and outputting to ocx.
      * @param {OutputContextLike} ocx,
@@ -7593,7 +7634,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
      * @throws {Error} if error occurs
      */
     async _render(ocx, code, options) {
-        const { style, inline, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
+        const { style, inline, global_state = ocx.xb.global_state, } = (options ?? {});
         const eval_context = (global_state[this.type] ??= {});
         let eval_ocx = ocx;
         // if !style && inline, then use the given ocx,
@@ -7657,7 +7698,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         return eval_ocx.element;
     }
     async #create_eval_environment(eval_context, ocx, source_code) {
-        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__/* .load_d3 */ .M)();
+        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_4__/* .load_d3 */ .M)();
         function is_stopped() {
             return ocx.stopped;
         }
@@ -7688,8 +7729,8 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             }
         }
         async function create_worker(options) {
-            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options);
-            ocx.add_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_7__/* .Activity */ .R(worker));
+            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_3__/* .EvalWorker */ .V(options);
+            ocx.add_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_6__/* .Activity */ .R(worker));
             return worker;
         }
         async function import_lib(lib_path) {
@@ -7709,10 +7750,10 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             ocx,
             source_code, // this evaluation's source code
             // Renderer, etc classes
-            TextOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld,
-            ApplicationOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ApplicationOrientedRenderer */ .T2,
+            TextOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld,
+            ApplicationOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationOrientedRenderer */ .T2,
             d3, // for use with Plotly
-            Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__/* .Algebrite */ .m,
+            Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_5__/* .Algebrite */ .m,
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
@@ -7744,7 +7785,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             graphviz: ocx.graphviz.bind(ocx),
             plotly: ocx.plotly.bind(ocx),
             canvas_image: ocx.canvas_image.bind(ocx),
-            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_8__,
+            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_7__,
         };
         return eval_environment;
     }
@@ -8018,15 +8059,244 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3946:
+/***/ 9465:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   $: () => (/* binding */ MarkdownRenderer)
+/* harmony export */ });
+/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3947);
+/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9284);
+/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8092);
+/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8121);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1517);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_marked__WEBPACK_IMPORTED_MODULE_4__]);
+_marked__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+
+
+
+
+// TeX handling adapted from: marked-katex-extension/index.js
+// https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
+// See also: https://marked.js.org/using_pro#async
+const extension_name__inline_tex = 'inline-tex';
+const extension_name__block_tex = 'block-tex';
+const extension_name__eval_code = 'eval-code';
+class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld {
+    static get type() { return 'markdown'; }
+    static {
+        // required for all TextOrientedRenderer extensions
+        src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
+    }
+    /** Render by evaluating the given markdown and outputting to ocx.
+     * @param {OutputContextLike} ocx,
+     * @param {String} markdown,
+     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @return {Element} element to which output was rendered
+     * @throws {Error} if error occurs
+     */
+    async _render(ocx, markdown, options) {
+        markdown ??= '';
+        const { style, global_state = ocx.xb.global_state, } = (options ?? {});
+        const parent = ocx.create_child({
+            attrs: {
+                'data-source-media-type': this.media_type,
+            },
+            style,
+        });
+        const main_renderer = this; // used below in extensions code  //!!! no longer used?
+        let deferred_evaluations = [];
+        const marked_options = {
+            walkTokens(token) {
+                switch (token.type) {
+                    case extension_name__inline_tex:
+                    case extension_name__block_tex: {
+                        token.global_state = global_state;
+                        break;
+                    }
+                    case extension_name__eval_code: {
+                        let renderer_factory = undefined;
+                        try {
+                            const source_type = token.source_type;
+                            if (!source_type) {
+                                throw new Error('no source_type present');
+                            }
+                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
+                            if (!renderer_factory) {
+                                throw new Error(`cannot find renderer for source type "${source_type}"`);
+                            }
+                            const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .pk)();
+                            deferred_evaluations.push({
+                                output_element_id,
+                                text: token.text ?? '',
+                                renderer: new renderer_factory(),
+                                renderer_options: {
+                                    global_state,
+                                },
+                            });
+                            // this is the element we will render to from deferred_evaluations:
+                            token.markup = `<div id="${output_element_id}"></div>`;
+                        }
+                        catch (error) {
+                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
+                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(error_ocx, error);
+                            token.markup = error_ocx.element.innerHTML;
+                        }
+                        break;
+                    }
+                }
+            }
+        };
+        const markup = _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
+        parent.innerHTML = markup;
+        // now run the deferred_evaluations
+        // by setting up the output elements for each of deferred_evaluations, we
+        // are now free to render asynchronously and in the background
+        // Note: we are assuming that parent (and ocx.element) are already in the DOM
+        // so that we can find the output element through document.getElementById().
+        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
+            const output_element = document.getElementById(output_element_id);
+            if (!output_element) {
+                // unexpected...
+                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+            }
+            else {
+                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
+                await renderer.render(sub_ocx, text, renderer_options)
+                    .catch((error) => {
+                    sub_ocx.keepalive = false; // in case this got set prior to the error
+                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(sub_ocx, error);
+                });
+                if (!sub_ocx.keepalive) {
+                    sub_ocx.stop(); // stop background processing, if any
+                }
+            }
+        }
+        return parent;
+    }
+}
+_marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
+    extensions: [
+        {
+            name: extension_name__inline_tex,
+            level: 'inline',
+            start(src) { return src.indexOf('$'); },
+            tokenizer(src, tokens) {
+                const match = src.match(/^\$+([^$]+?)\$+/);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    return {
+                        type: extension_name__inline_tex,
+                        raw: match[0],
+                        text: match[1].trim(),
+                        global_state: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                    displayMode: false,
+                    throwOnError: false,
+                });
+            },
+        },
+        {
+            name: extension_name__block_tex,
+            level: 'block',
+            start(src) { return src.indexOf('$$'); },
+            tokenizer(src, tokens) {
+                const match = src.match(/^\$\$([^$]+?)\$\$/);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    return {
+                        type: extension_name__block_tex,
+                        raw: match[0],
+                        text: match[1].trim(),
+                        global_state: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                    displayMode: true,
+                    throwOnError: false,
+                });
+                return `<p>${markup}</p>`;
+            },
+        },
+        {
+            name: extension_name__eval_code,
+            level: 'block',
+            start(src) { return src.match(/^[`]{3}[ ]*[!]/)?.index; },
+            tokenizer(src, tokens) {
+                const match = src.match(/^[`]{3}[ ]*[!]([ \t]*[^\n]*[ \t]*)?[\n](.*?)[`]{3}/s);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    const source_type = (match[1]?.trim() ?? '') || 'javascript';
+                    return {
+                        type: extension_name__eval_code,
+                        source_type,
+                        raw: match[0],
+                        text: match[2],
+                        markup: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                return token.markup; // now already filled in by walkTokens
+            },
+        },
+    ],
+});
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 8121:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   T: () => (/* binding */ marked)
+/* harmony export */ });
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6667);
+const current_script_url = "file:///home/ed/code/xb/src/renderer/text/marked.ts"; // save for later
+
+
+await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../../dist/marked.min.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
+const marked = globalThis.marked;
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } }, 1);
+
+/***/ }),
+
+/***/ 8092:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  j: () => (/* binding */ _katex)
+  _: () => (/* binding */ TeXRenderer)
 });
 
+// EXTERNAL MODULE: ./src/renderer/renderer.ts
+var renderer = __webpack_require__(3947);
+// EXTERNAL MODULE: ./src/renderer/factories.ts
+var factories = __webpack_require__(4464);
 ;// CONCATENATED MODULE: ./dist/katex/dist/katex.mjs
 /**
  * Lexing or parsing positional information for error reporting.
@@ -26592,259 +26862,16 @@ await load_stylesheet();  // load stylesheet now
 */
 const _katex = katex;
 
-
-/***/ }),
-
-/***/ 9465:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   $: () => (/* binding */ MarkdownRenderer)
-/* harmony export */ });
-/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
-/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3947);
-/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9284);
-/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7286);
-/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8121);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1517);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
-([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+;// CONCATENATED MODULE: ./src/renderer/text/tex-renderer.ts
 
 
 
-
-
-
-
-// TeX handling adapted from: marked-katex-extension/index.js
-// https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
-// See also: https://marked.js.org/using_pro#async
-const extension_name__inline_tex = 'inline-tex';
-const extension_name__block_tex = 'block-tex';
-const extension_name__eval_code = 'eval-code';
-class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld {
-    static get type() { return 'markdown'; }
-    static {
-        // required for all TextOrientedRenderer extensions
-        src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
-    }
-    /** Render by evaluating the given markdown and outputting to ocx.
-     * @param {OutputContextLike} ocx,
-     * @param {String} markdown,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
-     * @return {Element} element to which output was rendered
-     * @throws {Error} if error occurs
-     */
-    async _render(ocx, markdown, options) {
-        markdown ??= '';
-        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
-        const parent = ocx.create_child({
-            attrs: {
-                'data-source-media-type': this.media_type,
-            },
-            style,
-        });
-        const main_renderer = this; // used below in extensions code  //!!! no longer used?
-        let deferred_evaluations = [];
-        const marked_options = {
-            walkTokens(token) {
-                switch (token.type) {
-                    case extension_name__inline_tex:
-                    case extension_name__block_tex: {
-                        token.global_state = global_state;
-                        break;
-                    }
-                    case extension_name__eval_code: {
-                        let renderer_factory = undefined;
-                        try {
-                            const source_type = token.source_type;
-                            if (!source_type) {
-                                throw new Error('no source_type present');
-                            }
-                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_2__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
-                            if (!renderer_factory) {
-                                throw new Error(`cannot find renderer for source type "${source_type}"`);
-                            }
-                            const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__/* .generate_object_id */ .pk)();
-                            deferred_evaluations.push({
-                                output_element_id,
-                                text: token.text ?? '',
-                                renderer: new renderer_factory(),
-                                renderer_options: {
-                                    global_state,
-                                },
-                            });
-                            // this is the element we will render to from deferred_evaluations:
-                            token.markup = `<div id="${output_element_id}"></div>`;
-                        }
-                        catch (error) {
-                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
-                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(error_ocx, error);
-                            token.markup = error_ocx.element.innerHTML;
-                        }
-                        break;
-                    }
-                }
-            }
-        };
-        const markup = _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
-        parent.innerHTML = markup;
-        // now run the deferred_evaluations
-        // by setting up the output elements for each of deferred_evaluations, we
-        // are now free to render asynchronously and in the background
-        // Note: we are assuming that parent (and ocx.element) are already in the DOM
-        // so that we can find the output element through document.getElementById().
-        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
-            const output_element = document.getElementById(output_element_id);
-            if (!output_element) {
-                // unexpected...
-                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
-            }
-            else {
-                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
-                await renderer.render(sub_ocx, text, renderer_options)
-                    .catch((error) => {
-                    sub_ocx.keepalive = false; // in case this got set prior to the error
-                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__/* .ErrorRenderer */ .F.render_sync(sub_ocx, error);
-                });
-                if (!sub_ocx.keepalive) {
-                    sub_ocx.stop(); // stop background processing, if any
-                }
-            }
-        }
-        return parent;
-    }
-}
-_marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .T.use({
-    extensions: [
-        {
-            name: extension_name__inline_tex,
-            level: 'inline',
-            start(src) { return src.indexOf('$'); },
-            tokenizer(src, tokens) {
-                const match = src.match(/^\$+([^$]+?)\$+/);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    return {
-                        type: extension_name__inline_tex,
-                        raw: match[0],
-                        text: match[1].trim(),
-                        global_state: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
-                    displayMode: false,
-                    throwOnError: false,
-                });
-            },
-        },
-        {
-            name: extension_name__block_tex,
-            level: 'block',
-            start(src) { return src.indexOf('$$'); },
-            tokenizer(src, tokens) {
-                const match = src.match(/^\$\$([^$]+?)\$\$/);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    return {
-                        type: extension_name__block_tex,
-                        raw: match[0],
-                        text: match[1].trim(),
-                        global_state: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_4__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
-                    displayMode: true,
-                    throwOnError: false,
-                });
-                return `<p>${markup}</p>`;
-            },
-        },
-        {
-            name: extension_name__eval_code,
-            level: 'block',
-            start(src) { return src.match(/^[`]{3}[ ]*[!]/)?.index; },
-            tokenizer(src, tokens) {
-                const match = src.match(/^[`]{3}[ ]*[!]([ \t]*[^\n]*[ \t]*)?[\n](.*?)[`]{3}/s);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    const source_type = (match[1]?.trim() ?? '') || 'javascript';
-                    return {
-                        type: extension_name__eval_code,
-                        source_type,
-                        raw: match[0],
-                        text: match[2],
-                        markup: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                return token.markup; // now already filled in by walkTokens
-            },
-        },
-    ],
-});
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 8121:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   T: () => (/* binding */ marked)
-/* harmony export */ });
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
-/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6667);
-const current_script_url = "file:///home/ed/code/xb/src/renderer/text/marked.ts"; // save for later
-
-
-await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../../dist/marked.min.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
-const marked = globalThis.marked;
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } }, 1);
-
-/***/ }),
-
-/***/ 7286:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   _: () => (/* binding */ TeXRenderer)
-/* harmony export */ });
-/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
-/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4464);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5006);
-/* harmony import */ var _katex___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3946);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_2__]);
-src_xb_manager__WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-
-
-
-
-class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld {
+class TeXRenderer extends renderer/* TextOrientedRenderer */.ld {
     get CLASS() { return this.constructor; }
     static get type() { return 'tex'; }
     static {
         // required for all TextOrientedRenderer extensions
-        src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__/* ._initial_text_renderer_factories */ .U0.push(this);
+        factories/* _initial_text_renderer_factories */.U0.push(this);
     }
     /** Render the given TeX source to ocx.
      * @param {OutputContextLike} ocx,
@@ -26855,7 +26882,7 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
      */
     async _render(ocx, tex, options) {
         tex ??= '';
-        const { style, global_state = src_xb_manager__WEBPACK_IMPORTED_MODULE_2__/* .XbManager */ .g.singleton.global_state, } = (options ?? {});
+        const { style, global_state = ocx.xb.global_state, } = (options ?? {});
         const markup = this.CLASS.render_to_string(tex, global_state, {
             displayMode: true,
             throwOnError: false,
@@ -26873,12 +26900,10 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options ??= {};
         katex_options.macros ??= (global_state[this.type] ??= {}); // for persistent \gdef macros
-        return _katex___WEBPACK_IMPORTED_MODULE_3__/* .katex */ .j.renderToString(tex, katex_options);
+        return _katex.renderToString(tex, katex_options);
     }
 }
 
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -28101,8 +28126,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(53);
 /* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7654);
 /* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7451);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
-([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
+([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
 
 
@@ -28170,6 +28195,10 @@ class XbManager {
     // the following map is maintained by this.invoke_renderer()
     #cell_ocx_map = new WeakMap();
     constructor() {
+        // must set xb on all incoming cells
+        for (const cell of this.get_cells()) {
+            cell._set_xb(this);
+        }
         this.reset_global_state();
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
         // listen for settings changed events and trigger update in cells
@@ -28179,7 +28208,7 @@ class XbManager {
             }
         }); //!!! never unsubscribed
         this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_command_bindings */ .$R)();
-        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(window, this.#command_observer.bind(this));
+        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
         const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD)());
         this.push_key_map(key_map);
         this.#key_event_manager.attach();
@@ -28261,7 +28290,7 @@ class XbManager {
             this.activity_manager.stop();
         }
         catch (error) {
-            console.error('error while stopping XbManager.activity_manager', error, this.activity_manager);
+            console.error('error while stopping XbManager.singleton.activity_manager', error, this.activity_manager);
         }
     }
     stop_cell(cell) {
@@ -28347,7 +28376,7 @@ class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null; //!!! implement this
-        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .MenuBar */ .j.create(this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
+        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .MenuBar */ .j.create(this, this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
         //!!! this.#menubar_commands_subscription is never unsubscribed
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
@@ -28418,8 +28447,8 @@ class XbManager {
         const event_listener = (event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E && refound_cell !== XbManager.singleton.active_cell) {
-                XbManager.singleton.set_active_cell(refound_cell);
+            if (refound_cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E && refound_cell !== this.active_cell) {
+                this.set_active_cell(refound_cell);
             }
         };
         event_listener_manager.add(output_element, 'focus', event_listener, { capture: true });
@@ -28431,7 +28460,7 @@ class XbManager {
             }
         };
         globalThis.remove_event_handlers = remove_event_handlers; //!!!
-        const ocx = new src_output_context___WEBPACK_IMPORTED_MODULE_6__/* .OutputContext */ .l(output_element);
+        const ocx = new src_output_context___WEBPACK_IMPORTED_MODULE_6__/* .OutputContext */ .l(this, output_element);
         this.activity_manager.add_activity(ocx);
         this.#associate_cell_ocx(cell, ocx);
         const ocx_stop_subscription = ocx.stop_states.subscribe((state) => {
@@ -28508,7 +28537,7 @@ class XbManager {
         }
     }
     inject_command(command) {
-        return this.#perform_command({ command, target: this.active_cell });
+        return this.#perform_command({ xb: this, command, target: this.active_cell });
     }
     #perform_command(command_context) {
         let success = false; // for now...
@@ -28654,6 +28683,7 @@ class XbManager {
             set_id: true,
             ...extended_options,
         });
+        cell._set_xb(this);
         cell.set_editable(true);
         return cell;
     }

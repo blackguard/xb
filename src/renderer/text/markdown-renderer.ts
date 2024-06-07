@@ -3,10 +3,6 @@ import {
 } from 'src/renderer/factories';
 
 import {
-    XbManager,
-} from 'src/xb-manager';
-
-import {
     RendererFactory,
     TextOrientedRenderer,
 } from 'src/renderer/renderer';
@@ -73,7 +69,7 @@ export class MarkdownRenderer extends TextOrientedRenderer {
 
         const {
             style,
-            global_state = XbManager.singleton.global_state,
+            global_state = ocx.xb.global_state,
         } = (options ?? {});
 
         const parent = ocx.create_child({

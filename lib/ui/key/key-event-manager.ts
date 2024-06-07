@@ -1,4 +1,8 @@
 import {
+    XbManager,
+} from 'src/xb-manager';
+
+import {
     EventListenerManager,
 } from 'lib/sys/event-listener-manager';
 
@@ -22,6 +26,7 @@ import {
 
 
 export type CommandContext = {
+    xb:        XbManager,
     command:   string,
     event?:    null|Event,
     target?:   null|EventTarget,
@@ -29,9 +34,15 @@ export type CommandContext = {
 };
 
 export class KeyEventManager {
-    readonly event_target:     EventTarget;
-    readonly command_observer: ((cc: CommandContext) => void);
-    readonly commands:         SerialDataSource<CommandContext>;
+    #xb:               XbManager;
+    #event_target:     EventTarget;
+    #command_observer: ((cc: CommandContext) => void);
+    #commands:         SerialDataSource<CommandContext>;
+
+    get xb               (){ return this.#xb; }
+    get event_target     (){ return this.#event_target; }
+    get command_observer (){ return this.#command_observer; }
+    get commands         (){ return this.#commands; }
 
     #event_listener_manager: EventListenerManager;
     #commands_subscription:  Subscription;
@@ -43,13 +54,14 @@ export class KeyEventManager {
      *  @param {EventTarget} event_target the source of events
      *  @param {Function} command_observer function to handle command events
      */
-    constructor(event_target: EventTarget, command_observer: ((cc: CommandContext) => void)) {
-        this.event_target     = event_target;
-        this.command_observer = command_observer;
+    constructor(xb: XbManager, event_target: EventTarget, command_observer: ((cc: CommandContext) => void)) {
+        this.#xb               = xb;
+        this.#event_target     = event_target;
+        this.#command_observer = command_observer;
 
         this.#event_listener_manager = new EventListenerManager();
 
-        this.commands = new SerialDataSource<CommandContext>();
+        this.#commands = new SerialDataSource<CommandContext>();
         this.#commands_subscription = this.commands.subscribe(command_observer);  //!!! note: we do not unsubscribe
 
         this.#key_map_stack = [];    // stack grows from the front, i.e., the first item is the last pushed
@@ -161,7 +173,7 @@ export class KeyEventManager {
                     event.preventDefault();
                     if (typeof mapping_result === 'string') {
                         const command = mapping_result;
-                        const command_context: CommandContext = { command, event, target: event.target, key_spec };
+                        const command_context: CommandContext = { xb: this.xb, command, event, target: event.target, key_spec };
                         this.commands.dispatch(command_context);
                         reset();
                     } else {

@@ -97,7 +97,7 @@ export abstract class ApplicationOrientedRenderer<ValueType, OptionsType> extend
      * @param {OptionsType} options?: {
      *     style?:        Object,   // css style to be applied to output element
      *     inline?:       Boolean,  // render inline vs block?
-     *     global_state?: Object,   // global_state for evaluation; default: XbManager.singleton.global_state
+     *     global_state?: Object,   // global_state for evaluation; default: ocx.xb.global_state using ocx passed to render()
      * }
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs

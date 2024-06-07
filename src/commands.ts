@@ -69,7 +69,7 @@ export async function command_handler__save_as(command_context: CommandContext):
 
 export async function command_handler__eval(command_context: CommandContext): Promise<boolean> {
     const cell = command_context.target;
-    if (!cell || !(cell instanceof CellElement)) {
+    if (!(cell instanceof CellElement)) {
         return false;
     } else {
         try {

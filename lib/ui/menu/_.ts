@@ -5,6 +5,10 @@ import {
 } from 'lib/sys/assets-server-url';
 
 import {
+    XbManager,
+} from 'src/xb-manager';
+
+import {
     SerialDataSource,
 } from 'lib/sys/serial-data-source';
 
@@ -71,10 +75,13 @@ export class MenuBar {
      *  @param {Function|null|undefined} get_command_bindings
      *  @return {MenuBar} menu bar instance
      */
-    static create(parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
-        const menubar = new this(parent, menubar_spec, get_command_bindings);
+    static create(xb: XbManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
+        const menubar = new this(xb, parent, menubar_spec, get_command_bindings);
         return menubar;
     }
+
+    #xb: XbManager;
+    get xb (){ return this.#xb; }
 
     #commands = new SerialDataSource<CommandContext>;
     get commands (){ return this.#commands; }
@@ -88,13 +95,18 @@ export class MenuBar {
     #menu_id_to_element = new Map<string, HTMLElement>();
     #menubar_container: HTMLElement;  // set in constructor
 
-    constructor(parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
+    constructor(xb: XbManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
+        if (!(xb instanceof XbManager)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
         if (get_command_bindings !== null && typeof get_command_bindings !== 'undefined' && typeof get_command_bindings !== 'function') {
             throw new Error('get_command_bindings must be null, undefined, or a function');
         }
+
+        this.#xb = xb;
 
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
@@ -454,7 +466,7 @@ export class MenuBar {
             if (closest_menubar instanceof HTMLElement) {
                 this.#deactivate_menu(closest_menubar);
             }
-            const command_context = { command, event, target: event.target };
+            const command_context = { xb: this.xb, command, event, target: event.target };
             this.commands.dispatch(command_context);
             event.stopPropagation();
             event.preventDefault();

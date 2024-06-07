@@ -51,6 +51,18 @@ export class CellElement extends HTMLElement {
     #codemirror: undefined|CodemirrorInterface = undefined;
     #event_listener_manager = new EventListenerManager();
 
+    #xb: undefined|XbManager = undefined;
+    get (){ return this.#xb; }
+
+    /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
+     */
+    _set_xb(xb: XbManager) {
+        if (!(xb instanceof XbManager)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
+        this.#xb = xb;
+    }
+
     constructor() {
         super();
         this.#connect_focus_listeners();
@@ -68,6 +80,9 @@ export class CellElement extends HTMLElement {
     // === TEXT CONTENT ===
 
     get_text(): string {
+        if (!(this.#xb instanceof XbManager)) {
+            throw new Error('xb not set!');
+        }
         const text = this.#has_text_container()
             ? this.#codemirror?.get_text()
             : this.textContent;
@@ -76,6 +91,9 @@ export class CellElement extends HTMLElement {
 
     // this works even if the cell is not editable
     set_text(text: string): void {
+        if (!(this.#xb instanceof XbManager)) {
+            throw new Error('xb not set!');
+        }
         if (this.#has_text_container()) {
             this.#codemirror?.set_text(text);
         } else {
