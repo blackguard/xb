@@ -175,10 +175,6 @@ export class Dialog {
                 class: 'dialog-controls-form',
             },
         }) as HTMLElement;
-        create_element({
-            parent: this._dialog_form,
-            tag:    'hr',
-        });
         this._dialog_form_terminals = create_element({
             parent: this._dialog_form,
             attrs: {
