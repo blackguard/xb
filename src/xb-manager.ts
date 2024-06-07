@@ -239,7 +239,7 @@ export class XbManager {
         try {
             this.activity_manager.stop();
         } catch (error) {
-            console.error('error while stopping XbManager.singleton.activity_manager', error, this.activity_manager);
+            console.error('error while stopping this.activity_manager', error, this.activity_manager);
         }
     }
 

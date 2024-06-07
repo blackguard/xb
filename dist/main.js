@@ -5462,7 +5462,7 @@ class CellElement extends HTMLElement {
     #codemirror = undefined;
     #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__/* .EventListenerManager */ .w();
     #xb = undefined;
-    get() { return this.#xb; }
+    get xb() { return this.#xb; }
     /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
      */
     _set_xb(xb) {
@@ -5583,10 +5583,10 @@ class CellElement extends HTMLElement {
     /** stop any running activities for this cell
      */
     stop() {
-        src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.stop_cell(this);
+        this.xb?.stop_cell(this);
     }
     get can_stop() {
-        return src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.can_stop_cell(this);
+        return this.xb?.can_stop_cell(this) ?? false;
     }
     scroll_into_view() {
         //!!! this needs improvement
@@ -5621,13 +5621,15 @@ class CellElement extends HTMLElement {
     }
     // === FOCUS LISTENERS / ACTIVE ===
     #connect_focus_listeners() {
+        // note: this gets called before _set_xb() has been called
+        const self = this;
         function select_handler(event) {
             const target = event.target;
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name);
                 if (cell) {
-                    // XbManager.singleton.set_active_cell() clears/sets the "active" attributes of all cells
-                    src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.set_active_cell(cell);
+                    // self.xb?.set_active_cell() clears/sets the "active" attributes of all cells
+                    self.xb?.set_active_cell(cell);
                 }
             }
         }
@@ -5851,16 +5853,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   w_: () => (/* binding */ command_handler__delete),
 /* harmony export */   wq: () => (/* binding */ command_handler__reset_all)
 /* harmony export */ });
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5006);
-/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8165);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8401);
-/* harmony import */ var lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6490);
-/* harmony import */ var src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5693);
-/* harmony import */ var src_help_window___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1533);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, src_cell_element___WEBPACK_IMPORTED_MODULE_1__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_4__]);
-([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, src_cell_element___WEBPACK_IMPORTED_MODULE_1__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8165);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
+/* harmony import */ var lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6490);
+/* harmony import */ var src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5693);
+/* harmony import */ var src_help_window___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1533);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__]);
+([src_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // === COMMAND HANDLERS ===
-
 
 
 
@@ -5868,7 +5868,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 
 // These command_handler__* functions each return a boolean, true iff the command was successfully handled
 function command_handler__reset(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
@@ -5877,31 +5877,31 @@ function command_handler__reset(command_context) {
     }
 }
 function command_handler__reset_all(command_context) {
-    src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.reset();
+    command_context.xb.reset();
     return true;
 }
 async function command_handler__clear_all(command_context) {
-    if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .ConfirmDialog */ .QH.run('Clear document?')) {
-        src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.active_cell?.focus();
+    if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .ConfirmDialog */ .QH.run('Clear document?')) {
+        command_context.xb.active_cell?.focus();
         return false;
     }
-    src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.clear();
+    command_context.xb.clear();
     return true;
 }
 async function command_handler__save(command_context) {
-    return src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.perform_save();
+    return command_context.xb.perform_save();
 }
 async function command_handler__save_as(command_context) {
-    return src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.perform_save(true);
+    return command_context.xb.perform_save(true);
 }
 async function command_handler__eval(command_context) {
     const cell = command_context.target;
-    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
         try {
-            await src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.invoke_renderer_for_type(cell.type, undefined, cell);
+            await command_context.xb.invoke_renderer_for_type(cell.type, undefined, cell);
         }
         catch (error) {
             console.error('error rendering cell', error, cell);
@@ -5919,32 +5919,32 @@ async function command_handler__eval_and_refocus(command_context) {
         return false;
     }
     else {
-        const next_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(command_context.target, true) ?? src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.create_cell();
+        const next_cell = command_context.xb.adjacent_cell(command_context.target, true) ?? command_context.xb.create_cell();
         next_cell.focus();
         next_cell.scroll_into_view();
         return true;
     }
 }
 async function multi_eval_helper(command_context, eval_all = false) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
         const target_cell = command_context.target;
-        const cells = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.get_cells();
+        const cells = command_context.xb.get_cells();
         if (!eval_all && cells.indexOf(target_cell) === -1) {
             return true; // don't fail, but also don't do anything if !eval_all and cell is not in cells
         }
         else {
-            src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.stop(); // stop any previously-running renderers
-            src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.reset_global_state();
+            command_context.xb.stop(); // stop any previously-running renderers
+            command_context.xb.reset_global_state();
             for (const iter_cell of cells) {
                 iter_cell.focus();
                 if (!eval_all && iter_cell === target_cell) {
                     break; // only eval cells before target_cell if !eval_all
                 }
                 try {
-                    await src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.invoke_renderer_for_type(iter_cell.type, undefined, iter_cell);
+                    await command_context.xb.invoke_renderer_for_type(iter_cell.type, undefined, iter_cell);
                 }
                 catch (error) {
                     console.error('error rendering cell', error, iter_cell);
@@ -5973,7 +5973,7 @@ async function command_handler__eval_all(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
@@ -5985,15 +5985,15 @@ function command_handler__stop(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop_all(command_context) {
-    src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.stop();
+    command_context.xb.stop();
     return true;
 }
 function command_handler__focus_up(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
-        const focus_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(command_context.target, false);
+        const focus_cell = command_context.xb.adjacent_cell(command_context.target, false);
         if (!focus_cell) {
             return false;
         }
@@ -6005,11 +6005,11 @@ function command_handler__focus_up(command_context) {
     }
 }
 function command_handler__focus_down(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
-        const focus_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(command_context.target, true);
+        const focus_cell = command_context.xb.adjacent_cell(command_context.target, true);
         if (!focus_cell) {
             return false;
         }
@@ -6021,21 +6021,21 @@ function command_handler__focus_down(command_context) {
     }
 }
 function move_helper(command_context, move_down) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
         const cell = command_context.target;
-        let before = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(cell, move_down);
+        let before = command_context.xb.adjacent_cell(cell, move_down);
         if (!before) {
             return false;
         }
         else {
             if (move_down) {
-                before = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(before, move_down);
+                before = command_context.xb.adjacent_cell(before, move_down);
             }
-            const parent = before ? before.parentElement : src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.cell_parent;
-            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .move_node */ .V1)(cell, { parent, before });
+            const parent = before ? before.parentElement : command_context.xb.cell_parent;
+            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .V1)(cell, { parent, before });
             cell.focus();
             cell.scroll_into_view();
             return true;
@@ -6049,16 +6049,16 @@ function command_handler__move_down(command_context) {
     return move_helper(command_context, true);
 }
 function add_cell_helper(command_context, add_before) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
         const this_cell = command_context.target;
         const before = add_before
             ? this_cell
-            : src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(this_cell, true);
-        const parent = before ? before.parentElement : src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.cell_parent;
-        const new_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.create_cell({ before, parent });
+            : command_context.xb.adjacent_cell(this_cell, true);
+        const parent = before ? before.parentElement : command_context.xb.cell_parent;
+        const new_cell = command_context.xb.create_cell({ before, parent });
         if (!new_cell) {
             return false;
         }
@@ -6075,21 +6075,21 @@ function command_handler__add_after(command_context) {
     return add_cell_helper(command_context, false);
 }
 async function command_handler__delete(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
         const cell = command_context.target;
         if (cell.get_text().trim().length > 0) {
-            if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .ConfirmDialog */ .QH.run('Cannot undo delete of non-empty cell.\nContinue?')) {
+            if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .ConfirmDialog */ .QH.run('Cannot undo delete of non-empty cell.\nContinue?')) {
                 cell.focus();
                 return false;
             }
         }
-        let next_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(cell, true) ?? src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.adjacent_cell(cell, false);
+        let next_cell = command_context.xb.adjacent_cell(cell, true) ?? command_context.xb.adjacent_cell(cell, false);
         cell.remove();
         if (!next_cell) {
-            next_cell = src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g.singleton.create_cell();
+            next_cell = command_context.xb.create_cell();
         }
         next_cell.focus();
         next_cell.scroll_into_view();
@@ -6098,7 +6098,7 @@ async function command_handler__delete(command_context) {
 }
 function set_mode_helper(command_context, type) {
     const cell = command_context.target;
-    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_1__/* .CellElement */ .E)) {
+    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
         return false;
     }
     else {
@@ -6159,11 +6159,11 @@ function command_handler__set_view_none(command_context) {
     return set_view_helper(command_context, 'none');
 }
 function command_handler__show_settings_dialog(command_context) {
-    src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_4__/* .SettingsDialog */ .D.run();
+    src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__/* .SettingsDialog */ .D.run();
     return true;
 }
 function command_handler__show_help(command_context) {
-    (0,src_help_window___WEBPACK_IMPORTED_MODULE_5__/* .open_help_window */ .Z)();
+    (0,src_help_window___WEBPACK_IMPORTED_MODULE_4__/* .open_help_window */ .Z)();
     return true;
 }
 
@@ -28290,7 +28290,7 @@ class XbManager {
             this.activity_manager.stop();
         }
         catch (error) {
-            console.error('error while stopping XbManager.singleton.activity_manager', error, this.activity_manager);
+            console.error('error while stopping this.activity_manager', error, this.activity_manager);
         }
     }
     stop_cell(cell) {

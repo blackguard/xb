@@ -52,7 +52,7 @@ export class CellElement extends HTMLElement {
     #event_listener_manager = new EventListenerManager();
 
     #xb: undefined|XbManager = undefined;
-    get (){ return this.#xb; }
+    get xb (){ return this.#xb; }
 
     /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
      */
@@ -198,11 +198,11 @@ export class CellElement extends HTMLElement {
     /** stop any running activities for this cell
      */
     stop(): void {
-        XbManager.singleton.stop_cell(this);
+        this.xb?.stop_cell(this);
     }
 
     get can_stop (): boolean {
-        return XbManager.singleton.can_stop_cell(this);
+        return this.xb?.can_stop_cell(this) ?? false;
     }
 
     scroll_into_view(): void {
@@ -240,13 +240,15 @@ export class CellElement extends HTMLElement {
     // === FOCUS LISTENERS / ACTIVE ===
 
     #connect_focus_listeners(): void {
+        // note: this gets called before _set_xb() has been called
+        const self = this;
         function select_handler(event: Event) {
             const target = event.target;
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name) as CellElement;
                 if (cell) {
-                    // XbManager.singleton.set_active_cell() clears/sets the "active" attributes of all cells
-                    XbManager.singleton.set_active_cell(cell);
+                    // self.xb?.set_active_cell() clears/sets the "active" attributes of all cells
+                    self.xb?.set_active_cell(cell);
                 }
             }
         }
