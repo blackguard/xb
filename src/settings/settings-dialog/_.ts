@@ -147,7 +147,7 @@ export class SettingsDialog extends Dialog {
 
         for (const section of sections) {
             const { name, settings } = section;
-            const section_div = this._dialog_form;
+            const section_div = this._dialog_form_content;
 
             const named_section_div = create_element({ parent: section_div, attrs: { 'data-section': name } });
             const error_div = create_element({
@@ -225,15 +225,8 @@ export class SettingsDialog extends Dialog {
 
         // Done button should not cause Enter to automatically submit the form
         // unless directly clicked.
-        const accept_button = create_element({
-            parent: this._dialog_form,
-            tag:    'input',
-            attrs: {
-                type: 'button',
-                value: 'Done',
-            },
-        });
-        (accept_button as any).onclick = (event: Event) => this._dialog_element?.close();
+        const accept_button = this._create_terminal_button('Done', true);
+        accept_button.onclick = (event: Event) => this._dialog_element?.close();
 
         if (this._dialog_element) {
             this._dialog_element.onclose = (event: Event) => this._complete();

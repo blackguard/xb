@@ -27,7 +27,7 @@ import {
 
 import {
     AlertDialog,
-    ConfirmDialog,
+    ConfirmDialog,//!!!
 } from 'lib/ui/dialog/_';
 
 import {
@@ -361,7 +361,7 @@ export class XbManager {
         const save_result = await fs_interface.save(save_serializer, {
             file_handle: perform_save_as ? undefined : this.#file_handle,
             prompt_options: {
-                suggestedName: this.#get_suggested_file_name(),//!!!
+                suggestedName: this.#get_suggested_filename(),//!!!
             },
         });
         const {
@@ -376,7 +376,7 @@ export class XbManager {
         return !canceled;
     }
 
-    #get_suggested_file_name(): string {
+    #get_suggested_filename(): string {
         return window.location.pathname.split('/').slice(-1)[0];
     }
 
@@ -702,7 +702,8 @@ export class XbManager {
     // === SHOW UNHANDLED EVENT ===
 
     _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): void {
-        AlertDialog.run(`Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${(event as any)?.reason?.message}`);
-        ConfirmDialog.run('now is the time for all good men to come to the aid of their party').then(result => console.log(result));//!!!
+        ConfirmDialog.run('now is the time for all good men to come to the aid of their party').then(console.log);//!!!
+        const message = `Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${(event as any)?.reason?.message}`;
+        AlertDialog.run(message);
     }
 }

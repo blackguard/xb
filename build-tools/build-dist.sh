@@ -50,6 +50,7 @@ for (( i = 0; i < ${#DIRECTORIES_TO_COPY[@]}; i += 2 )); do
     cp -a "${directory}" "${DIST_DIR}/${destination}"
 done
 
+echo "building...."
 npx webpack --config ./webpack.config.js
 
 echo "done"

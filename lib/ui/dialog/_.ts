@@ -58,11 +58,15 @@ export class Dialog {
     static _modal_dialog_css_class = 'modal_dialog';
 
     #promise = new OpenPromise<boolean>();
+
     #dialog_element_id: string = `dialog-${uuidv4()}`;
-    #ui_element: undefined|Element = undefined;
-    _dialog_element: undefined|HTMLDialogElement = undefined;
-    _dialog_text_container: undefined|HTMLElement = undefined;
-    _dialog_form: undefined|HTMLFormElement = undefined;
+
+    #ui_element:            undefined|Element           = undefined;
+    _dialog_element:        undefined|HTMLDialogElement = undefined;
+    _dialog_text_container: undefined|HTMLElement       = undefined;
+    _dialog_form:           undefined|HTMLFormElement   = undefined;
+    _dialog_form_content:   undefined|HTMLElement       = undefined;
+    _dialog_form_terminals: undefined|HTMLElement       = undefined;
 
     #completed: boolean = false;
     get completed (){ return this.#completed; }
@@ -140,7 +144,7 @@ export class Dialog {
             parent,
             before: parent.firstChild,  // prepend
         });
-        const dialog_element = create_element({
+        this._dialog_element = create_element({
             parent: this.#ui_element,
             tag:    'dialog',
             attrs: {
@@ -149,25 +153,38 @@ export class Dialog {
             },
         }) as HTMLDialogElement;
         this._dialog_text_container = create_element({
-            parent: dialog_element,
+            parent: this._dialog_element,
             tag: 'h2',
             attrs: {
                 class: 'dialog-message-text',
             },
         }) as HTMLElement;
-        create_element({
-            parent: dialog_element,
-            tag:    'hr',
-        });
         this._dialog_form = create_element({
-            parent: dialog_element,
+            parent: this._dialog_element,
             tag:    'form',
             attrs: {
                 method: 'dialog',
                 class: 'dialog-controls-form',
             },
         }) as HTMLFormElement;
-        this._dialog_element = dialog_element;
+        this._dialog_form_content = create_element({
+            parent: this._dialog_form,
+            tag:    'form',
+            attrs: {
+                method: 'dialog',
+                class: 'dialog-controls-form',
+            },
+        }) as HTMLElement;
+        create_element({
+            parent: this._dialog_form,
+            tag:    'hr',
+        });
+        this._dialog_form_terminals = create_element({
+            parent: this._dialog_form,
+            attrs: {
+                class: 'dialog-controls-form-terminals',
+            },
+        }) as HTMLElement;
     }
 
     _destroy_dialog_element() {
@@ -175,6 +192,23 @@ export class Dialog {
             this.#ui_element.remove();
             this.#ui_element = undefined;
         }
+    }
+
+    _create_terminal_button(label: string, is_accept: boolean = false): HTMLElement {
+        const button = create_element({
+            parent: this._dialog_form_terminals,
+            tag:    'input',
+            attrs: {
+                type: is_accept ? 'submit' : 'button',
+                value: label,
+                class: is_accept ? 'dialog-accept' : 'dialog-decline',
+            },
+            innerText: label,
+        }) as HTMLInputElement;
+        if (!is_accept) {
+            button.onclick = (event) => this._complete(false);
+        }
+        return button;
     }
 }
 
@@ -187,16 +221,7 @@ export class AlertDialog extends Dialog {
         if (this._dialog_text_container) {  // test for the sake of typescript...
             this._dialog_text_container.innerText = message;
         }
-        const accept_button = create_element({
-            parent: this._dialog_form,
-            tag:    'input',
-            attrs: {
-                type: 'submit',
-                value: accept_button_label,
-                class: 'dialog-accept',
-            },
-            innerText: accept_button_label,
-        }) as HTMLInputElement;
+        const accept_button = this._create_terminal_button(accept_button_label, true);
         if (this._dialog_element) {  // test for the sake of typescript...
             this._dialog_element.onclose = (event) => this._complete();
         }
@@ -213,27 +238,8 @@ export class ConfirmDialog extends Dialog {
         if (this._dialog_text_container) {  // test for the sake of typescript...
             this._dialog_text_container.innerText = message;
         }
-        const decline_button = create_element({
-            parent: this._dialog_form,
-            tag:    'input',
-            attrs: {
-                type: 'button',
-                value: decline_button_label,
-                class: 'dialog-decline',
-            },
-            innerText: decline_button_label,
-        }) as HTMLInputElement;
-        decline_button.onclick = (event) => this._complete(false);
-        const accept_button = create_element({
-            parent: this._dialog_form,
-            tag:    'input',
-            attrs: {
-                type: 'submit',
-                value: accept_button_label,
-                class: 'dialog-accept',
-            },
-            innerText: accept_button_label,
-        });
+        const decline_button = this._create_terminal_button(decline_button_label);
+        const accept_button  = this._create_terminal_button(accept_button_label, true);
         if (this._dialog_element) {  // test for the sake of typescript...
             this._dialog_element.oncancel = (event) => this._complete(false);
             this._dialog_element.onclose = (event) => this._complete(this._dialog_element?.returnValue === accept_button_label);
