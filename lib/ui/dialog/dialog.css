@@ -3,15 +3,26 @@ dialog {
     box-shadow: 3px 3px 16px grey;
 }
 
-dialog button,
-dialog input[type="button"] {
-    margin: 1.75em 0 0 0;
+dialog .dialog-controls-form {
+    display: flex;
+    justify-content: flex-end;
 }
 
-dialog .dialog_decline {
-    display: inline;
+dialog .dialog-controls-form button,
+dialog .dialog-controls-form input[type="button"] {
+    margin: 0 0 0 0;
 }
 
-dialog .dialog_accept {
+dialog .dialog-accept,
+dialog .dialog-decline {
     display: inline;
+    margin: 0 0 0 0.25em;
+}
+
+dialog .dialog-message-text {
+    font-size: 120%;
+    font-weight: bold;
+}
+
+dialog .dialog-text {
 }

@@ -27,6 +27,7 @@ import {
 
 import {
     AlertDialog,
+    ConfirmDialog,
 } from 'lib/ui/dialog/_';
 
 import {
@@ -702,5 +703,6 @@ export class XbManager {
 
     _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): void {
         AlertDialog.run(`Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${(event as any)?.reason?.message}`);
+        ConfirmDialog.run('now is the time for all good men to come to the aid of their party').then(result => console.log(result));//!!!
     }
 }

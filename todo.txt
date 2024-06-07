@@ -1,9 +1,8 @@
-fix save-as, etc; fs-interface needs a rewrite
 make help document
 update README.md
-improve appearance of AlertDialog and ConfirmDialog
 review the way global_eval_context is used/partitioned
 fix syntax coloring in CodeMirror
+improve appearance of AlertDialog and ConfirmDialog
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
@@ -13,6 +12,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* fix save-as, etc; fs-interface needs a rewrite (did a little cleanup, no rewrite...)
 * display unhandled rejections and errors
 * save-as does not work in Chromium
 * async command handlers do not trigger error (beep) when they return false (indicating failure)

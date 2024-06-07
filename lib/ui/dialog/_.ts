@@ -152,14 +152,19 @@ export class Dialog {
             parent: dialog_element,
             tag: 'h2',
             attrs: {
-                class: 'dialog-text',
+                class: 'dialog-message-text',
             },
         }) as HTMLElement;
+        create_element({
+            parent: dialog_element,
+            tag:    'hr',
+        });
         this._dialog_form = create_element({
             parent: dialog_element,
             tag:    'form',
             attrs: {
                 method: 'dialog',
+                class: 'dialog-controls-form',
             },
         }) as HTMLFormElement;
         this._dialog_element = dialog_element;
@@ -188,7 +193,9 @@ export class AlertDialog extends Dialog {
             attrs: {
                 type: 'submit',
                 value: accept_button_label,
+                class: 'dialog-accept',
             },
+            innerText: accept_button_label,
         }) as HTMLInputElement;
         if (this._dialog_element) {  // test for the sake of typescript...
             this._dialog_element.onclose = (event) => this._complete();
@@ -212,9 +219,10 @@ export class ConfirmDialog extends Dialog {
             attrs: {
                 type: 'button',
                 value: decline_button_label,
+                class: 'dialog-decline',
             },
+            innerText: decline_button_label,
         }) as HTMLInputElement;
-        decline_button.innerText = decline_button_label;
         decline_button.onclick = (event) => this._complete(false);
         const accept_button = create_element({
             parent: this._dialog_form,
@@ -222,7 +230,9 @@ export class ConfirmDialog extends Dialog {
             attrs: {
                 type: 'submit',
                 value: accept_button_label,
+                class: 'dialog-accept',
             },
+            innerText: accept_button_label,
         });
         if (this._dialog_element) {  // test for the sake of typescript...
             this._dialog_element.oncancel = (event) => this._complete(false);
