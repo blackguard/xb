@@ -1,5 +1,6 @@
 make help document
 update README.md
+rework settings-dialog and dialog in general (need to segregate accept/decline controls)
 review the way global_eval_context is used/partitioned
 fix syntax coloring in CodeMirror
 improve appearance of AlertDialog and ConfirmDialog
