@@ -21,7 +21,7 @@ const cell_view_attribute_name   = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none'];
 
 
-// this script is itself the bootstrap script, so we can go ahead and grab its markup now...
+// this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
 const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
