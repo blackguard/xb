@@ -6526,6 +6526,9 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
+        if (parent?.xb !== xb) {
+            throw new Error('parent has a different XbManager');
+        }
         this.#xb = xb;
         this.#element = element;
         this.#parent = parent;
@@ -6590,6 +6593,10 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
      *  @return {OutputContextLike} the new OutputContextLike object
      */
     create_new_ocx(element, parent) {
+        this.abort_if_stopped();
+        if (parent?.xb !== this.xb) {
+            throw new Error('parent has a different XbManager');
+        }
         return new OutputContext(this.xb, element, parent);
     }
     /** create a new OutputContext from a new child element of this.element created via this.create_child()
@@ -6600,11 +6607,11 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
     create_child_ocx(options) {
         this.abort_if_stopped();
         options ??= {};
-        const parent_style_attr = this.element.getAttribute('style');
-        if (parent_style_attr) {
+        const parent_element_style_attr = this.element.getAttribute('style');
+        if (parent_element_style_attr) {
             options.attrs = {
                 ...(options.attrs ?? {}),
-                style: parent_style_attr, // inherit parent's style attribute (vs style)
+                style: parent_element_style_attr, // inherit parent's style attribute (vs style)
             };
         }
         const child_ocx = new OutputContext(this.xb, this.create_child(options), this);
@@ -28511,6 +28518,9 @@ class XbManager {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
+        if (ocx.xb !== this) {
+            console.error('unexpected: ocx has a different xb');
+        }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {
             ocx_set.add(ocx);
@@ -28524,6 +28534,9 @@ class XbManager {
     #dissociate_cell_ocx(cell, ocx) {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
+        }
+        if (ocx.xb !== this) {
+            console.error('unexpected: ocx has a different xb');
         }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {

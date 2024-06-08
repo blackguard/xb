@@ -499,6 +499,9 @@ export class XbManager {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
+        if (ocx.xb !== this) {
+            console.error('unexpected: ocx has a different xb');
+        }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {
             ocx_set.add(ocx);
@@ -512,6 +515,9 @@ export class XbManager {
     #dissociate_cell_ocx(cell: CellElement, ocx: OutputContext) {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
+        }
+        if (ocx.xb !== this) {
+            console.error('unexpected: ocx has a different xb');
         }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {

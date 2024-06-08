@@ -72,6 +72,9 @@ export class OutputContext extends OutputContextLike {
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
+        if (parent?.xb !== xb) {
+            throw new Error('parent has a different XbManager');
+        }
         this.#xb      = xb;
         this.#element = element;
         this.#parent  = parent;
@@ -147,6 +150,10 @@ export class OutputContext extends OutputContextLike {
      *  @return {OutputContextLike} the new OutputContextLike object
      */
     create_new_ocx(element: Element, parent?: OutputContext): OutputContext {
+        this.abort_if_stopped();
+        if (parent?.xb !== this.xb) {
+            throw new Error('parent has a different XbManager');
+        }
         return new OutputContext(this.xb, element, parent);
     }
 
@@ -158,11 +165,11 @@ export class OutputContext extends OutputContextLike {
     create_child_ocx(options?: object): OutputContext {
         this.abort_if_stopped();
         options ??= {};
-        const parent_style_attr = this.element.getAttribute('style');
-        if (parent_style_attr) {
+        const parent_element_style_attr = this.element.getAttribute('style');
+        if (parent_element_style_attr) {
             (options as any).attrs = {
                 ...((options as any).attrs ?? {}),
-                style: parent_style_attr,  // inherit parent's style attribute (vs style)
+                style: parent_element_style_attr,  // inherit parent's style attribute (vs style)
             };
         }
         const child_ocx = new OutputContext(this.xb, this.create_child(options), this);

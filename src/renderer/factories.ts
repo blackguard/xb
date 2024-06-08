@@ -4,10 +4,6 @@ import {
     TextOrientedRenderer,
 } from './renderer';
 
-import {
-    OutputContextLike,
-} from 'src/output-context/types';
-
 
 // === TEXT-ORIENTED RENDERER FACTORY COLLECTION (INITIALIZED BELOW) ===
 
