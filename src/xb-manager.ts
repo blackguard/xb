@@ -679,7 +679,7 @@ export class XbManager {
             console.error('unexpected: cell has a different xb');
         }
 
-        //!!! do something...
+        //!!! do something...  is this observer necessary?
     }
 
 
@@ -757,3 +757,4 @@ export class XbManager {
         AlertDialog.run(message);
     }
 }
+(globalThis as any).XbManager = XbManager;//!!!

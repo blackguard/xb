@@ -58,7 +58,7 @@ export class KeyEventManager<DocumentManager> {
         this.#event_listener_manager = new EventListenerManager();
 
         this.#commands = new SerialDataSource<CommandContext<DocumentManager>>();
-        this.#commands_subscription = this.commands.subscribe(command_observer);  //!!! note: we do not unsubscribe
+        this.#commands_subscription = this.commands.subscribe(command_observer);  //!!! note: never unsubscribed
 
         this.#key_map_stack = [];    // stack grows from the front, i.e., the first item is the last pushed
         this.#key_mapper    = null;  // set iff attached

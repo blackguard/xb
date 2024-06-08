@@ -1,3 +1,4 @@
+should the loading origin be relative to the bootscrap script instead of the main document?  (see also: dom-tools: load_script() and load_script_and_wait_for_condition())
 make help document
 update README.md
 XbManager: root element (use instead of document, etc, for e.g., querySelector())
@@ -7,10 +8,15 @@ review the way global_eval_context is used/partitioned
 fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
+manage scroll position better
 how does parent ActivityManager get notified if a child stops?  necessary?
 beforeunload warning not working (but works after interacting with menu...)
-CellElement.outerHTML does not correctly translate attribute values that contain a " character
+CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
 KeySpec.#is_on_macos needs to be fixed
+settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
+determine if attribute observers would be useful in CellElement
+can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
+implement recents (?)
 tsconfig: module, moduleResolution
 
 

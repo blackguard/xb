@@ -79,8 +79,6 @@ export class MarkdownRenderer extends TextOrientedRenderer {
             style,
         });
 
-        const main_renderer = this;  // used below in extensions code  //!!! no longer used?
-
         let deferred_evaluations: {
             output_element_id: string,
             text:              string,

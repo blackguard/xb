@@ -187,7 +187,7 @@ export class CellElement extends HTMLElement {
     /** reset the cell, removing all associated output elements
      */
     reset(): void {
-        //!!! should stop any running renderer, however running ocx is not stored here....
+        this.xb?.stop_cell(this);        
         if (this.id) {
             for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
                 output_element.remove();
@@ -223,7 +223,7 @@ export class CellElement extends HTMLElement {
         const open_tag_segments = [
             `<${this.CLASS.custom_element_name}`,
         ];
-        //!!! attributes values' contained " character are incorrectly translated to \"
+        //!!! attributes values' containing " character are incorrectly translated to \"
         for (const name of this.getAttributeNames()) {
             const value = this.getAttribute(name);
             if (value === null) {

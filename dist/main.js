@@ -4726,7 +4726,7 @@ class KeyEventManager {
         this.#command_observer = command_observer;
         this.#event_listener_manager = new event_listener_manager/* EventListenerManager */.w();
         this.#commands = new serial_data_source/* SerialDataSource */.B();
-        this.#commands_subscription = this.commands.subscribe(command_observer); //!!! note: we do not unsubscribe
+        this.#commands_subscription = this.commands.subscribe(command_observer); //!!! note: never unsubscribed
         this.#key_map_stack = []; // stack grows from the front, i.e., the first item is the last pushed
         this.#key_mapper = null; // set iff attached
     }
@@ -5575,7 +5575,7 @@ class CellElement extends HTMLElement {
     /** reset the cell, removing all associated output elements
      */
     reset() {
-        //!!! should stop any running renderer, however running ocx is not stored here....
+        this.xb?.stop_cell(this);
         if (this.id) {
             for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
                 output_element.remove();
@@ -5608,7 +5608,7 @@ class CellElement extends HTMLElement {
         const open_tag_segments = [
             `<${this.CLASS.custom_element_name}`,
         ];
-        //!!! attributes values' contained " character are incorrectly translated to \"
+        //!!! attributes values' containing " character are incorrectly translated to \"
         for (const name of this.getAttributeNames()) {
             const value = this.getAttribute(name);
             if (value === null) {
@@ -6355,7 +6355,7 @@ const current_script_url = "file:///home/ed/code/xb/src/init.ts"; // save for la
 
 const cell_view_attribute_name = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none'];
-// this script is itself the bootstrap script, so we can go ahead and grab its markup now...
+// this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
 const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
@@ -6413,7 +6413,6 @@ async function initialize_document() {
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
         await src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
-        globalThis.XbManager = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g; //!!!
         // initialize renderer factories after all the TextOrientedRenderer factories have been registered...
         (0,src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* .reset_to_initial_text_renderer_factories */ .$F)();
     }
@@ -8117,7 +8116,6 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
             },
             style,
         });
-        const main_renderer = this; // used below in extensions code  //!!! no longer used?
         let deferred_evaluations = [];
         const marked_options = {
             walkTokens(token) {
@@ -28673,7 +28671,7 @@ class XbManager {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
-        //!!! do something...
+        //!!! do something...  is this observer necessary?
     }
     // === CELL MANAGEMENT ===
     /** return an ordered list of the CellElement (cell-) cells in the document
@@ -28748,6 +28746,7 @@ class XbManager {
         lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .AlertDialog */ .aR.run(message);
     }
 }
+globalThis.XbManager = XbManager; //!!!
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
