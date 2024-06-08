@@ -340,6 +340,13 @@ export function command_handler__set_view_none(command_context: CommandContext<X
     return set_view_helper(command_context, 'none');
 }
 
+/** set the document view to "kiosk".
+ *  @return {Boolean} true iff command successfully handled
+ */
+export function command_handler__set_view_kiosk(command_context: CommandContext<XbManager>): boolean {
+    return set_view_helper(command_context, 'kiosk');
+}
+
 export function command_handler__show_settings_dialog(command_context: CommandContext<XbManager>): boolean {
     SettingsDialog.run();
     return true;

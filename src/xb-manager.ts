@@ -574,7 +574,7 @@ export class XbManager {
                 const bindings_fn = this.#command_bindings[updated_command_context.command];
                 if (bindings_fn) {
                     if (bindings_fn instanceof AsyncFunction) {
-                        return bindings_fn(updated_command_context)
+                        bindings_fn(updated_command_context)
                             .then((success: boolean) => {
                                 if (!success) {
                                     beep();
@@ -650,6 +650,7 @@ export class XbManager {
             menubar.set_menu_state('set-view-hide',       { checked: (cell_view_mode === 'hide')   });
             menubar.set_menu_state('set-view-full',       { checked: (cell_view_mode === 'full')   });
             menubar.set_menu_state('set-view-none',       { checked: (cell_view_mode === 'none')   });
+            menubar.set_menu_state('set-view-kiosk',      { checked: (cell_view_mode === 'kiosk')   });
 
             // no update to command 'settings'
             // no update to command 'help'

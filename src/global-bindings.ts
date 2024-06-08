@@ -52,6 +52,7 @@ export function get_menubar_spec() {
             { label: 'Hide',            item: { command: 'set-view-hide'       }, id: 'set-view-hide' },
             { label: 'Full',            item: { command: 'set-view-full'       }, id: 'set-view-full' },
             { label: 'None',            item: { command: 'set-view-none'       }, id: 'set-view-none' },
+            { label: 'Kiosk',           item: { command: 'set-view-kiosk'      }, id: 'set-view-kiosk' },
         ] },
 
         { label: 'Help', collection: [
@@ -99,6 +100,7 @@ export function get_global_initial_key_map_bindings() {
         'set-view-hide':       [ 'Alt-V h' ],
         'set-view-full':       [ 'Alt-V f' ],
         'set-view-none':       [ 'Alt-V x' ],
+        'set-view-kiosk':      [ 'Alt-V k' ],
 
         'settings':            [ 'CmdOrCtrl-,' ],
         'help':                [ 'F1' ],
@@ -144,6 +146,7 @@ export function get_global_command_bindings() {
         'set-view-hide':       commands.command_handler__set_view_hide,
         'set-view-full':       commands.command_handler__set_view_full,
         'set-view-none':       commands.command_handler__set_view_none,
+        'set-view-kiosk':      commands.command_handler__set_view_kiosk,
 
         'settings':            commands.command_handler__show_settings_dialog,
         'help':                commands.command_handler__show_help,

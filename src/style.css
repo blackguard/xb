@@ -119,14 +119,21 @@ cell-[data-type="javascript"] {
     --content-color: var(--theme-ty-bgc-javascript);
 }
 
-/* html[data-cell-view]: none|hide|normal|full
- * - none: cells are not displayed
- * - hide: cells auto-hide; focused cell scrolls, other cells minimized
- * - <empty>|normal: all cells scroll (default)
- * - full: all cells shown completely
-*/
+/* html[data-cell-view]: none|hide|normal|full|kiosk
+ * - none:   cells are not displayed
+ * - hide:   cells auto-hide; focused cell scrolls, other cells minimized
+ * - normal: all cells scroll (default)
+ * - full:   all cells shown completely
+ * - kiosk:  like none, and also the header element is hidden
+ */
 
 html[data-cell-view="none"] cell- {
+    display: none;
+}
+html[data-cell-view="kiosk"] header {
+    display: none;
+}
+html[data-cell-view="kiosk"] cell- {
     display: none;
 }
 html[data-cell-view="hide"] cell-:not([data-active]) {
