@@ -286,11 +286,13 @@ export class XbManager {
             this.#set_initial_active_cell();
 
             // add "changes may not be saved" prompt for when document is being closed while modified
-            window.addEventListener('beforeunload', (event: Event) => {
-                const warn = true;  //!!! always warn for now
-                event.preventDefault();
-                event.returnValue = !warn;  // indicate: if false, default action prevented
-                return warn;                // indicate: if true, default action prevented
+            window.addEventListener('beforeunload', (event: Event): any => {
+                if (this.cell_view_mode !== 'kiosk') {
+                   const warn = true;  //!!! always warn for now
+                   event.preventDefault();
+                   event.returnValue = !warn;  // indicate: if false, default action prevented
+                   return warn;                // indicate: if true, default action prevented
+                }
             });  //!!! event handler never removed
 
         } catch (error) {

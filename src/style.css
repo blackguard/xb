@@ -124,7 +124,7 @@ cell-[data-type="javascript"] {
  * - hide:   cells auto-hide; focused cell scrolls, other cells minimized
  * - normal: all cells scroll (default)
  * - full:   all cells shown completely
- * - kiosk:  like none, and also the header element is hidden
+ * - kiosk:  like none, but also the header element is hidden and no document close warning is issued
  */
 
 html[data-cell-view="none"] cell- {
