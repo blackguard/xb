@@ -68,7 +68,7 @@ cell- {
     margin:  0;
 
     caret-color: var(--theme-cl-ctc);
-    outline: 0px solid transparent;  /* disable default contenteditable outline */
+    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */
 
     white-space: pre-wrap;  /* properly display white-space */
     font-family: var(--theme-cl-ff);
@@ -106,11 +106,12 @@ cell-[data-active][data-type]::before {
     font-weight: bold;
 }
 
-cell-[data-type="plain"] {
-    --content-color: var(--theme-ty-bgc-plain);
-}
+cell-,  /* markdown is the default */
 cell-[data-type="markdown"] {
     --content-color: var(--theme-ty-bgc-markdown);
+}
+cell-[data-type="plain"] {
+    --content-color: var(--theme-ty-bgc-plain);
 }
 cell-[data-type="tex"] {
     --content-color: var(--theme-ty-bgc-tex);
@@ -125,10 +126,19 @@ cell-[data-type="javascript"] {
  * - normal: all cells scroll (default)
  * - full:   all cells shown completely
  * - kiosk:  like none, but also the header element is hidden and no document close warning is issued
+ *   -- in kiosk mode, cells with css class "show-in-kiosk" will be shown as in "normal" mode
  */
 
 html[data-cell-view="none"] cell- {
     display: none;
+}
+html[data-cell-view="hide"] cell-:not([data-active]) {
+    display: block;
+    max-height: 0.2rem;
+    border-width: 1px;
+    border-color: black;
+    padding: 0;
+    margin: 0.2rem;
 }
 html[data-cell-view="kiosk"] header {
     display: none;
@@ -136,14 +146,9 @@ html[data-cell-view="kiosk"] header {
 html[data-cell-view="kiosk"] cell- {
     display: none;
 }
-html[data-cell-view="hide"] cell-:not([data-active]) {
-    max-height: 0.2rem;
-    border-width: 1px;
-    border-color: black;
-    padding: 0;
-    margin: 0.2rem;
-}
-cell- {
+cell-,
+html[data-cell-view="kiosk"] cell-.show-in-kiosk {
+    display: block;
     max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
     transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
 }
@@ -161,11 +166,12 @@ cell- {
 }
 
 /* show full content if html[data-cell-view="full"] */
-html[data-cell-view="full"] .cm-editor {
-    max-height: unset;
-}
+html[data-cell-view="full"] cell-,
+html[data-cell-view="full"] .cm-editor,
 html[data-cell-view="full"] .cm-scroller {
-    overflow-y: auto;
+    overflow-y: hidden;
+    max-height: unset;
+    height: 100%;
 }
 
 /* line number switch */
