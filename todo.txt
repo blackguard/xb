@@ -49,10 +49,10 @@ tsconfig: module, moduleResolution
 
 OutputContext (ocx)
 CellElement
-MenuBar (for CommandContext)
-KeyEventManager (for CommandContext)
+MenuBar (for CommandContext)(parameterized by type DocumentManager to avoid src/XbManager references in lib/)
+KeyEventManager (for CommandContext)(parameterized by type DocumentManager)
 
-Also: CommandContext
+Also: CommandContext (parameterized by type DocumentManager)
 Not:  Renderer
 
 

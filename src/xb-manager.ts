@@ -190,6 +190,9 @@ export class XbManager {
 
     get active_cell (){ return this.#active_cell; }
     set_active_cell(cell: null|CellElement): void {
+        if (cell?.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
         this.#active_cell = (cell ?? null);
         for (const cell of this.get_cells()) {
             cell.set_active(cell === this.active_cell);
@@ -244,6 +247,9 @@ export class XbManager {
     }
 
     stop_cell(cell: CellElement): void {
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
         this.#cell_ocx_map.get(cell)?.forEach(ocx => {
             try {
                 ocx.stop();
@@ -254,11 +260,16 @@ export class XbManager {
     }
 
     can_stop_cell(cell: CellElement): boolean {
-        const ocxs = this.#cell_ocx_map.get(cell);
-        if (!ocxs) {
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
             return false;
         } else {
-            return [ ...ocxs.values() ].some(ocx => !ocx.stopped);
+            const ocxs = this.#cell_ocx_map.get(cell);
+            if (!ocxs) {
+                return false;
+            } else {
+                return [ ...ocxs.values() ].some(ocx => !ocx.stopped);
+            }
         }
     }
 
@@ -353,6 +364,9 @@ export class XbManager {
             document.querySelector(`${CellElement.custom_element_name}`)              ??  // first cell
             this.create_cell()                                                            // new cell
         ) as CellElement;
+        if (active_cell.xb !== this) {
+            console.error('unexpected: active_cell has a different xb');
+        }
         active_cell.focus();
         // this.set_active_cell() will establish the active cell correctly,
         // and reset "active" on all other cells.
@@ -392,6 +406,9 @@ export class XbManager {
                               options?:        null|TextOrientedRendererOptionsType,
                               cell?:           null|CellElement,
                               output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
+        if (cell?.xb !== this) {
+            throw new Error('unexpected: cell has a different xb');
+        }
         type ??= 'plain';
         const renderer = TextOrientedRenderer.renderer_for_type(type);
         if (!renderer) {
@@ -407,6 +424,9 @@ export class XbManager {
         cell ??= this.active_cell;
         if (!cell) {
             throw new Error('cell not specified and no active_cell');
+        }
+        if (cell.xb !== this) {
+            throw new Error('unexpected: cell has a different xb');
         }
 
         cell.ensure_id();
@@ -435,8 +455,10 @@ export class XbManager {
         const event_listener = (event: Event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof CellElement && refound_cell !== this.active_cell) {
-                this.set_active_cell(refound_cell);
+            if (refound_cell instanceof CellElement) {
+                if (refound_cell !== this.active_cell && refound_cell.xb === this) {
+                    this.set_active_cell(refound_cell);
+                }
             }
         };
         event_listener_manager.add(output_element, 'focus', event_listener, { capture: true });
@@ -474,6 +496,9 @@ export class XbManager {
     }
 
     #associate_cell_ocx(cell: CellElement, ocx: OutputContext) {
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {
             ocx_set.add(ocx);
@@ -485,6 +510,9 @@ export class XbManager {
     }
 
     #dissociate_cell_ocx(cell: CellElement, ocx: OutputContext) {
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
         const ocx_set = this.#cell_ocx_map.get(cell);
         if (ocx_set) {
             ocx_set.delete(ocx);
@@ -629,15 +657,21 @@ export class XbManager {
     // === EVAL STATES ===
 
     emit_eval_state(cell: CellElement, eval_state: boolean) {
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
         this.#eval_states.dispatch({ cell, eval_state });
     }
 
     #eval_states_observer(data: { cell: CellElement, eval_state: boolean }) {
-        // data is ignored
         const {
             cell,
             eval_state,
         } = data;
+
+        if (cell.xb !== this) {
+            console.error('unexpected: cell has a different xb');
+        }
 
         //!!! do something...
     }
@@ -660,22 +694,26 @@ export class XbManager {
      *     no such adjacent cell.
      */
     adjacent_cell(reference?: CellElement, forward: boolean = false): undefined|CellElement {
-        const cells = this.get_cells();
-        const pos = reference ? cells.indexOf(reference) : -1;
-        if (pos === -1) {
-            return undefined;
+        if (reference?.xb !== this) {
+            throw new Error('unexpected: reference cell has a different xb');
         } else {
-            if (forward) {
-                if (pos === cells.length-1) {
-                    return undefined;
-                } else {
-                    return cells[pos+1];
-                }
+            const cells = this.get_cells();
+            const pos = reference ? cells.indexOf(reference) : -1;
+            if (pos === -1) {
+                return undefined;
             } else {
-                if (pos === 0) {
-                    return undefined;
+                if (forward) {
+                    if (pos === cells.length-1) {
+                        return undefined;
+                    } else {
+                        return cells[pos+1];
+                    }
                 } else {
-                    return cells[pos-1];
+                    if (pos === 0) {
+                        return undefined;
+                    } else {
+                        return cells[pos-1];
+                    }
                 }
             }
         }
