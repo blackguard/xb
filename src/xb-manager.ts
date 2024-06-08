@@ -189,11 +189,11 @@ export class XbManager {
     }
 
     get active_cell (){ return this.#active_cell; }
-    set_active_cell(cell: null|CellElement): void {
-        if (cell?.xb !== this) {
+    set_active_cell(cell: CellElement): void {
+        if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
-        this.#active_cell = (cell ?? null);
+        this.#active_cell = cell;
         for (const cell of this.get_cells()) {
             cell.set_active(cell === this.active_cell);
         }
@@ -406,7 +406,7 @@ export class XbManager {
                               options?:        null|TextOrientedRendererOptionsType,
                               cell?:           null|CellElement,
                               output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
-        if (cell?.xb !== this) {
+        if (cell && cell.xb !== this) {
             throw new Error('unexpected: cell has a different xb');
         }
         type ??= 'plain';
@@ -700,7 +700,7 @@ export class XbManager {
      *     no such adjacent cell.
      */
     adjacent_cell(reference?: CellElement, forward: boolean = false): undefined|CellElement {
-        if (reference?.xb !== this) {
+        if (reference && reference.xb !== this) {
             throw new Error('unexpected: reference cell has a different xb');
         } else {
             const cells = this.get_cells();

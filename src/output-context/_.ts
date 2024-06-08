@@ -72,7 +72,7 @@ export class OutputContext extends OutputContextLike {
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
-        if (parent?.xb !== xb) {
+        if (parent && parent.xb !== xb) {
             throw new Error('parent has a different XbManager');
         }
         this.#xb      = xb;
@@ -151,7 +151,7 @@ export class OutputContext extends OutputContextLike {
      */
     create_new_ocx(element: Element, parent?: OutputContext): OutputContext {
         this.abort_if_stopped();
-        if (parent?.xb !== this.xb) {
+        if (parent && parent.xb !== this.xb) {
             throw new Error('parent has a different XbManager');
         }
         return new OutputContext(this.xb, element, parent);

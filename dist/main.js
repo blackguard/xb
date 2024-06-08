@@ -6526,7 +6526,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
         if (!(element instanceof Element)) {
             throw new Error('element must be an instance of Element');
         }
-        if (parent?.xb !== xb) {
+        if (parent && parent.xb !== xb) {
             throw new Error('parent has a different XbManager');
         }
         this.#xb = xb;
@@ -6594,7 +6594,7 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
      */
     create_new_ocx(element, parent) {
         this.abort_if_stopped();
-        if (parent?.xb !== this.xb) {
+        if (parent && parent.xb !== this.xb) {
             throw new Error('parent has a different XbManager');
         }
         return new OutputContext(this.xb, element, parent);
@@ -28250,10 +28250,10 @@ class XbManager {
     }
     get active_cell() { return this.#active_cell; }
     set_active_cell(cell) {
-        if (cell?.xb !== this) {
+        if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
-        this.#active_cell = (cell ?? null);
+        this.#active_cell = cell;
         for (const cell of this.get_cells()) {
             cell.set_active(cell === this.active_cell);
         }
@@ -28436,7 +28436,7 @@ class XbManager {
     }
     // === RENDER INTERFACE ===
     invoke_renderer_for_type(type = 'plain', options, cell, output_element) {
-        if (cell?.xb !== this) {
+        if (cell && cell.xb !== this) {
             throw new Error('unexpected: cell has a different xb');
         }
         type ??= 'plain';
@@ -28690,7 +28690,7 @@ class XbManager {
      *     no such adjacent cell.
      */
     adjacent_cell(reference, forward = false) {
-        if (reference?.xb !== this) {
+        if (reference && reference.xb !== this) {
             throw new Error('unexpected: reference cell has a different xb');
         }
         else {
