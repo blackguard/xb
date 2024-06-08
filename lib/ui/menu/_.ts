@@ -5,10 +5,6 @@ import {
 } from 'lib/sys/assets-server-url';
 
 import {
-    XbManager,
-} from 'src/xb-manager';
-
-import {
     SerialDataSource,
 } from 'lib/sys/serial-data-source';
 
@@ -43,7 +39,7 @@ export type MenuCommandBindingsGetter = {
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
-export class MenuBar {
+export class MenuBar<DocumentManager> {
     get CLASS (){ return this.constructor as typeof MenuBar; }
 
     static menu_element_tag_name     = 'menu';
@@ -75,15 +71,19 @@ export class MenuBar {
      *  @param {Function|null|undefined} get_command_bindings
      *  @return {MenuBar} menu bar instance
      */
-    static create(xb: XbManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
-        const menubar = new this(xb, parent, menubar_spec, get_command_bindings);
+    static create<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                          parent:                Element,
+                                          menubar_spec:          (string|object)[],
+                                          get_command_bindings?: MenuCommandBindingsGetter
+                                        ) {
+        const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
         return menubar;
     }
 
-    #xb: XbManager;
-    get xb (){ return this.#xb; }
+    #dm: DocumentManager;
+    get dm (){ return this.#dm; }
 
-    #commands = new SerialDataSource<CommandContext>;
+    #commands = new SerialDataSource<CommandContext<DocumentManager>>;
     get commands (){ return this.#commands; }
 
     #selects  = new SerialDataSource<{ select: boolean, target: EventTarget }>();  // select: true is sent before, select: false is sent after
@@ -95,10 +95,7 @@ export class MenuBar {
     #menu_id_to_element = new Map<string, HTMLElement>();
     #menubar_container: HTMLElement;  // set in constructor
 
-    constructor(xb: XbManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
-        if (!(xb instanceof XbManager)) {
-            throw new Error('xb must be an instance of XbManager');
-        }
+    constructor(dm: DocumentManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -106,7 +103,7 @@ export class MenuBar {
             throw new Error('get_command_bindings must be null, undefined, or a function');
         }
 
-        this.#xb = xb;
+        this.#dm = dm;
 
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
@@ -466,7 +463,12 @@ export class MenuBar {
             if (closest_menubar instanceof HTMLElement) {
                 this.#deactivate_menu(closest_menubar);
             }
-            const command_context = { xb: this.xb, command, event, target: event.target };
+            const command_context: CommandContext<DocumentManager> = {
+                dm:      this.dm,
+                command,
+                event,
+                target:  event.target,
+            };
             this.commands.dispatch(command_context);
             event.stopPropagation();
             event.preventDefault();

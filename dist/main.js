@@ -4703,11 +4703,11 @@ var beep = __webpack_require__(53);
 
 
 class KeyEventManager {
-    #xb;
+    #dm;
     #event_target;
     #command_observer;
     #commands;
-    get xb() { return this.#xb; }
+    get dm() { return this.#dm; }
     get event_target() { return this.#event_target; }
     get command_observer() { return this.#command_observer; }
     get commands() { return this.#commands; }
@@ -4720,8 +4720,8 @@ class KeyEventManager {
      *  @param {EventTarget} event_target the source of events
      *  @param {Function} command_observer function to handle command events
      */
-    constructor(xb, event_target, command_observer) {
-        this.#xb = xb;
+    constructor(dm, event_target, command_observer) {
+        this.#dm = dm;
         this.#event_target = event_target;
         this.#command_observer = command_observer;
         this.#event_listener_manager = new event_listener_manager/* EventListenerManager */.w();
@@ -4828,7 +4828,13 @@ class KeyEventManager {
                         event.preventDefault();
                         if (typeof mapping_result === 'string') {
                             const command = mapping_result;
-                            const command_context = { xb: this.xb, command, event, target: event.target, key_spec };
+                            const command_context = {
+                                dm: this.dm,
+                                command,
+                                event,
+                                target: event.target,
+                                key_spec,
+                            };
                             this.commands.dispatch(command_context);
                             reset();
                         }
@@ -4884,22 +4890,17 @@ class KeyEventManager {
 /***/ }),
 
 /***/ 7827:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   j: () => (/* binding */ MenuBar)
 /* harmony export */ });
 /* unused harmony export load_stylesheet */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
-/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6318);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8401);
-/* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2636);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__]);
-src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6318);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
+/* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2636);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/lib/ui/menu/_.ts")); // save for later
-
 
 
 
@@ -4938,31 +4939,29 @@ class MenuBar {
      *  @param {Function|null|undefined} get_command_bindings
      *  @return {MenuBar} menu bar instance
      */
-    static create(xb, parent, menubar_spec, get_command_bindings) {
-        const menubar = new this(xb, parent, menubar_spec, get_command_bindings);
+    static create(dm, // static members cannot reference class type parameters
+    parent, menubar_spec, get_command_bindings) {
+        const menubar = new this(dm, parent, menubar_spec, get_command_bindings);
         return menubar;
     }
-    #xb;
-    get xb() { return this.#xb; }
-    #commands = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__/* .SerialDataSource */ .B;
+    #dm;
+    get dm() { return this.#dm; }
+    #commands = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__/* .SerialDataSource */ .B;
     get commands() { return this.#commands; }
-    #selects = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_4__/* .SerialDataSource */ .B(); // select: true is sent before, select: false is sent after
+    #selects = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_3__/* .SerialDataSource */ .B(); // select: true is sent before, select: false is sent after
     get selects() { return this.#selects; }
     #get_command_bindings; // set in constructor
     get get_command_bindings() { return this.#get_command_bindings; }
     #menu_id_to_element = new Map();
     #menubar_container; // set in constructor
-    constructor(xb, parent, menubar_spec, get_command_bindings) {
-        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g)) {
-            throw new Error('xb must be an instance of XbManager');
-        }
+    constructor(dm, parent, menubar_spec, get_command_bindings) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
         if (get_command_bindings !== null && typeof get_command_bindings !== 'undefined' && typeof get_command_bindings !== 'function') {
             throw new Error('get_command_bindings must be null, undefined, or a function');
         }
-        this.#xb = xb;
+        this.#dm = dm;
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
         this.#menubar_container = this.#build_menubar(parent, menubar_spec);
@@ -5139,7 +5138,7 @@ class MenuBar {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
-        const element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+        const element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             parent,
             tag: this.CLASS.menuitem_element_tag_name,
         });
@@ -5190,13 +5189,13 @@ class MenuBar {
         else {
             // collection
             element.classList.add('collection');
-            const collection_element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+            const collection_element = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
                 parent: element,
                 tag: this.CLASS.menu_element_tag_name,
             });
             collection_element.classList.add('menu');
             if (!toplevel) {
-                const el = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+                const el = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
                     parent: element,
                     attrs: {
                         class: ['menuitem-annotation', 'collection-arrow'],
@@ -5240,7 +5239,7 @@ class MenuBar {
     }
     #build_menuitem(label, toplevel = false) {
         // both items and collections are menuitem elements, but the collection also has children...
-        const menuitem = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+        const menuitem = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             tag: this.CLASS.menuitem_element_tag_name,
             attrs: {
                 set_id: true,
@@ -5248,7 +5247,7 @@ class MenuBar {
             },
         });
         // add the label
-        const lbl = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+        const lbl = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             parent: menuitem,
             attrs: {
                 class: 'menuitem-label',
@@ -5272,7 +5271,7 @@ class MenuBar {
             if (command_bindings) {
                 const kbd_bindings = command_bindings[command];
                 if (kbd_bindings) {
-                    const kbd_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+                    const kbd_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
                         parent: menuitem,
                         attrs: {
                             class: 'menuitem-annotation',
@@ -5280,11 +5279,11 @@ class MenuBar {
                     });
                     // create <kbd>...</kbd> elements
                     kbd_bindings.forEach(binding => {
-                        const keys = binding.split(lib_ui_key___WEBPACK_IMPORTED_MODULE_3__/* .KeySpec */ .k7.canonical_key_string_separator);
+                        const keys = binding.split(lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7.canonical_key_string_separator);
                         const binding_glyphs = keys
-                            .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_3__/* .KeySpec */ .k7(key).glyphs)
+                            .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7(key).glyphs)
                             .join(this.CLASS.small_right_triangle);
-                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
+                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
                     });
                 }
             }
@@ -5294,14 +5293,19 @@ class MenuBar {
             if (closest_menubar instanceof HTMLElement) {
                 this.#deactivate_menu(closest_menubar);
             }
-            const command_context = { xb: this.xb, command, event, target: event.target };
+            const command_context = {
+                dm: this.dm,
+                command,
+                event,
+                target: event.target,
+            };
             this.commands.dispatch(command_context);
             event.stopPropagation();
             event.preventDefault();
         });
     }
     #build_menubar(parent, menubar_spec) {
-        const menubar_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .T1)({
+        const menubar_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             parent,
             tag: this.CLASS.menu_element_tag_name,
             attrs: {
@@ -5418,8 +5422,6 @@ class MenuBar {
     }
 }
 
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -5628,7 +5630,7 @@ class CellElement extends HTMLElement {
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name);
                 if (cell) {
-                    // self.xb?.set_active_cell() clears/sets the "active" attributes of all cells
+                    // self.xb?.set_active_cell() clears the "active" attributes of all other cells
                     self.xb?.set_active_cell(cell);
                 }
             }
@@ -5877,22 +5879,22 @@ function command_handler__reset(command_context) {
     }
 }
 function command_handler__reset_all(command_context) {
-    command_context.xb.reset();
+    command_context.dm.reset();
     return true;
 }
 async function command_handler__clear_all(command_context) {
     if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .ConfirmDialog */ .QH.run('Clear document?')) {
-        command_context.xb.active_cell?.focus();
+        command_context.dm.active_cell?.focus();
         return false;
     }
-    command_context.xb.clear();
+    command_context.dm.clear();
     return true;
 }
 async function command_handler__save(command_context) {
-    return command_context.xb.perform_save();
+    return command_context.dm.perform_save();
 }
 async function command_handler__save_as(command_context) {
-    return command_context.xb.perform_save(true);
+    return command_context.dm.perform_save(true);
 }
 async function command_handler__eval(command_context) {
     const cell = command_context.target;
@@ -5901,7 +5903,7 @@ async function command_handler__eval(command_context) {
     }
     else {
         try {
-            await command_context.xb.invoke_renderer_for_type(cell.type, undefined, cell);
+            await command_context.dm.invoke_renderer_for_type(cell.type, undefined, cell);
         }
         catch (error) {
             console.error('error rendering cell', error, cell);
@@ -5919,7 +5921,7 @@ async function command_handler__eval_and_refocus(command_context) {
         return false;
     }
     else {
-        const next_cell = command_context.xb.adjacent_cell(command_context.target, true) ?? command_context.xb.create_cell();
+        const next_cell = command_context.dm.adjacent_cell(command_context.target, true) ?? command_context.dm.create_cell();
         next_cell.focus();
         next_cell.scroll_into_view();
         return true;
@@ -5931,20 +5933,20 @@ async function multi_eval_helper(command_context, eval_all = false) {
     }
     else {
         const target_cell = command_context.target;
-        const cells = command_context.xb.get_cells();
+        const cells = command_context.dm.get_cells();
         if (!eval_all && cells.indexOf(target_cell) === -1) {
             return true; // don't fail, but also don't do anything if !eval_all and cell is not in cells
         }
         else {
-            command_context.xb.stop(); // stop any previously-running renderers
-            command_context.xb.reset_global_state();
+            command_context.dm.stop(); // stop any previously-running renderers
+            command_context.dm.reset_global_state();
             for (const iter_cell of cells) {
                 iter_cell.focus();
                 if (!eval_all && iter_cell === target_cell) {
                     break; // only eval cells before target_cell if !eval_all
                 }
                 try {
-                    await command_context.xb.invoke_renderer_for_type(iter_cell.type, undefined, iter_cell);
+                    await command_context.dm.invoke_renderer_for_type(iter_cell.type, undefined, iter_cell);
                 }
                 catch (error) {
                     console.error('error rendering cell', error, iter_cell);
@@ -5985,7 +5987,7 @@ function command_handler__stop(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop_all(command_context) {
-    command_context.xb.stop();
+    command_context.dm.stop();
     return true;
 }
 function command_handler__focus_up(command_context) {
@@ -5993,7 +5995,7 @@ function command_handler__focus_up(command_context) {
         return false;
     }
     else {
-        const focus_cell = command_context.xb.adjacent_cell(command_context.target, false);
+        const focus_cell = command_context.dm.adjacent_cell(command_context.target, false);
         if (!focus_cell) {
             return false;
         }
@@ -6009,7 +6011,7 @@ function command_handler__focus_down(command_context) {
         return false;
     }
     else {
-        const focus_cell = command_context.xb.adjacent_cell(command_context.target, true);
+        const focus_cell = command_context.dm.adjacent_cell(command_context.target, true);
         if (!focus_cell) {
             return false;
         }
@@ -6026,15 +6028,15 @@ function move_helper(command_context, move_down) {
     }
     else {
         const cell = command_context.target;
-        let before = command_context.xb.adjacent_cell(cell, move_down);
+        let before = command_context.dm.adjacent_cell(cell, move_down);
         if (!before) {
             return false;
         }
         else {
             if (move_down) {
-                before = command_context.xb.adjacent_cell(before, move_down);
+                before = command_context.dm.adjacent_cell(before, move_down);
             }
-            const parent = before ? before.parentElement : command_context.xb.cell_parent;
+            const parent = before ? before.parentElement : command_context.dm.cell_parent;
             (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .V1)(cell, { parent, before });
             cell.focus();
             cell.scroll_into_view();
@@ -6056,9 +6058,9 @@ function add_cell_helper(command_context, add_before) {
         const this_cell = command_context.target;
         const before = add_before
             ? this_cell
-            : command_context.xb.adjacent_cell(this_cell, true);
-        const parent = before ? before.parentElement : command_context.xb.cell_parent;
-        const new_cell = command_context.xb.create_cell({ before, parent });
+            : command_context.dm.adjacent_cell(this_cell, true);
+        const parent = before ? before.parentElement : command_context.dm.cell_parent;
+        const new_cell = command_context.dm.create_cell({ before, parent });
         if (!new_cell) {
             return false;
         }
@@ -6086,10 +6088,10 @@ async function command_handler__delete(command_context) {
                 return false;
             }
         }
-        let next_cell = command_context.xb.adjacent_cell(cell, true) ?? command_context.xb.adjacent_cell(cell, false);
+        let next_cell = command_context.dm.adjacent_cell(cell, true) ?? command_context.dm.adjacent_cell(cell, false);
         cell.remove();
         if (!next_cell) {
-            next_cell = command_context.xb.create_cell();
+            next_cell = command_context.dm.create_cell();
         }
         next_cell.focus();
         next_cell.scroll_into_view();
@@ -6411,7 +6413,7 @@ async function initialize_document() {
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
         await src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
-        globalThis.xb_manager = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton; //!!!
+        globalThis.XbManager = src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g; //!!!
         // initialize renderer factories after all the TextOrientedRenderer factories have been registered...
         (0,src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* .reset_to_initial_text_renderer_factories */ .$F)();
     }
@@ -28126,8 +28128,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(53);
 /* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7654);
 /* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7451);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
-([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
+([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
 
 
@@ -28527,17 +28529,8 @@ class XbManager {
         }
         this.#key_event_manager.inject_key_event(key_event);
     }
-    #command_observer(command_context) {
-        let success = false;
-        try {
-            this.#perform_command(command_context);
-        }
-        catch (error) {
-            console.error('error processing command', command_context, error);
-        }
-    }
     inject_command(command) {
-        return this.#perform_command({ xb: this, command, target: this.active_cell });
+        return this.#perform_command({ dm: this, command, target: this.active_cell });
     }
     #perform_command(command_context) {
         let success = false; // for now...
@@ -28560,7 +28553,7 @@ class XbManager {
                             .catch((error) => {
                             console.error('error while performing command', error, command_context);
                         });
-                        return; // beep() handled asynchronously
+                        success = true; // so far..., a failure may yet happen asynchronously
                     }
                     else {
                         success = bindings_fn(updated_command_context);
@@ -28570,6 +28563,15 @@ class XbManager {
         }
         if (!success) {
             (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__/* .beep */ .V)();
+        }
+    }
+    #command_observer(command_context) {
+        let success = false;
+        try {
+            this.#perform_command(command_context);
+        }
+        catch (error) {
+            console.error('error processing command', command_context, error);
         }
     }
     #update_menu_state() {

@@ -247,7 +247,7 @@ export class CellElement extends HTMLElement {
             if (target instanceof Element) {
                 const cell = target.closest(CellElement.custom_element_name) as CellElement;
                 if (cell) {
-                    // self.xb?.set_active_cell() clears/sets the "active" attributes of all cells
+                    // self.xb?.set_active_cell() clears the "active" attributes of all other cells
                     self.xb?.set_active_cell(cell);
                 }
             }

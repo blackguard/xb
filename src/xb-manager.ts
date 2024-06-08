@@ -120,8 +120,8 @@ export class XbManager {
     #eval_states = new SerialDataSource<{ cell: CellElement, eval_state: boolean }>();
     #eval_states_subscription: Subscription;
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
-    #key_event_manager: KeyEventManager;
-    #menubar: undefined|MenuBar = undefined;
+    #key_event_manager: KeyEventManager<XbManager>;
+    #menubar: undefined|MenuBar<XbManager> = undefined;
     #menubar_commands_subscription: undefined|Subscription = undefined;
     #menubar_selects_subscription:  undefined|Subscription = undefined;
     #file_handle: any = null;
@@ -150,7 +150,7 @@ export class XbManager {
 
         this.#command_bindings = get_global_command_bindings();
 
-        this.#key_event_manager = new KeyEventManager(this, window, this.#command_observer.bind(this));
+        this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#command_observer.bind(this));
         const key_map = new KeyMap(get_global_initial_key_map_bindings());
         this.push_key_map(key_map);
         this.#key_event_manager.attach();
@@ -340,7 +340,7 @@ export class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null;//!!! implement this
-        this.#menubar = MenuBar.create(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
+        this.#menubar = MenuBar.create<XbManager>(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
         //!!! this.#menubar_commands_subscription is never unsubscribed
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
@@ -524,20 +524,11 @@ export class XbManager {
         this.#key_event_manager.inject_key_event(key_event);
     }
 
-    #command_observer(command_context: CommandContext): void {
-        let success = false;
-        try {
-            this.#perform_command(command_context);
-        } catch (error) {
-            console.error('error processing command', command_context, error);
-        }
-    }
-
     inject_command(command: string) {
-        return this.#perform_command({ xb: this, command, target: this.active_cell });
+        return this.#perform_command({ dm: this, command, target: this.active_cell });
     }
 
-    #perform_command(command_context: CommandContext): void {
+    #perform_command(command_context: CommandContext<XbManager>): void {
         let success: boolean = false;  // for now...
         if (command_context) {
             const target = command_context.target;
@@ -558,7 +549,7 @@ export class XbManager {
                             .catch((error: unknown) => {
                                 console.error('error while performing command', error, command_context);
                             });
-                        return;  // beep() handled asynchronously
+                        success = true;  // so far..., a failure may yet happen asynchronously
                     } else {
                         success = bindings_fn(updated_command_context);
                     }
@@ -567,6 +558,15 @@ export class XbManager {
         }
         if (!success) {
             beep();
+        }
+    }
+
+    #command_observer(command_context: CommandContext<XbManager>): void {
+        let success = false;
+        try {
+            this.#perform_command(command_context);
+        } catch (error) {
+            console.error('error processing command', command_context, error);
         }
     }
 
