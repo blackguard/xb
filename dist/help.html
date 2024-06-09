@@ -5,6 +5,7 @@
     <script type="module" src="../dist/main.js"></script>
 </head>
 <body>
+
 <cell- id="id-d54b874e-16db-49b5-8946-97a6af438abb" data-active="true">
 # Help
 === XB DESIGN NOTES ===
@@ -55,8 +56,55 @@ immutable?
 virtual dom?
 
 ---
-</cell-><output data-source-element="id-d54b874e-16db-49b5-8946-97a6af438abb" data-source-media-type="text/markdown"><div data-source-media-type="text/markdown"><h1 id="help">Help</h1>
+</cell-><output class="cell-output" data-source-element="id-d54b874e-16db-49b5-8946-97a6af438abb" data-source-media-type="text/markdown"><div data-source-media-type="text/markdown"><h1 id="help">Help</h1>
+<p>=== XB DESIGN NOTES ===</p>
+<p>editor
+renderer
+ocx (output context)</p>
+<p>document_manager
+activity_manager
+command_manager</p>
+<p>settings</p>
+<hr>
+<p>locus of activity management candidates:</p>
+<ul>
+<li>XbManager.singleton</li>
+<li>ocx</li>
+<li>renderer</li>
+<li>cell</li>
+<li>output_element
+choose: XbManager.singleton and ocx</li>
+</ul>
+<hr>
+<p>"cell" elements</p>
+<ul>
+<li>id</li>
+<li>css class: "cell"</li>
+<li>dataset attributes:
+-- type: media-type, e.g., "text/plain", "text/html", "text/javascipt", "text/typescript", "application/json", "text/x-tex", "text/x-latex", ...</li>
+</ul>
+<p>"output" elements</p>
+<ul>
+<li>class: "output" (necessary?)</li>
+<li>dataset attributes:
+-- source-element: source element (cell) id
+-- source-media-type</li>
+</ul>
+<p>see: <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">https://www.iana.org/assignments/media-types/media-types.xhtml</a></p>
+<hr>
+<p>alternative terms: renderer, translator, converter, interpreter, compiler, evaluator</p>
+<hr>
+<p>reactive?
+typescript?
+Signals?</p>
+<p>immutable?
+virtual dom?</p>
+<hr>
+</div></output><output data-source-element="id-d54b874e-16db-49b5-8946-97a6af438abb" data-source-media-type="text/markdown"><div data-source-media-type="text/markdown"><h1 id="help">Help</h1>
 <p>... to be created</p>
 </div></output>
+
+
+
 </body>
 </html>

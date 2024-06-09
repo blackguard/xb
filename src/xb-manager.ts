@@ -442,6 +442,7 @@ export class XbManager {
             parent: cell.parentElement,
             before: cell.nextSibling,
             attrs: {
+                class: 'cell-output',
                 'data-source-element':    cell.id,
                 'data-source-media-type': renderer.media_type,
             },
