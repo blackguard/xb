@@ -1,4 +1,8 @@
 import {
+    show_initialization_failed,
+} from 'src/init';
+
+import {
     SerialDataSource,
 } from 'lib/sys/serial-data-source';
 
@@ -28,6 +32,9 @@ const initial_settings = {
     formatting_options: {
         align:  'left',
         indent: '0em',
+    },
+    render_options: {
+        reset_before_render: true,
     },
 };
 
@@ -241,6 +248,34 @@ export function analyze_formatting_options(formatting_options: any, name?: strin
     return undefined;
 }
 
+/** analyze/validate a render_options reset_before_render property
+ *  @param {string} value
+ *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
+ */
+export function analyze_render_options_reset_before_render(value: any, name?: string): undefined|string {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'reset_before_render'} must be true or false`;
+    }
+    return undefined;
+}
+/** analyze/validate a render_options object
+ *  @param {Object} render_options: { reset_before_render?: boolean }
+ *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
+ */
+export function analyze_render_options(render_options: any, name?: string): undefined|string {
+    const keys = Object.keys(render_options);
+    if (!keys.every(k => ['reset_before_render'].includes(k))) {
+        return `${name ?? 'render_options'} may only have the keys "reset_before_render"`;
+    }
+    if ('reset_before_render' in render_options) {
+        const complaint = analyze_render_options_reset_before_render(render_options.reset_before_render);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    return undefined;
+}
+
 const valid_theme_values = [ theme_system, theme_light, theme_dark ];
 
 export function get_valid_theme_values() {
@@ -256,8 +291,8 @@ export function analyze_settings(settings: any, name?: string): undefined|string
         return `${name ?? 'settings'} must be an object`;
     }
     const keys = Object.keys(settings);
-    if (!keys.every(k => ['editor_options', 'formatting_options', 'theme'].includes(k))) {
-        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options" and "theme"`;
+    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme'].includes(k))) {
+        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", 'render_options' and "theme"`;
     }
     if (!('editor_options' in settings)) {
         return `${name ?? 'settings'} must contain an "editor_options" property`;
@@ -271,6 +306,14 @@ export function analyze_settings(settings: any, name?: string): undefined|string
         return `${name ?? 'settings'} must contain a "formmating_options" property`;
     } else {
         const complaint = analyze_formatting_options(settings.formatting_options);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    if (!('render_options' in settings)) {
+        return `${name ?? 'settings'} must contain a "render_options" property`;
+    } else {
+        const complaint = analyze_render_options(settings.render_options);
         if (complaint) {
             return complaint;
         }
@@ -290,7 +333,9 @@ export function analyze_settings(settings: any, name?: string): undefined|string
 (() => {
     const complaint = analyze_settings(initial_settings);
     if (complaint) {
-        throw new Error(`initial_settings: ${complaint}`);
+        // there is no place to throw this error to, we are deep in module initialization,
+        // so just display the error to the top-level document
+        show_initialization_failed(new Error(`initial_settings: ${complaint}`));
     }
 })();
 

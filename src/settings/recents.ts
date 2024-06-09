@@ -10,7 +10,8 @@ export const max_recents = 100;  // the maximum number of elements to store
 
 export function is_valid_recent(recent: object): boolean {
     const FSFH = globalThis.FileSystemFileHandle ?? null;  // not defined in all browsers at this time
-    return ( typeof recent === 'object' &&
+    return ( recent &&
+             typeof recent === 'object' &&
              (recent as any).file_handle instanceof FSFH &&
              typeof (recent as any).stats === 'object' &&
              typeof (recent as any).stats.name === 'string'

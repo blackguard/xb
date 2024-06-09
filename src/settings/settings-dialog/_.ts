@@ -37,6 +37,7 @@ import {
     valid_formatting_options_align_values,
     analyze_formatting_options_align,
     analyze_formatting_options_indent,
+    analyze_render_options_reset_before_render,
     get_valid_theme_values,
     analyze_theme,
 } from '../settings';
@@ -121,6 +122,16 @@ const sections = [
             settings_path: [ 'formatting_options', 'indent' ],
             analyze: analyze_formatting_options_indent,  // (value, label) => complaint
         }],
+    }, {
+        name: 'Render',
+        settings: [{
+            id: 'render_options_reset_before_render',
+            label: 'Reset cell before render',
+            type: 'checkbox',
+            settings_path: [ 'render_options', 'reset_before_render' ],
+            analyze: analyze_render_options_reset_before_render,  // (value, label) => complaint
+        }
+        ],
     },
 ];
 

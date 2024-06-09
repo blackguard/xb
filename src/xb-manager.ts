@@ -58,6 +58,7 @@ import {
 
 import {
     settings_updated_events,
+    get_settings,
 } from 'src/settings/_';
 
 import {
@@ -131,6 +132,9 @@ export class XbManager {
     // the following map is maintained by this.invoke_renderer()
     #cell_ocx_map = new WeakMap<CellElement, Set<OutputContext>>();
 
+    #reset_before_render: boolean = false;  // from settings, kept up-to-date via settings_updated_events
+    get reset_before_render (){ return this.#reset_before_render; }
+
     constructor() {
         // must set xb on all incoming cells
         for (const cell of this.get_cells()) {
@@ -142,11 +146,8 @@ export class XbManager {
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! this.#eval_states_subscription is never unsubscribed
 
         // listen for settings changed events and trigger update in cells
-        settings_updated_events.subscribe(() => {
-            for (const cell of this.get_cells()) {
-                cell.update_from_settings();
-            }
-        });  //!!! never unsubscribed
+        settings_updated_events.subscribe(this.update_from_settings.bind(this));  //!!! never unsubscribed
+        this.update_from_settings();  // establish initial settings
 
         this.#command_bindings = get_global_command_bindings();
 
@@ -435,7 +436,17 @@ export class XbManager {
         const cell_id = cell.id;
 
         options ??= {};
-        options.global_state ??= this.global_state;
+        if (!options.global_state) {
+            options = {
+                ...options,
+                global_state: this.global_state,
+            };
+        }
+
+        // reset_before_render is performed only if no output_element was passed in
+        if (!output_element && this.#reset_before_render) {
+            cell.reset();
+        }
 
         output_element ??= create_element({
             tag: 'output',
@@ -662,6 +673,14 @@ export class XbManager {
               recents
             */
         }
+    }
+
+    update_from_settings() {
+        const current_settings = get_settings();
+        for (const cell of this.get_cells()) {
+            cell.update_from_settings();
+        }
+        this.#reset_before_render = !!(current_settings as any)?.render_options?.reset_before_render;
     }
 
     // === EVAL STATES ===

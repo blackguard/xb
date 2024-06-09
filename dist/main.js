@@ -27100,6 +27100,16 @@ const sections = [
                 settings_path: ['formatting_options', 'indent'],
                 analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_formatting_options_indent */ .fe, // (value, label) => complaint
             }],
+    }, {
+        name: 'Render',
+        settings: [{
+                id: 'render_options_reset_before_render',
+                label: 'Reset cell before render',
+                type: 'checkbox',
+                settings_path: ['render_options', 'reset_before_render'],
+                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_render_options_reset_before_render */ .m3, // (value, label) => complaint
+            }
+        ],
     },
 ];
 class SettingsDialog extends lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .Dialog */ .Vq {
@@ -27224,13 +27234,18 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   fe: () => (/* binding */ analyze_formatting_options_indent),
 /* harmony export */   gd: () => (/* binding */ analyze_editor_options_indent_with_tabs),
 /* harmony export */   hh: () => (/* binding */ analyze_editor_options_mode),
+/* harmony export */   m3: () => (/* binding */ analyze_render_options_reset_before_render),
 /* harmony export */   oj: () => (/* binding */ get_settings),
 /* harmony export */   yj: () => (/* binding */ analyze_formatting_options_align),
 /* harmony export */   zi: () => (/* binding */ analyze_editor_options_tab_key_indents)
 /* harmony export */ });
-/* unused harmony exports validate_numeric, analyze_contained, analyze_editor_options, valid_formatting_options_indent_units, analyze_formatting_options, analyze_settings, _reset_settings */
-/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6318);
-/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6477);
+/* unused harmony exports validate_numeric, analyze_contained, analyze_editor_options, valid_formatting_options_indent_units, analyze_formatting_options, analyze_render_options, analyze_settings, _reset_settings */
+/* harmony import */ var src_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6178);
+/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6318);
+/* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6477);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__]);
+src_init__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 
 // === INITIAL SETTINGS ===
@@ -27251,12 +27266,15 @@ const initial_settings = {
         align: 'left',
         indent: '0em',
     },
+    render_options: {
+        reset_before_render: true,
+    },
 };
 // === EVENT INTERFACE ===
 function copy_settings(settings) {
     return JSON.parse(JSON.stringify(settings));
 }
-const settings_updated_events = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_1__/* .SerialDataSource */ .B();
+const settings_updated_events = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_2__/* .SerialDataSource */ .B();
 // === GENERIC VALIDATION ===
 const numeric_re = /^([+-]?[0-9]+[.][0-9]*[Ee][+-]?[0-9]+|[+-]?[.][0-9]+[Ee][+-]?[0-9]+|[+-]?[0-9]+[Ee][+-]?[0-9]+|[+-]?[0-9]+[.][0-9]*|[+-]?[.][0-9]+|[+-]?[0-9]+)$/;
 /** validate test_value for being numeric
@@ -27442,6 +27460,33 @@ function analyze_formatting_options(formatting_options, name) {
     }
     return undefined;
 }
+/** analyze/validate a render_options reset_before_render property
+ *  @param {string} value
+ *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
+ */
+function analyze_render_options_reset_before_render(value, name) {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'reset_before_render'} must be true or false`;
+    }
+    return undefined;
+}
+/** analyze/validate a render_options object
+ *  @param {Object} render_options: { reset_before_render?: boolean }
+ *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
+ */
+function analyze_render_options(render_options, name) {
+    const keys = Object.keys(render_options);
+    if (!keys.every(k => ['reset_before_render'].includes(k))) {
+        return `${name ?? 'render_options'} may only have the keys "reset_before_render"`;
+    }
+    if ('reset_before_render' in render_options) {
+        const complaint = analyze_render_options_reset_before_render(render_options.reset_before_render);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    return undefined;
+}
 const valid_theme_values = [theme_system, theme_light, theme_dark];
 function get_valid_theme_values() {
     return [...valid_theme_values];
@@ -27454,8 +27499,8 @@ function analyze_settings(settings, name) {
         return `${name ?? 'settings'} must be an object`;
     }
     const keys = Object.keys(settings);
-    if (!keys.every(k => ['editor_options', 'formatting_options', 'theme'].includes(k))) {
-        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options" and "theme"`;
+    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme'].includes(k))) {
+        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", 'render_options' and "theme"`;
     }
     if (!('editor_options' in settings)) {
         return `${name ?? 'settings'} must contain an "editor_options" property`;
@@ -27475,6 +27520,15 @@ function analyze_settings(settings, name) {
             return complaint;
         }
     }
+    if (!('render_options' in settings)) {
+        return `${name ?? 'settings'} must contain a "render_options" property`;
+    }
+    else {
+        const complaint = analyze_render_options(settings.render_options);
+        if (complaint) {
+            return complaint;
+        }
+    }
     if (!('theme' in settings)) {
         return `${name ?? 'settings'} must contain a "theme" property`;
     }
@@ -27490,18 +27544,20 @@ function analyze_settings(settings, name) {
 (() => {
     const complaint = analyze_settings(initial_settings);
     if (complaint) {
-        throw new Error(`initial_settings: ${complaint}`);
+        // there is no place to throw this error to, we are deep in module initialization,
+        // so just display the error to the top-level document
+        (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .show_initialization_failed */ .R)(new Error(`initial_settings: ${complaint}`));
     }
 })();
 // === STORAGE ===
 // may throw an error if the settings value is corrupt or circular
 async function put_settings_to_storage(settings) {
-    return _storage__WEBPACK_IMPORTED_MODULE_0__/* .storage_db */ .zS.put(_storage__WEBPACK_IMPORTED_MODULE_0__/* .db_key_settings */ .Fx, settings);
+    return _storage__WEBPACK_IMPORTED_MODULE_1__/* .storage_db */ .zS.put(_storage__WEBPACK_IMPORTED_MODULE_1__/* .db_key_settings */ .Fx, settings);
 }
 // may throw an error if settings value corrupt and unable to store initial settings
 async function get_settings_from_storage() {
     try {
-        const settings = await _storage__WEBPACK_IMPORTED_MODULE_0__/* .storage_db */ .zS.get(_storage__WEBPACK_IMPORTED_MODULE_0__/* .db_key_settings */ .Fx);
+        const settings = await _storage__WEBPACK_IMPORTED_MODULE_1__/* .storage_db */ .zS.get(_storage__WEBPACK_IMPORTED_MODULE_1__/* .db_key_settings */ .Fx);
         if (!analyze_settings(settings)) {
             return settings;
         }
@@ -27619,7 +27675,7 @@ const db_key_themes = 'themes';
 const db_key_recents = 'recents';
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = '17b5977c-98a0-49a2-acaf-59285ff6bb1f';
+const uuid = 'f7e16054-d00f-4824-91ab-44979678da13';
 const database_name = `settings-database-${uuid}`;
 const database_store_name = `settings-database-store-${uuid}`;
 const storage_db = new IndexedDBInterface(database_name, database_store_name);
@@ -27772,10 +27828,10 @@ const standard_themes_spec = {
     "--theme-ou-p": ['0.5em', '0.5em'],
     "--theme-ou-fgc": ['black', '#eee'],
     "--theme-ou-bgc": ['white', 'black'],
-    "--theme-ty-fgc-markdown": ['black', 'white'],
-    "--theme-ty-bgc-markdown": ['hsl(205deg  85%  90% / 100%)', 'hsl(205deg  80%  30% / 100%)'],
     "--theme-ty-fgc-tex": ['black', 'white'],
-    "--theme-ty-bgc-tex": ['hsl( 45deg  55%  80% / 100%)', 'hsl( 45deg  35%  30% / 100%)'],
+    "--theme-ty-bgc-tex": ['hsl(205deg  85%  90% / 100%)', 'hsl(205deg  80%  30% / 100%)'],
+    "--theme-ty-fgc-markdown": ['black', 'white'],
+    "--theme-ty-bgc-markdown": ['hsl( 45deg  55%  80% / 100%)', 'hsl( 45deg  35%  30% / 100%)'],
     "--theme-ty-fgc-javascript": ['black', 'white'],
     "--theme-ty-bgc-javascript": ['hsl( 85deg  55%  80% / 100%)', 'hsl(120deg  45%  25% / 100%)'],
     "--theme-ty-fgc-plain": ['black', 'white'],
@@ -28233,6 +28289,8 @@ class XbManager {
     #global_state = {}; // persistent state for renderers
     // the following map is maintained by this.invoke_renderer()
     #cell_ocx_map = new WeakMap();
+    #reset_before_render = false; // from settings, kept up-to-date via settings_updated_events
+    get reset_before_render() { return this.#reset_before_render; }
     constructor() {
         // must set xb on all incoming cells
         for (const cell of this.get_cells()) {
@@ -28241,11 +28299,8 @@ class XbManager {
         this.reset_global_state();
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
         // listen for settings changed events and trigger update in cells
-        src_settings___WEBPACK_IMPORTED_MODULE_9__/* .settings_updated_events */ .Ll.subscribe(() => {
-            for (const cell of this.get_cells()) {
-                cell.update_from_settings();
-            }
-        }); //!!! never unsubscribed
+        src_settings___WEBPACK_IMPORTED_MODULE_9__/* .settings_updated_events */ .Ll.subscribe(this.update_from_settings.bind(this)); //!!! never unsubscribed
+        this.update_from_settings(); // establish initial settings
         this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_command_bindings */ .$R)();
         this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
         const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD)());
@@ -28489,7 +28544,16 @@ class XbManager {
         cell.ensure_id();
         const cell_id = cell.id;
         options ??= {};
-        options.global_state ??= this.global_state;
+        if (!options.global_state) {
+            options = {
+                ...options,
+                global_state: this.global_state,
+            };
+        }
+        // reset_before_render is performed only if no output_element was passed in
+        if (!output_element && this.#reset_before_render) {
+            cell.reset();
+        }
         output_element ??= (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
             tag: 'output',
             parent: cell.parentElement,
@@ -28694,6 +28758,13 @@ class XbManager {
               recents
             */
         }
+    }
+    update_from_settings() {
+        const current_settings = (0,src_settings___WEBPACK_IMPORTED_MODULE_9__/* .get_settings */ .oj)();
+        for (const cell of this.get_cells()) {
+            cell.update_from_settings();
+        }
+        this.#reset_before_render = !!current_settings?.render_options?.reset_before_render;
     }
     // === EVAL STATES ===
     emit_eval_state(cell, eval_state) {

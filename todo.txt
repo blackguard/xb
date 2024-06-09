@@ -2,6 +2,7 @@ make help document
 update README.md
 manage scroll position better
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
+need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
 fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
