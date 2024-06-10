@@ -214,9 +214,9 @@ marked.use({
         {
             name: extension_name__eval_code,
             level: 'block',
-            start(src: string) { return src.match(/^[`]{3}[ ]*[!]/)?.index; },
+            start(src: string) { return src.match(/^[`]{3}[^\n]*[!][\s]*[\n]/)?.index; },
             tokenizer(src: string, tokens: unknown): undefined|walkTokens_token_type {
-                const match = src.match(/^[`]{3}[ ]*[!]([ \t]*[^\n]*[ \t]*)?[\n](.*?)[`]{3}/s);
+                const match = src.match(/^[`]{3}[\s]*([^\n]*)[\s]*[!][\s]*[\n](.*?)[`]{3}/s);
                 if (!match) {
                     return undefined;
                 } else {

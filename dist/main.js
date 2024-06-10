@@ -13396,9 +13396,9 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
         {
             name: extension_name__eval_code,
             level: 'block',
-            start(src) { return src.match(/^[`]{3}[ ]*[!]/)?.index; },
+            start(src) { return src.match(/^[`]{3}[^\n]*[!][\s]*[\n]/)?.index; },
             tokenizer(src, tokens) {
-                const match = src.match(/^[`]{3}[ ]*[!]([ \t]*[^\n]*[ \t]*)?[\n](.*?)[`]{3}/s);
+                const match = src.match(/^[`]{3}[\s]*([^\n]*)[\s]*[!][\s]*[\n](.*?)[`]{3}/s);
                 if (!match) {
                     return undefined;
                 }
