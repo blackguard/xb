@@ -9,6 +9,7 @@
 body {
     overflow: hidden;  /* inhibit scrolling for body */
     margin: 0;
+    color:            var(--theme-by-fgc);
     background-color: var(--theme-by-bgc);
 }
 
@@ -33,10 +34,10 @@ main {
     max-width:  100vw;
 }
 main > :first-child {
-    padding-top: 0;
+    margin-top: 0;
 }
 main > :not(:first-child) {
-    padding-top: var(--theme-cl-p-inter);
+    margin-top: var(--theme-cl-p-inter);
 }
 
 .cell-output {
@@ -91,7 +92,7 @@ cell- > * {
 }
 
 cell- {
-    padding-top: 0;
+    margin-top: 0;
     border-top-width: 0;
 }
 cell-::before {

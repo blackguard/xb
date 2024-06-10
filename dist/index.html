@@ -8,13 +8,13 @@
 <h1>XB Test</h1>
 <cell- data-type="javascript">
 bg(async () => {
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 1000; i < 2000; i++) {
         await printf(' %d', i);
         await sleep(0.3);
     }
 });
 </cell->
-<cell- data-type="markdown" data-active="true">
+<cell- data-type="markdown">
 $$
 a x^2 + b x + c = 0
 $$
@@ -25,10 +25,13 @@ $$
     await markdown(`## Seconds since 1 Jan 1970: ${Date.now()/1000}`);
     function test(x) { return `--- ${x} ---`; }
     await print__();
-    for (let i = 100; i < 110; i++) {
-        await println(test(i));
+    for (let i = 1000; i < 2000; i++) {
+        await printf(' %s', test(i));
+        await sleep(0.3);
     }
 ```
 </cell->
+<cell- data-type="tex"></cell->
+<cell- data-type="plain"></cell->
 </body>
 </html>

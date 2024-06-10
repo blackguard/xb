@@ -97,6 +97,8 @@ import {
     Algebrite,
 } from 'lib/sys/algebrite';
 
+import * as rxjs from 'rxjs';
+
 import * as canvas_tools from 'lib/ui/canvas-tools';
 
 
@@ -260,6 +262,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             d3,  // for use with Plotly
 
             Algebrite,
+            rxjs,
 
             // utility functions defined above
             is_stopped,  // no abort_if_stopped()....
