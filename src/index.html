@@ -5,16 +5,8 @@
     <script type="module" src="../dist/main.js"></script>
 </head>
 <body>
-<h1>XB Test</h1>
-<cell- data-type="javascript">
-bg(async () => {
-    for (let i = 1000; i < 2000; i++) {
-        await printf(' %d', i);
-        await sleep(0.3);
-    }
-});
-</cell->
 <cell- data-type="markdown">
+# $x\textrm{b}$
 $$
 a x^2 + b x + c = 0
 $$
@@ -31,7 +23,15 @@ $$
     }
 ```
 </cell->
-<cell- data-type="tex"></cell->
-<cell- data-type="plain"></cell->
+<cell- data-type="javascript">
+bg(async () => {
+    for (let i = 1000; i < 2000; i++) {
+        await printf(' %d', i);
+        await sleep(0.3);
+    }
+});
+</cell->
+<cell- data-type="tex">\textrm{Let } x = x\textrm{.}</cell->
+<cell- data-type="plain">The quick brown fox jumped over the lazy dog's back.</cell->
 </body>
 </html>
