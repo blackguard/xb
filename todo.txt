@@ -1,6 +1,9 @@
 make help document
 update README.md
 manage scroll position better
+provide feedback for "saved", etc
+what about x- media-types?
+TeX formatting settings no longer work
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned

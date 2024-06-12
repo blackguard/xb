@@ -39,6 +39,9 @@ lint: ./node_modules
 $(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./lib/*/*/* ./node_modules README.md
 	make lint && ./build-tools/build-dist.sh
 
+copy-files:
+	./build-tools/build-dist.sh copy-only
+
 .PHONY: test
 test:
 	npm test

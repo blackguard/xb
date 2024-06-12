@@ -1,5 +1,20 @@
 #!/bin/bash
 
+declare THIS_FILE=${BASH_SOURCE##*/}
+declare THIS_FILE_DIR=$([[ -z "${BASH_SOURCE%/*}" ]] && echo '' || { cd "${BASH_SOURCE%/*}"; pwd; })
+
+declare COPY_ONLY_KEYWORD=copy-only
+
+if [[ $# -gt 1 || ( $# == 1 && "$1" != "${COPY_ONLY_KEYWORD}" ) ]]; then
+    echo 1>&2 "usage: ${THIS_FILE} [ ${COPY_ONLY_KEYWORD} ]"
+    exit 1
+fi
+
+declare copy_only=
+if [[ "$1" == "${COPY_ONLY_KEYWORD}" ]]; then
+   copy_only=true
+fi
+
 set -e  # abort on error
 
 declare THIS_FILE=${BASH_SOURCE##*/}
@@ -33,7 +48,9 @@ declare -a DIRECTORIES_TO_COPY=(
 
 cd "${ROOT_DIR}"
 
-\rm -fr "dist"
+if [[ -z "${copy_only}" ]]; then
+    \rm -fr "dist"
+fi
 mkdir -p "dist"
 
 #!!!/usr/bin/env node -e 'require("fs/promises").readFile("README.md").then(t => console.log(`<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n</head>\n<body>\n$${require("marked").marked(t.toString())}\n</body>\n</html>`))' > "${DIST_DIR}/help.html"
@@ -50,7 +67,11 @@ for (( i = 0; i < ${#DIRECTORIES_TO_COPY[@]}; i += 2 )); do
     cp -a "${directory}" "${DIST_DIR}/${destination}"
 done
 
-echo "building...."
-npx webpack --config ./webpack.config.js
+if [[ -z "${copy_only}" ]]; then
+
+    echo "building...."
+    npx webpack --config ./webpack.config.js
+
+fi
 
 echo "done"

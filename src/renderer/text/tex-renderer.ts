@@ -41,11 +41,12 @@ export class TeXRenderer extends TextOrientedRenderer {
 
         const {
             style,
-            global_state = ocx.xb.global_state,
+            inline,
+            global_state = ocx.xb.global_state ?? {},
         } = (options ?? {});
 
         const markup = this.CLASS.render_to_string(tex, global_state, {
-            displayMode:  true,
+            displayMode:  !inline,
             throwOnError: false,
         });
 
@@ -62,7 +63,10 @@ export class TeXRenderer extends TextOrientedRenderer {
 
     static render_to_string(tex: string, global_state: any, katex_options?: object): string {
         // this function encapsulates how the "macros" options is gotten from global_state
-        katex_options ??= {};
+        katex_options = {
+            macros: (global_state[this.type] ??= {}),
+            ...(katex_options ?? {}),
+        };
         (katex_options as any).macros ??= (global_state[this.type] ??= {});  // for persistent \gdef macros
         return katex.renderToString(tex, katex_options);
     }

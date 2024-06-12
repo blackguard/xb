@@ -69,10 +69,12 @@ export class MarkdownRenderer extends TextOrientedRenderer {
 
         const {
             style,
+            inline,
             global_state = ocx.xb.global_state,
         } = (options ?? {});
 
         const parent = ocx.create_child({
+            tag: inline ? 'span' : 'div',
             attrs: {
                 'data-source-media-type': this.media_type,
             },

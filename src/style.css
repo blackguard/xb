@@ -50,8 +50,8 @@ main > :not(:first-child) {
     color:            var(--theme-ou-fgc);
     background-color: var(--theme-ou-bgc);
 }
-.eval-cell-output:empty,
-.eval-cell-output:not(:has(> *:not(:empty))) {
+.cell-output:empty,
+.cell-output:not(:has(> *:not(:empty))) {
     display: none;
 }
 
@@ -79,8 +79,8 @@ cell- {
     background-color: var(--content-color);
 
     max-height:   fit-content;
-    padding:      0.2rem;
-    border: 2px solid var(--content-color);
+    padding: 0;
+    border: 1px solid var(--content-color);
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
 }
@@ -178,6 +178,11 @@ html[data-cell-view="full"] .cm-scroller {
 /* line number switch */
 .codemirror-hide-line-numbers .cm-lineNumbers {
     display: none !important;  /* must use !important to override codemirror's !important setting */
+}
+
+/* patch too-bright light-mode .activeLine color */
+:root:not([data-theme="dark"]) .cm-activeLine {  /* :root:not(---) for specificity */
+    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */
 }
 
 /* patches for CodeMirror colors in dark mode */

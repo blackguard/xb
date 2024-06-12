@@ -24,7 +24,10 @@ export class TextRenderer extends TextOrientedRenderer {
     }
 
     async _render(ocx: OutputContextLike, text: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
-        const style = options?.style;
+        const {
+            style,
+            inline,
+        } = (options ?? {});
 
         const span = ocx.create_child({
             tag: 'span',
