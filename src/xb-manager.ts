@@ -147,7 +147,7 @@ export class XbManager {
 
         // listen for settings changed events and trigger update in cells
         settings_updated_events.subscribe(this.update_from_settings.bind(this));  //!!! never unsubscribed
-        this.update_from_settings();  // establish initial settings
+        this.update_from_settings();  // establish initial settings right away
 
         this.#command_bindings = get_global_command_bindings();
 
@@ -676,11 +676,20 @@ export class XbManager {
     }
 
     update_from_settings() {
-        const current_settings = get_settings();
+        const {
+            editor_options,
+            render_options,
+        } = (get_settings() ?? {}) as any;
         for (const cell of this.get_cells()) {
             cell.update_from_settings();
         }
-        this.#reset_before_render = !!(current_settings as any)?.render_options?.reset_before_render;
+        // update --cell-max-height-scrolling
+        const root_element = document.querySelector(':root') as HTMLElement
+        if (root_element) {
+            (root_element as HTMLElement).style.setProperty('--cell-max-height-scrolling', `${editor_options?.limited_size ?? 50}vh`);
+        }
+        // update reset_before_render
+        this.#reset_before_render = !!render_options?.reset_before_render;
     }
 
     // === EVAL STATES ===

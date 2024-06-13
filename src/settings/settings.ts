@@ -28,6 +28,7 @@ const initial_settings = {
         tab_key_indents:  false,
         mode:             'default',
         line_numbers:     true,
+        limited_size:     33,
     },
     formatting_options: {
         align:  'left',
@@ -142,14 +143,20 @@ export function analyze_editor_options_line_numbers(value: any, name?: string): 
     }
     return undefined;
 }
+export function analyze_editor_options_limited_size(value: any, name?: string): undefined|string {
+    if (typeof value !== 'number' || value <= 0) {
+        return `${name ?? 'limited_size'} must be a positive number`;
+    }
+    return undefined;
+}
 
 export function analyze_editor_options(editor_options: any, name?: string): undefined|string {
     if (typeof editor_options !== 'object') {
         return `${name ?? 'editor_options'} must be an object`;
     }
     const keys = Object.keys(editor_options);
-    if (!keys.every(k => ['indent', 'tab_size', 'indent_with_tabs', 'tab_key_indents', 'mode', 'line_numbers'].includes(k))) {
-        return `${name ?? 'editor_options'} may only have the keys "indent", "tab_size", "indent_with_tabs", "tab_key_indents", "mode" and "line_numbers"`;
+    if (!keys.every(k => ['indent', 'tab_size', 'indent_with_tabs', 'tab_key_indents', 'mode', 'line_numbers', 'limited_size'].includes(k))) {
+        return `${name ?? 'editor_options'} may only have the keys "indent", "tab_size", "indent_with_tabs", "tab_key_indents", "mode", "line_numbers" and "limited_size"`;
     }
     if ('indent' in editor_options) {
         const complaint = analyze_editor_options_indent(editor_options.indent);
@@ -183,6 +190,12 @@ export function analyze_editor_options(editor_options: any, name?: string): unde
     }
     if ('line_numbers' in editor_options) {
         const complaint = analyze_editor_options_line_numbers(editor_options.line_numbers);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    if ('limited_size' in editor_options) {
+        const complaint = analyze_editor_options_limited_size(editor_options.limited_size);
         if (complaint) {
             return complaint;
         }

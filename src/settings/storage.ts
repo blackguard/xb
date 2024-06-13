@@ -9,7 +9,7 @@ export const db_key_recents  = 'recents';
 
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = 'f7e16054-d00f-4824-91ab-44979678da13';
+const uuid = '8d0b5990-9b52-42c7-91c1-cde04508b64f';
 export const database_name       = `settings-database-${uuid}`;
 export const database_store_name = `settings-database-store-${uuid}`;
 

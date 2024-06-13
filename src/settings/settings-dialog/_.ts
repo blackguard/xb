@@ -34,6 +34,7 @@ import {
     valid_editor_options_mode_values,
     analyze_editor_options_mode,
     analyze_editor_options_line_numbers,
+    analyze_editor_options_limited_size,
     valid_formatting_options_align_values,
     analyze_formatting_options_align,
     analyze_formatting_options_indent,
@@ -105,6 +106,13 @@ const sections = [
             type: 'checkbox',
             settings_path: [ 'editor_options', 'line_numbers' ],
             analyze: analyze_editor_options_line_numbers,  // (value, label) => complaint
+        }, {
+            id: 'editor_options_limited_size',
+            label: 'Window size (%)',
+            type: 'number',
+            settings_path: [ 'editor_options', 'limited_size' ],
+            analyze: analyze_editor_options_limited_size,  // (value, label) => complaint
+            convert_to_number: true,
         }],
     }, {
         name: 'TeX Formatting',
@@ -169,7 +177,15 @@ export class SettingsDialog extends Dialog {
             }) as HTMLElement;
 
             for (const setting of settings) {
-                const { id, label, type, settings_path, options, analyze, convert_to_number } = setting;
+                const {
+                    id,
+                    label,
+                    type,
+                    settings_path,
+                    options,
+                    analyze,
+                    convert_to_number,
+                } = setting;
                 const setting_div = named_section_div;
                 let control;
                 if (type === 'select') {
@@ -208,7 +224,9 @@ export class SettingsDialog extends Dialog {
                         }
                     };
 
-                    const value = (type === 'checkbox') ? (control as any).checked : (control as any).value;
+                    const value = (type === 'checkbox')
+                        ? (control as any).checked
+                        : convert_to_number ? +(control as any).value : (control as any).value;
                     if (analyze) {
                         const complaint = analyze(value, label);
                         if (complaint) {
@@ -216,7 +234,7 @@ export class SettingsDialog extends Dialog {
                             return;
                         }
                     }
-                    set_obj_path(current_settings, settings_path, (convert_to_number ? +value : value));
+                    set_obj_path(current_settings, settings_path, value);
 
                     try {
                         await update_settings(current_settings);

@@ -3,7 +3,7 @@
 /* See settings/theme-settings.js for definition of --theme-* properties */
 
 :root {
-    --cell-max-height-scrolling: 50vh;
+    --cell-max-height-scrolling: 33vh;
 }
 
 body {
