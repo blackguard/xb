@@ -122,6 +122,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             style,
             inline,
             global_state = ocx.xb.global_state,
+            background   = false,
         } = (options ?? {});
 
         const eval_context = ((global_state as any)[this.type] ??= {});
@@ -154,8 +155,8 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
 
         // evaluate the code:
         const eval_fn_this = eval_context;
-//        const eval_fn_body = code;
-        const eval_fn_body = `try { ${code} } catch (error) { await ocx.render_error(error, { abbreviated: true }); }`;
+        const code_to_run = background ? `bg(async () => { ${code} });` : code;  // use bg() defined by #create_eval_environment() for background processing
+        const eval_fn_body = `try { ${code_to_run} } catch (error) { await ocx.render_error(error, { abbreviated: true }); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
 

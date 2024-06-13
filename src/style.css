@@ -80,7 +80,7 @@ cell- {
 
     max-height:   fit-content;
     padding: 0;
-    border: 1px solid var(--content-color);
+    border: 2px solid var(--content-color);
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
 }
@@ -98,6 +98,7 @@ cell- {
 cell-::before {
     content: "markdown";  /* markdown is the default */
     display: inline-block;
+    padding: 0 0 0 0.5em;
     max-width: fit-content;
 }
 cell-[data-type]::before {

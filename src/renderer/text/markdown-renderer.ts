@@ -46,6 +46,8 @@ type walkTokens_token_type = {
     text?:         string,
     markup?:       string,
     global_state?: object,
+    show?:         boolean,
+    background?:   boolean,
     source_type?:  string,
 };
 
@@ -101,25 +103,41 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                     let renderer_factory: undefined|RendererFactory = undefined;
                     try {
 
-                        const source_type = token.source_type;
+                        const {
+                            source_type,
+                            text        = '',
+                            show        = false,
+                            background  = false,
+                        } = token;
                         if (!source_type) {
-                            throw new Error('no source_type present');
+                            throw new Error('no source_type given');
                         }
                         renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
                         if (!renderer_factory) {
                             throw new Error(`cannot find renderer for source type "${source_type}"`);
                         }
-                        const output_element_id = generate_object_id();
-                        deferred_evaluations.push({
-                            output_element_id,
-                            text:             token.text ?? '',
-                            renderer:         new renderer_factory() as TextOrientedRenderer,
-                            renderer_options: {
-                                global_state,
-                            },
-                        });
-                        // this is the element we will render to from deferred_evaluations:
-                        token.markup = `<div id="${output_element_id}"></div>`;
+                        const markup_segments: string[] = [];
+                        function add_segment(renderer_factory: RendererFactory, text_to_render: string, run_in_background: boolean) {
+                            const output_element_id = generate_object_id();
+                            deferred_evaluations.push({
+                                output_element_id,
+                                text: text_to_render,
+                                renderer: new renderer_factory() as TextOrientedRenderer,
+                                renderer_options: {
+                                    global_state,
+                                    background: run_in_background,
+                                },
+                            });
+                            // this is the element we will render to from deferred_evaluations:
+                            markup_segments.push(`<div id="${output_element_id}"></div>`);
+                        }
+                        if (token.show && text) {
+                            // render the source text without executing
+                            add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n', false);
+                        }
+                        // render/execute the source text
+                        add_segment(renderer_factory, text, background);
+                        token.markup = markup_segments.join('\n');
 
                     } catch (error: unknown) {
                         const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx);  // temporary, for renderering error
@@ -216,18 +234,21 @@ marked.use({
         {
             name: extension_name__eval_code,
             level: 'block',
-            start(src: string) { return src.match(/^[`]{3}[^\n]*[!][\s]*[\n]/)?.index; },
+            start(src: string) { return src.match(/^[`]{3}[^$!&\n]*([\s]*[$])?([!]|[&])[\s]*[\n]/)?.index; },
             tokenizer(src: string, tokens: unknown): undefined|walkTokens_token_type {
-                const match = src.match(/^[`]{3}[\s]*([^\n]*)[\s]*[!][\s]*[\n](.*?)[`]{3}/s);
+                const match_re = /^[`]{3}[\s]*(?<source_type>[^$!&\n]*)[\s]*((?<flags_b>[!])|(?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_bg>[&])|(?<flags_show_bg>[$][\s]*[&]))[\s]*[\n](?<code>.*?)[`]{3}/s;
+                const match = src.match(match_re);
                 if (!match) {
                     return undefined;
                 } else {
-                    const source_type = (match[1]?.trim() ?? '') || 'javascript';
+                    const source_type = (match.groups?.source_type?.trim() ?? '') || 'javascript';
                     return {
                         type: extension_name__eval_code,
                         source_type,
                         raw:  match[0],
-                        text: match[2],
+                        text: match.groups?.code ?? '',
+                        show:       !!match.groups?.flags_show_exec || !!match.groups?.flags_show_bg,
+                        background: !!match.groups?.flags_bg || !!match.groups?.flags_show_bg,
                         markup: undefined,  // filled in later by walkTokens
                     };
                 }

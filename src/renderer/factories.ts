@@ -17,7 +17,7 @@ let type_to_text_renderer_factory_map: Map<string, RendererFactory>;  // Map typ
 // === TEXT-ORIENTED RENDERER COLLECTION ACCESS/UPDATE ===
 
 export function text_renderer_factory_for_type(type: string): undefined|RendererFactory {
-    const renderer_factory = type_to_text_renderer_factory_map.get(type);
+    const renderer_factory = type_to_text_renderer_factory_map.get(type.toLowerCase());
     return renderer_factory ? renderer_factory : undefined;
 }
 
