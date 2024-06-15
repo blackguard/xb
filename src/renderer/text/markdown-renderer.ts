@@ -93,59 +93,59 @@ export class MarkdownRenderer extends TextOrientedRenderer {
         const marked_options = {
             walkTokens(token: walkTokens_token_type) {
                 switch (token.type) {
-                case extension_name__inline_tex:
-                case extension_name__block_tex: {
-                    token.global_state = global_state;
-                    break;
-                }
-
-                case extension_name__eval_code: {
-                    let renderer_factory: undefined|RendererFactory = undefined;
-                    try {
-
-                        const {
-                            source_type,
-                            text        = '',
-                            show        = false,
-                            background  = false,
-                        } = token;
-                        if (!source_type) {
-                            throw new Error('no source_type given');
-                        }
-                        renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
-                        if (!renderer_factory) {
-                            throw new Error(`cannot find renderer for source type "${source_type}"`);
-                        }
-                        const markup_segments: string[] = [];
-                        function add_segment(renderer_factory: RendererFactory, text_to_render: string, run_in_background: boolean) {
-                            const output_element_id = generate_object_id();
-                            deferred_evaluations.push({
-                                output_element_id,
-                                text: text_to_render,
-                                renderer: new renderer_factory() as TextOrientedRenderer,
-                                renderer_options: {
-                                    global_state,
-                                    background: run_in_background,
-                                },
-                            });
-                            // this is the element we will render to from deferred_evaluations:
-                            markup_segments.push(`<div id="${output_element_id}"></div>`);
-                        }
-                        if (token.show && text) {
-                            // render the source text without executing
-                            add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n', false);
-                        }
-                        // render/execute the source text
-                        add_segment(renderer_factory, text, background);
-                        token.markup = markup_segments.join('\n');
-
-                    } catch (error: unknown) {
-                        const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx);  // temporary, for renderering error
-                        ErrorRenderer.render_sync(error_ocx, error);
-                        token.markup = error_ocx.element.innerHTML;
+                    case extension_name__inline_tex:
+                    case extension_name__block_tex: {
+                        token.global_state = global_state;
+                        break;
                     }
-                    break;
-                }
+
+                    case extension_name__eval_code: {
+                        let renderer_factory: undefined|RendererFactory = undefined;
+                        try {
+
+                            const {
+                                source_type,
+                                text        = '',
+                                show        = false,
+                                background  = false,
+                            } = token;
+                            if (!source_type) {
+                                throw new Error('no source_type given');
+                            }
+                            renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
+                            if (!renderer_factory) {
+                                throw new Error(`cannot find renderer for source type "${source_type}"`);
+                            }
+                            const markup_segments: string[] = [];
+                            function add_segment(renderer_factory: RendererFactory, text_to_render: string, run_in_background: boolean) {
+                                const output_element_id = generate_object_id();
+                                deferred_evaluations.push({
+                                    output_element_id,
+                                    text: text_to_render,
+                                    renderer: new renderer_factory() as TextOrientedRenderer,
+                                    renderer_options: {
+                                        global_state,
+                                        background: run_in_background,
+                                    },
+                                });
+                                // this is the element we will render to from deferred_evaluations:
+                                markup_segments.push(`<div id="${output_element_id}"></div>`);
+                            }
+                            if (token.show && text) {
+                                // render the source text without executing
+                                add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n', false);
+                            }
+                            // render/execute the source text
+                            add_segment(renderer_factory, text, background);
+                            token.markup = markup_segments.join('\n');
+
+                        } catch (error: unknown) {
+                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx);  // temporary, for renderering error
+                            ErrorRenderer.render_sync(error_ocx, error);
+                            token.markup = error_ocx.element.innerHTML;
+                        }
+                        break;
+                    }
                 }
             }
         };

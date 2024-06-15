@@ -167,25 +167,25 @@ export class MenuBar<DocumentManager> {
         const element = this.#get_menu_element(menu_id);
         for (const [ name, value ] of Object.entries(state_spec ?? {})) {
             switch (name) {
-            case 'enabled': {
-                if (value) {
-                    element.classList.remove('disabled');
-                } else {
-                    element.classList.add('disabled');
+                case 'enabled': {
+                    if (value) {
+                        element.classList.remove('disabled');
+                    } else {
+                        element.classList.add('disabled');
+                    }
+                    break;
                 }
-                break;
-            }
-            case 'checked': {
-                if (value) {
-                    element.classList.add('checked');
-                } else {
-                    element.classList.remove('checked');
+                case 'checked': {
+                    if (value) {
+                        element.classList.add('checked');
+                    } else {
+                        element.classList.remove('checked');
+                    }
+                    break;
                 }
-                break;
-            }
-            default: {
-                throw new Error('unknown state specifier');
-            }
+                default: {
+                    throw new Error('unknown state specifier');
+                }
             }
         }
     }
@@ -525,63 +525,63 @@ export class MenuBar<DocumentManager> {
                 }
 
                 switch (event.key) {
-                case 'Enter':
-                case ' ': {
-                    menuitem.click();
-                    break;
-                }
-                case 'Escape': {
-                    this.#deactivate_menu(menubar_container);
-                    break;
-                }
-                case key_menu_prev: {
-                    const mi = this.CLASS.find_previous_menuitem(menuitem);
-                    if (mi instanceof HTMLElement) {
-                        this.#select_menuitem(mi);
-                    } else if (!is_in_menubar) {
-                        menuitem.classList.remove('selected');  // parent menuitem will still be selected
+                    case 'Enter':
+                    case ' ': {
+                        menuitem.click();
+                        break;
                     }
-                    break;
-                }
-                case key_menu_next: {
-                    const mi = this.CLASS.find_next_menuitem(menuitem);
-                    if (mi instanceof HTMLElement) {
-                        this.#select_menuitem(mi);
+                    case 'Escape': {
+                        this.#deactivate_menu(menubar_container);
+                        break;
                     }
-                    break;
-                }
-                case key_cross_prev: {
-                    if (!is_in_menubar) {
-                        const menubar_menuitem = menubar_container.querySelector('.menuitem.selected');
-                        const mbi = this.CLASS.find_previous_menuitem(menubar_menuitem as HTMLElement);
-                        if (mbi instanceof HTMLElement) {
-                            this.#select_menuitem(mbi);
-                        }
-                    }
-                    break;
-                }
-                case key_cross_next: {
-                    let navigated_into_collection = false;
-                    if (menuitem.classList.contains('collection')) {
-                        // enter collection if possible
-                        const mi = menuitem.querySelector('.menuitem:not(.disabled)');
+                    case key_menu_prev: {
+                        const mi = this.CLASS.find_previous_menuitem(menuitem);
                         if (mi instanceof HTMLElement) {
                             this.#select_menuitem(mi);
-                            navigated_into_collection = true;
+                        } else if (!is_in_menubar) {
+                            menuitem.classList.remove('selected');  // parent menuitem will still be selected
                         }
+                        break;
                     }
-                    if (!navigated_into_collection && !is_in_menubar) {
-                        const menubar_menuitem = menubar_container.querySelector('.menuitem.selected') as HTMLElement;
-                        const mbi = this.CLASS.find_next_menuitem(menubar_menuitem);
-                        if (mbi instanceof HTMLElement) {
-                            this.#select_menuitem(mbi);
+                    case key_menu_next: {
+                        const mi = this.CLASS.find_next_menuitem(menuitem);
+                        if (mi instanceof HTMLElement) {
+                            this.#select_menuitem(mi);
                         }
+                        break;
                     }
-                    break;
-                }
+                    case key_cross_prev: {
+                        if (!is_in_menubar) {
+                            const menubar_menuitem = menubar_container.querySelector('.menuitem.selected');
+                            const mbi = this.CLASS.find_previous_menuitem(menubar_menuitem as HTMLElement);
+                            if (mbi instanceof HTMLElement) {
+                                this.#select_menuitem(mbi);
+                            }
+                        }
+                        break;
+                    }
+                    case key_cross_next: {
+                        let navigated_into_collection = false;
+                        if (menuitem.classList.contains('collection')) {
+                            // enter collection if possible
+                            const mi = menuitem.querySelector('.menuitem:not(.disabled)');
+                            if (mi instanceof HTMLElement) {
+                                this.#select_menuitem(mi);
+                                navigated_into_collection = true;
+                            }
+                        }
+                        if (!navigated_into_collection && !is_in_menubar) {
+                            const menubar_menuitem = menubar_container.querySelector('.menuitem.selected') as HTMLElement;
+                            const mbi = this.CLASS.find_next_menuitem(menubar_menuitem);
+                            if (mbi instanceof HTMLElement) {
+                                this.#select_menuitem(mbi);
+                            }
+                        }
+                        break;
+                    }
 
-                default:
-                    return;  // do not handle or alter propagation
+                    default:
+                        return;  // do not handle or alter propagation
                 }
             }
 

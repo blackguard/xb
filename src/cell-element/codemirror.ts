@@ -34,6 +34,10 @@ import {
 } from "@codemirror/lang-javascript";
 
 import {
+    markdown,
+} from "@codemirror/lang-markdown";
+
+import {
     clear_element,
 } from 'lib/ui/dom-tools';
 
@@ -47,6 +51,13 @@ import {
 
 
 export class CodemirrorInterface {
+
+    static create(cell: CellElement) {
+        const codemirror_interface = new this(cell);
+        codemirror_interface.set_language_from_type(cell.type)
+        return codemirror_interface;
+    }
+
     #view: EditorView;
     get view (){ return this.#view; }
 
@@ -62,6 +73,7 @@ export class CodemirrorInterface {
         this.#indent_unit_compartment     = new Compartment();
         this.#tab_key_indents_compartment = new Compartment();
         this.#line_numbers_compartment    = new Compartment();
+        this.#language_compartment        = new Compartment();
 
         const state = EditorState.create({
             doc: text,
@@ -71,10 +83,10 @@ export class CodemirrorInterface {
                 this.#indent_unit_compartment.of(indentUnit.of(' '.repeat(2))),
                 this.#tab_key_indents_compartment.of(keymap.of([ indentWithTab ])),
                 this.#line_numbers_compartment.of(lineNumbers()),
+                this.#language_compartment.of([]),
 
                 keymap.of(defaultKeymap),
                 basicSetup,
-                javascript(),
             ],
         });
 
@@ -94,6 +106,7 @@ export class CodemirrorInterface {
     #indent_unit_compartment;
     #tab_key_indents_compartment;
     #line_numbers_compartment;
+    #language_compartment;
 
     get_text(): string {
         return this.view.state.doc.toString();
@@ -119,6 +132,14 @@ export class CodemirrorInterface {
         this.view.dispatch({ effects: EditorView.scrollIntoView(0) });
     }
 
+    set_language_from_type(type: string): void {
+        switch (type) {
+            case 'javascript': this.#view.dispatch({ effects: this.#language_compartment.reconfigure(javascript()) }); break;
+            case 'markdown':   this.#view.dispatch({ effects: this.#language_compartment.reconfigure(markdown())   }); break;
+            default:           this.#view.dispatch({ effects: this.#language_compartment.reconfigure([])           }); break;
+        }
+    }
+
     update_from_settings(): void {
         const {
             mode,
@@ -130,9 +151,9 @@ export class CodemirrorInterface {
 
         let keymap_config;
         switch (mode) {
-        case 'emacs': keymap_config = keymap.of(emacsStyleKeymap); break;
-        case 'vim':   keymap_config = vim();                       break;
-        default:      keymap_config = [];                          break;
+            case 'emacs': keymap_config = keymap.of(emacsStyleKeymap); break;
+            case 'vim':   keymap_config = vim();                       break;
+            default:      keymap_config = [];                          break;
         }
 
         const indent_unit_string = ' '.repeat(indent);
@@ -153,8 +174,4 @@ export class CodemirrorInterface {
             this.view.dom.classList.add(css_class_hide_line_numbers);
         }
     }
-}
-
-export function create_codemirror_view(cell: CellElement): CodemirrorInterface {
-    return new CodemirrorInterface(cell);
 }

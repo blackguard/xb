@@ -134,56 +134,56 @@ export class KeyEventManager<DocumentManager> {
 
         const key_handler = (event: KeyboardEvent) => {  // attached to this.event_target
             switch (event.key) {
-            case 'Alt':
-            case 'AltGraph':
-            case 'CapsLock':
-            case 'Control':
-            case 'Fn':
-            case 'FnLock':
-            case 'Hyper':
-            case 'Meta':
-            case 'NumLock':
-            case 'ScrollLock':
-            case 'Shift':
-            case 'Super':
-            case 'Symbol':
-            case 'SymbolLock':
-            case 'OS':  // Firefox quirk
-                // modifier key, ignore
-                break;
+                case 'Alt':
+                case 'AltGraph':
+                case 'CapsLock':
+                case 'Control':
+                case 'Fn':
+                case 'FnLock':
+                case 'Hyper':
+                case 'Meta':
+                case 'NumLock':
+                case 'ScrollLock':
+                case 'Shift':
+                case 'Super':
+                case 'Symbol':
+                case 'SymbolLock':
+                case 'OS':  // Firefox quirk
+                    // modifier key, ignore
+                    break;
 
-            default: {
-                const key_spec = KeySpec.from_keyboard_event(event);
-                key_sequence?.push(key_spec);
-                const mapping_result = state.consume(key_spec);
-                if (!mapping_result) {
-                    // failed
-                    if (state !== initial_state) {
-                        // beep only if at least one keypress has already been accepted
-                        event.preventDefault();
-                        beep();
-                    }
-                    // if still in initial_state, then no event.preventDefault()
-                    reset();
-                } else {
-                    event.preventDefault();
-                    if (typeof mapping_result === 'string') {
-                        const command = mapping_result;
-                        const command_context: CommandContext<DocumentManager> = {
-                            dm:      this.dm,
-                            command,
-                            event,
-                            target:  event.target,
-                            key_spec,
-                        };
-                        this.commands.dispatch(command_context);
+                default: {
+                    const key_spec = KeySpec.from_keyboard_event(event);
+                    key_sequence?.push(key_spec);
+                    const mapping_result = state.consume(key_spec);
+                    if (!mapping_result) {
+                        // failed
+                        if (state !== initial_state) {
+                            // beep only if at least one keypress has already been accepted
+                            event.preventDefault();
+                            beep();
+                        }
+                        // if still in initial_state, then no event.preventDefault()
                         reset();
                     } else {
-                        state = mapping_result;
+                        event.preventDefault();
+                        if (typeof mapping_result === 'string') {
+                            const command = mapping_result;
+                            const command_context: CommandContext<DocumentManager> = {
+                                dm:      this.dm,
+                                command,
+                                event,
+                                target:  event.target,
+                                key_spec,
+                            };
+                            this.commands.dispatch(command_context);
+                            reset();
+                        } else {
+                            state = mapping_result;
+                        }
                     }
+                    break;
                 }
-                break;
-            }
             }
         };
 

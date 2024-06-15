@@ -15,7 +15,6 @@ import {
 
 import {
     CodemirrorInterface,
-    create_codemirror_view,
 } from './codemirror';
 
 import {
@@ -105,7 +104,7 @@ export class CellElement extends HTMLElement {
 
     #establish_editable_text_container(): void {
         if (!this.#has_text_container()) {
-            this.#codemirror = create_codemirror_view(this);
+            this.#codemirror = CodemirrorInterface.create(this);
         }
     }
 
@@ -179,6 +178,7 @@ export class CellElement extends HTMLElement {
 
     set type (type: string){
         this.setAttribute(CellElement.#attribute__type, type);
+        this.#codemirror?.set_language_from_type(this.type);
     }
 
 
@@ -293,10 +293,10 @@ export class CellElement extends HTMLElement {
     //     Which attributes to notice change for is specified in a static get observedAttributes method
     attributeChangedCallback(name: string, old_value: any, new_value: any): void {
         switch (name) {
-        case 'xyzzy': {
-            //!!!
-            break;
-        }
+            case 'xyzzy': {
+                //!!!
+                break;
+            }
         }
         //!!!
     }
