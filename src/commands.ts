@@ -5,8 +5,8 @@ import {
 } from 'src/xb-manager';
 
 import {
-    CellElement,
-} from 'src/cell-element/_';
+    XbCellElement,
+} from 'src/xb-cell-element/_';
 
 import {
     CommandContext,
@@ -37,7 +37,7 @@ import {
 
 
 export function command_handler__reset(command_context: CommandContext<XbManager>): boolean {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         command_context.target.reset();
@@ -69,7 +69,7 @@ export async function command_handler__save_as(command_context: CommandContext<X
 
 export async function command_handler__eval(command_context: CommandContext<XbManager>): Promise<boolean> {
     const cell = command_context.target;
-    if (!(cell instanceof CellElement)) {
+    if (!(cell instanceof XbCellElement)) {
         return false;
     } else {
         try {
@@ -90,7 +90,7 @@ export async function command_handler__eval_and_refocus(command_context: Command
     if (!eval_result) {
         return false;
     } else {
-        const next_cell = command_context.dm.adjacent_cell(command_context.target as CellElement, true) ?? command_context.dm.create_cell();
+        const next_cell = command_context.dm.adjacent_cell(command_context.target as XbCellElement, true) ?? command_context.dm.create_cell();
         next_cell.focus();
         next_cell.scroll_into_view();
         return true;
@@ -98,7 +98,7 @@ export async function command_handler__eval_and_refocus(command_context: Command
 }
 
 async function multi_eval_helper(command_context: CommandContext<XbManager>, eval_all: boolean = false): Promise<boolean> {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const target_cell = command_context.target;
@@ -145,7 +145,7 @@ export async function command_handler__eval_all(command_context: CommandContext<
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__stop(command_context: CommandContext<XbManager>): boolean {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         command_context.target.stop();
@@ -162,7 +162,7 @@ export function command_handler__stop_all(command_context: CommandContext<XbMana
 }
 
 export function command_handler__focus_up(command_context: CommandContext<XbManager>): boolean {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const focus_cell = command_context.dm.adjacent_cell(command_context.target, false);
@@ -177,7 +177,7 @@ export function command_handler__focus_up(command_context: CommandContext<XbMana
 }
 
 export function command_handler__focus_down(command_context: CommandContext<XbManager>): boolean {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const focus_cell = command_context.dm.adjacent_cell(command_context.target, true);
@@ -192,7 +192,7 @@ export function command_handler__focus_down(command_context: CommandContext<XbMa
 }
 
 function move_helper(command_context: CommandContext<XbManager>, move_down: boolean): boolean {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const cell = command_context.target;
@@ -221,7 +221,7 @@ export function command_handler__move_down(command_context: CommandContext<XbMan
 }
 
 function add_cell_helper(command_context: CommandContext<XbManager>, add_before: boolean) {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const this_cell = command_context.target;
@@ -248,7 +248,7 @@ export function command_handler__add_after(command_context: CommandContext<XbMan
 }
 
 export async function command_handler__delete(command_context: CommandContext<XbManager>): Promise<boolean> {
-    if (!(command_context.target instanceof CellElement)) {
+    if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
         const cell = command_context.target;
@@ -271,7 +271,7 @@ export async function command_handler__delete(command_context: CommandContext<Xb
 
 function set_mode_helper(command_context: CommandContext<XbManager>, type: string) {
     const cell = command_context.target;
-    if (!(cell instanceof CellElement)) {
+    if (!(cell instanceof XbCellElement)) {
         return false;
     } else {
         cell.type = type;

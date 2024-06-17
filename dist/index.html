@@ -5,7 +5,7 @@
     <script type="module" src="../dist/main.js"></script>
 </head>
 <body>
-<cell- data-type="markdown">
+<xb-cell data-type="markdown">
 # $x\textrm{b}$
 $$
 a x^2 + b x + c = 0
@@ -22,16 +22,16 @@ $$
         await sleep(0.3);
     }
 ```
-</cell->
-<cell- data-type="javascript">
+</xb-cell>
+<xb-cell data-type="javascript">
 bg(async () => {
     for (let i = 1000; i < 2000; i++) {
         await printf(' %d', i);
         await sleep(0.3);
     }
 });
-</cell->
-<cell- data-type="tex">\textrm{Let } x = x\textrm{.}</cell->
-<cell- data-type="plain">The quick brown fox jumped over the lazy dog's back.</cell->
+</xb-cell>
+<xb-cell data-type="tex">\textrm{Let } x = x\textrm{.}</xb-cell>
+<xb-cell data-type="plain">The quick brown fox jumped over the lazy dog's back.</xb-cell>
 </body>
 </html>

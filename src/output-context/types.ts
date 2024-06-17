@@ -5,8 +5,8 @@ import {
 } from 'src/xb-manager';
 
 import {
-    CellElement,
-} from 'src/cell-element/_';
+    XbCellElement,
+} from 'src/xb-cell-element/_';
 
 import {
     clear_element,
@@ -106,7 +106,7 @@ export abstract class OutputContextLike extends ActivityManager {
         return svg_string;
     }
 
-    static create_cell_output(cell: CellElement, media_type: string): HTMLOutputElement {
+    static create_cell_output(cell: XbCellElement, media_type: string): HTMLOutputElement {
         if (!cell.id) {
             throw new Error('cell must have an id');
         }
@@ -115,7 +115,7 @@ export abstract class OutputContextLike extends ActivityManager {
             parent: cell.parentElement,
             before: cell.nextSibling,
             attrs: {
-                class: 'cell-output',
+                class: 'xb-cell-output',
                 'data-source-element':    cell.id,
                 'data-source-media-type': media_type,
             },

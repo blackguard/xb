@@ -1,4 +1,4 @@
-cell- {
+xb-cell {
     outline: 0px solid transparent;  /* disable default outline */
 
     white-space: pre-wrap;  /* properly display white-space */
@@ -14,6 +14,6 @@ cell- {
     background-color: #eee;
 }
 
-cell-[data-active] {
+xb-cell[data-active] {
     border: 1px solid black;
 }

@@ -49,8 +49,8 @@ import {
 } from 'lib/ui/menu/_';
 
 import {
-    CellElement,
-} from 'src/cell-element/_';
+    XbCellElement,
+} from 'src/xb-cell-element/_';
 
 import {
     EventListenerManager,
@@ -118,7 +118,7 @@ export class XbManager {
 
     #initialize_called = false;
     #activity_manager: ActivityManager = new ActivityManager(true);  // true --> multiple_stops
-    #eval_states = new SerialDataSource<{ cell: CellElement, eval_state: boolean }>();
+    #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
     #eval_states_subscription: Subscription;
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
     #key_event_manager: KeyEventManager<XbManager>;
@@ -127,10 +127,10 @@ export class XbManager {
     #menubar_selects_subscription:  undefined|Subscription = undefined;
     #file_handle: any = null;
     #editable: boolean = true;
-    #active_cell: null|CellElement = null;
+    #active_cell: null|XbCellElement = null;
     #global_state: object = {};  // persistent state for renderers
     // the following map is maintained by this.invoke_renderer()
-    #cell_ocx_map = new WeakMap<CellElement, Set<OutputContext>>();
+    #cell_ocx_map = new WeakMap<XbCellElement, Set<OutputContext>>();
 
     #reset_before_render: boolean = false;  // from settings, kept up-to-date via settings_updated_events
     get reset_before_render (){ return this.#reset_before_render; }
@@ -190,7 +190,7 @@ export class XbManager {
     }
 
     get active_cell (){ return this.#active_cell; }
-    set_active_cell(cell: CellElement): void {
+    set_active_cell(cell: XbCellElement): void {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
@@ -247,7 +247,7 @@ export class XbManager {
         }
     }
 
-    stop_cell(cell: CellElement): void {
+    stop_cell(cell: XbCellElement): void {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
@@ -260,7 +260,7 @@ export class XbManager {
         })
     }
 
-    can_stop_cell(cell: CellElement): boolean {
+    can_stop_cell(cell: XbCellElement): boolean {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
             return false;
@@ -363,10 +363,10 @@ export class XbManager {
 
     #set_initial_active_cell() {
         const active_cell = (
-            document.querySelector(`${CellElement.custom_element_name}[data-active]`) ??  // cell currently set as active
-            document.querySelector(`${CellElement.custom_element_name}`)              ??  // first cell
-            this.create_cell()                                                            // new cell
-        ) as CellElement;
+            document.querySelector(`${XbCellElement.custom_element_name}[data-active]`) ??  // cell currently set as active
+            document.querySelector(`${XbCellElement.custom_element_name}`)              ??  // first cell
+            this.create_cell()                                                              // new cell
+        ) as XbCellElement;
         if (active_cell.xb !== this) {
             console.error('unexpected: active_cell has a different xb');
         }
@@ -407,7 +407,7 @@ export class XbManager {
 
     invoke_renderer_for_type( type:            string = 'plain',
                               options?:        null|TextOrientedRendererOptionsType,
-                              cell?:           null|CellElement,
+                              cell?:           null|XbCellElement,
                               output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         if (cell && cell.xb !== this) {
             throw new Error('unexpected: cell has a different xb');
@@ -422,7 +422,7 @@ export class XbManager {
 
     invoke_renderer( renderer:        TextOrientedRenderer,
                      options?:        null|TextOrientedRendererOptionsType,
-                     cell?:           null|CellElement,
+                     cell?:           null|XbCellElement,
                      output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         cell ??= this.active_cell;
         if (!cell) {
@@ -460,7 +460,7 @@ export class XbManager {
         const event_listener = (event: Event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof CellElement) {
+            if (refound_cell instanceof XbCellElement) {
                 if (refound_cell !== this.active_cell && refound_cell.xb === this) {
                     this.set_active_cell(refound_cell);
                 }
@@ -500,7 +500,7 @@ export class XbManager {
             });
     }
 
-    #associate_cell_ocx(cell: CellElement, ocx: OutputContext) {
+    #associate_cell_ocx(cell: XbCellElement, ocx: OutputContext) {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
@@ -517,7 +517,7 @@ export class XbManager {
         }
     }
 
-    #dissociate_cell_ocx(cell: CellElement, ocx: OutputContext) {
+    #dissociate_cell_ocx(cell: XbCellElement, ocx: OutputContext) {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
@@ -685,14 +685,14 @@ export class XbManager {
 
     // === EVAL STATES ===
 
-    emit_eval_state(cell: CellElement, eval_state: boolean) {
+    emit_eval_state(cell: XbCellElement, eval_state: boolean) {
         if (cell.xb !== this) {
             console.error('unexpected: cell has a different xb');
         }
         this.#eval_states.dispatch({ cell, eval_state });
     }
 
-    #eval_states_observer(data: { cell: CellElement, eval_state: boolean }) {
+    #eval_states_observer(data: { cell: XbCellElement, eval_state: boolean }) {
         const {
             cell,
             eval_state,
@@ -708,21 +708,21 @@ export class XbManager {
 
     // === CELL MANAGEMENT ===
 
-    /** return an ordered list of the CellElement (cell-) cells in the document
+    /** return an ordered list of the XbCellElement (xb-cell) cells in the document
      */
-    get_cells(): CellElement[] {
-        return [ ...document.getElementsByTagName(CellElement.custom_element_name) ] as CellElement[];
+    get_cells(): XbCellElement[] {
+        return [ ...document.getElementsByTagName(XbCellElement.custom_element_name) ] as XbCellElement[];
     }
 
     /** return the cell that is adjacent to the given cell, either forward (or
      *  alternately backward) from the reference.
-     * @param {undefined|CellElement} reference (default: this.active_cell)
+     * @param {undefined|XbCellElement} reference (default: this.active_cell)
      * @param {Boolean} forward
-     * @return {undefined|CellElement} the adjacent cell, or undefined if
+     * @return {undefined|XbCellElement} the adjacent cell, or undefined if
      *     reference does not exist in the document or if there is
      *     no such adjacent cell.
      */
-    adjacent_cell(reference?: CellElement, forward: boolean = false): undefined|CellElement {
+    adjacent_cell(reference?: XbCellElement, forward: boolean = false): undefined|XbCellElement {
         if (reference && reference.xb !== this) {
             throw new Error('unexpected: reference cell has a different xb');
         } else {
@@ -750,11 +750,11 @@ export class XbManager {
 
     /** create a new cell in the document
      *  @param (Object|null|undefined} options
-     *  @return {CellElement} new cell
+     *  @return {XbCellElement} new cell
      * options is passed to create_element() but with "parent" and "before"
      * set if not already set.
      */
-    create_cell(options?: object): CellElement {
+    create_cell(options?: object): XbCellElement {
         const extended_options = (options && ('parent' in (options as any) || 'before' in (options as any)))
             ? options
             : {
@@ -762,10 +762,10 @@ export class XbManager {
                 ...options,
             };
         const cell = create_element({
-            tag: CellElement.custom_element_name,
+            tag: XbCellElement.custom_element_name,
             set_id: true,
             ...extended_options,
-        }) as CellElement;
+        }) as XbCellElement;
         cell._set_xb(this);
         cell.set_editable(true);
         return cell;

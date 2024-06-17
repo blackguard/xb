@@ -34,13 +34,13 @@ export async function load_stylesheet() {
     create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
 }
 
-/** CellElement represents a text-oriented input/source
+/** XbCellElement represents a text-oriented input/source
  *  It represents media types text/???
  */
-export class CellElement extends HTMLElement {
-    get CLASS (){ return this.constructor as typeof CellElement; }
+export class XbCellElement extends HTMLElement {
+    get CLASS (){ return this.constructor as typeof XbCellElement; }
 
-    static custom_element_name = 'cell-';
+    static custom_element_name = 'xb-cell';
 
     static attribute__active = 'data-active';
     static #attribute__type  = 'data-type';
@@ -174,10 +174,10 @@ export class CellElement extends HTMLElement {
         }
     }
 
-    get type (): string { return this.getAttribute(CellElement.#attribute__type) ?? this.CLASS.default_type; }
+    get type (): string { return this.getAttribute(XbCellElement.#attribute__type) ?? this.CLASS.default_type; }
 
     set type (type: string){
-        this.setAttribute(CellElement.#attribute__type, type);
+        this.setAttribute(XbCellElement.#attribute__type, type);
         this.#codemirror?.set_language_from_type(this.type);
     }
 
@@ -245,7 +245,7 @@ export class CellElement extends HTMLElement {
         function select_handler(event: Event) {
             const target = event.target;
             if (target instanceof Element) {
-                const cell = target.closest(CellElement.custom_element_name) as CellElement;
+                const cell = target.closest(XbCellElement.custom_element_name) as XbCellElement;
                 if (cell) {
                     // self.xb?.set_active_cell() clears the "active" attributes of all other cells
                     self.xb?.set_active_cell(cell);

@@ -267,7 +267,7 @@ main > :not(:first-child) {
     margin-top: var(--theme-cl-p-inter);
 }
 
-.cell-output {
+.xb-cell-output {
     display: block;
     overflow: auto;  /* enable h/v scrolling */
 
@@ -277,8 +277,8 @@ main > :not(:first-child) {
     color:            var(--theme-ou-fgc);
     background-color: var(--theme-ou-bgc);
 }
-.cell-output:empty,
-.cell-output:not(:has(> *:not(:empty))) {
+.xb-cell-output:empty,
+.xb-cell-output:not(:has(> *:not(:empty))) {
     display: none;
 }
 
@@ -287,7 +287,7 @@ main > :not(:first-child) {
     line-height: 140%;
 }
 
-cell- {
+xb-cell {
     --content-color: lightgray;
 
     overflow: hidden;
@@ -311,41 +311,41 @@ cell- {
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
 }
-cell- > * {
+xb-cell > * {
     /* make sure --content-color is restricted to border and padding,
      * and does not bleed through transparent children
      */
     background-color: var(--theme-cl-bgc);
 }
 
-cell- {
+xb-cell {
     margin-top: 0;
     border-top-width: 0;
 }
-cell-::before {
+xb-cell::before {
     content: "markdown";  /* markdown is the default */
     display: inline-block;
     padding: 0 0 0 0.5em;
     max-width: fit-content;
 }
-cell-[data-type]::before {
+xb-cell[data-type]::before {
     content: attr(data-type);
 }
-cell-[data-active][data-type]::before {
+xb-cell[data-active][data-type]::before {
     font-weight: bold;
 }
 
-cell-,  /* markdown is the default */
-cell-[data-type="markdown"] {
+xb-cell,  /* markdown is the default */
+xb-cell[data-type="markdown"] {
     --content-color: var(--theme-ty-bgc-markdown);
 }
-cell-[data-type="plain"] {
+xb-cell[data-type="plain"] {
     --content-color: var(--theme-ty-bgc-plain);
 }
-cell-[data-type="tex"] {
+xb-cell[data-type="tex"] {
     --content-color: var(--theme-ty-bgc-tex);
 }
-cell-[data-type="javascript"] {
+xb-cell[data-type="javascript"] {
     --content-color: var(--theme-ty-bgc-javascript);
 }
 
@@ -358,10 +358,10 @@ cell-[data-type="javascript"] {
  *   -- in kiosk mode, cells with css class "show-in-kiosk" will be shown as in "normal" mode
  */
 
-html[data-cell-view="none"] cell- {
+html[data-cell-view="none"] xb-cell {
     display: none;
 }
-html[data-cell-view="hide"] cell-:not([data-active]) {
+html[data-cell-view="hide"] xb-cell:not([data-active]) {
     display: block;
     max-height: 0.2rem;
     border-width: 1px;
@@ -372,11 +372,11 @@ html[data-cell-view="hide"] cell-:not([data-active]) {
 html[data-cell-view="kiosk"] header {
     display: none;
 }
-html[data-cell-view="kiosk"] cell- {
+html[data-cell-view="kiosk"] xb-cell {
     display: none;
 }
-cell-,
-html[data-cell-view="kiosk"] cell-.show-in-kiosk {
+xb-cell,
+html[data-cell-view="kiosk"] xb-cell.show-in-kiosk {
     display: block;
     max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
     transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
@@ -395,7 +395,7 @@ html[data-cell-view="kiosk"] cell-.show-in-kiosk {
 }
 
 /* show full content if html[data-cell-view="full"] */
-html[data-cell-view="full"] cell-,
+html[data-cell-view="full"] xb-cell,
 html[data-cell-view="full"] .cm-editor,
 html[data-cell-view="full"] .cm-scroller {
     overflow-y: hidden;
@@ -700,7 +700,7 @@ body > .error-message {
     }
 
 }
-`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    margin-top: 0;\n}\nmain > :not(:first-child) {\n    margin-top: var(--theme-cl-p-inter);\n}\n\n.cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.cell-output:empty,\n.cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\ncell- {\n    --content-color: lightgray;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n    background-color: var(--content-color);\n\n    max-height:   fit-content;\n    padding: 0;\n    border: 2px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\ncell- > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\ncell- {\n    margin-top: 0;\n    border-top-width: 0;\n}\ncell-::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\ncell-[data-type]::before {\n    content: attr(data-type);\n}\ncell-[data-active][data-type]::before {\n    font-weight: bold;\n}\n\ncell-,  /* markdown is the default */\ncell-[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\ncell-[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\ncell-[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\ncell-[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] cell- {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] cell-:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] cell- {\n    display: none;\n}\ncell-,\nhtml[data-cell-view=\"kiosk\"] cell-.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] cell-,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-size: 120%;\n    font-weight: bold;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    margin-top: 0;\n}\nmain > :not(:first-child) {\n    margin-top: var(--theme-cl-p-inter);\n}\n\n.xb-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.xb-cell-output:empty,\n.xb-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\nxb-cell {\n    --content-color: lightgray;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n    background-color: var(--content-color);\n\n    max-height:   fit-content;\n    padding: 0;\n    border: 2px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\nxb-cell > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\nxb-cell {\n    margin-top: 0;\n    border-top-width: 0;\n}\nxb-cell::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\nxb-cell[data-type]::before {\n    content: attr(data-type);\n}\nxb-cell[data-active][data-type]::before {\n    font-weight: bold;\n}\n\nxb-cell,  /* markdown is the default */\nxb-cell[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\nxb-cell[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\nxb-cell[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\nxb-cell[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] xb-cell {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] xb-cell:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] xb-cell {\n    display: none;\n}\nxb-cell,\nhtml[data-cell-view=\"kiosk\"] xb-cell.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] xb-cell,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-size: 120%;\n    font-weight: bold;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10572,421 +10572,6 @@ class MenuBar {
 
 /***/ }),
 
-/***/ 8165:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   E: () => (/* binding */ CellElement)
-/* harmony export */ });
-/* unused harmony export load_stylesheet */
-/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5006);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
-/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(871);
-/* harmony import */ var _codemirror__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3394);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1517);
-/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6667);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__]);
-([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/cell-element/_.ts")); // save for later
-
-
-
-
-
-
-
-async function load_stylesheet() {
-    create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
-}
-/** CellElement represents a text-oriented input/source
- *  It represents media types text/???
- */
-class CellElement extends HTMLElement {
-    get CLASS() { return this.constructor; }
-    static custom_element_name = 'cell-';
-    static attribute__active = 'data-active';
-    static #attribute__type = 'data-type';
-    static default_type = 'markdown';
-    #codemirror = undefined;
-    #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__/* .EventListenerManager */ .w();
-    #xb = undefined;
-    get xb() { return this.#xb; }
-    /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
-     */
-    _set_xb(xb) {
-        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
-            throw new Error('xb must be an instance of XbManager');
-        }
-        this.#xb = xb;
-    }
-    constructor() {
-        super();
-        this.#connect_focus_listeners();
-    }
-    // === UPDATE FROM SETTINGS ===
-    update_from_settings() {
-        if (this.#has_text_container()) {
-            this.#codemirror?.update_from_settings();
-        }
-    }
-    // === TEXT CONTENT ===
-    get_text() {
-        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
-            throw new Error('xb not set!');
-        }
-        const text = this.#has_text_container()
-            ? this.#codemirror?.get_text()
-            : this.textContent;
-        return text ?? '';
-    }
-    // this works even if the cell is not editable
-    set_text(text) {
-        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
-            throw new Error('xb not set!');
-        }
-        if (this.#has_text_container()) {
-            this.#codemirror?.set_text(text);
-        }
-        else {
-            this.textContent = text;
-        }
-    }
-    #has_text_container() { return !!this.#codemirror; }
-    #establish_editable_text_container() {
-        if (!this.#has_text_container()) {
-            this.#codemirror = _codemirror__WEBPACK_IMPORTED_MODULE_2__/* .CodemirrorInterface */ .l.create(this);
-        }
-    }
-    #remove_text_container() {
-        if (this.#has_text_container()) {
-            const text = this.get_text();
-            this.#codemirror = undefined;
-            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .clear_element */ .gX)(this); // remove text_container element, etc
-            this.set_text(text); // will be added directly to this because no text_container
-        }
-    }
-    /** override focus() so that we can direct focus to the contained textarea
-     *  if necessary.  Setting a tabindex="0" attribute on this cell solves the
-     *  problem but then causes another: SHIFT-Tab out of a textarea with a
-     *  tabindex="0" parent fails.  So we just have to do it the hard way.
-     */
-    focus(options) {
-        this.set_active(true); // set "active" right away
-        if (this.#has_text_container()) {
-            this.#codemirror?.focus();
-        }
-        else {
-            super.focus(options); // will most likely fail, but that would be appropriate
-        }
-    }
-    // === EDITABLE ===
-    get editable() {
-        return this.#has_text_container();
-    }
-    set_editable(editable) {
-        this.removeAttribute('contenteditable'); // editability established by text container element
-        if (editable) {
-            this.#establish_editable_text_container();
-        }
-        else {
-            this.#remove_text_container();
-        }
-    }
-    // === ACTIVE ===
-    get active() {
-        return !!this.hasAttribute(this.CLASS.attribute__active);
-    }
-    set_active(state = false) {
-        state = !!state;
-        if (this.active !== state) { // avoid creating an unnecessary dom mutation
-            if (state) {
-                this.setAttribute(this.CLASS.attribute__active, true.toString());
-            }
-            else {
-                this.removeAttribute(this.CLASS.attribute__active);
-            }
-        }
-    }
-    // === ID, TYPE ===
-    ensure_id() {
-        if (!this.id) {
-            this.id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .pk)();
-        }
-    }
-    get type() { return this.getAttribute(CellElement.#attribute__type) ?? this.CLASS.default_type; }
-    set type(type) {
-        this.setAttribute(CellElement.#attribute__type, type);
-        this.#codemirror?.set_language_from_type(this.type);
-    }
-    // === DOM ===
-    /** reset the cell, removing all associated output elements
-     */
-    reset() {
-        this.xb?.stop_cell(this);
-        if (this.id) {
-            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
-                output_element.remove();
-            }
-        }
-    }
-    /** stop any running activities for this cell
-     */
-    stop() {
-        this.xb?.stop_cell(this);
-    }
-    get can_stop() {
-        return this.xb?.can_stop_cell(this) ?? false;
-    }
-    scroll_into_view() {
-        //!!! this needs improvement
-        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
-        if (this.#has_text_container()) {
-            this.#codemirror?.scroll_into_view();
-        }
-        else {
-            //!!! this is too eager...
-            this.scrollIntoView();
-        }
-    }
-    /* Override this.outerHTML to provide clean output for save_serializer() in 'src/init.ts'.
-     * This is done so that CodeMirror stuff does not get included, only the text.
-     */
-    get outerHTML() {
-        const open_tag_segments = [
-            `<${this.CLASS.custom_element_name}`,
-        ];
-        //!!! attributes values' containing " character are incorrectly translated to \"
-        for (const name of this.getAttributeNames()) {
-            const value = this.getAttribute(name);
-            if (value === null) {
-                open_tag_segments.push(name);
-            }
-            else {
-                open_tag_segments.push(`${name}=${(0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .make_string_literal */ .E9)(value, true)}`);
-            }
-        }
-        const open_tag = open_tag_segments.join(' ') + '>';
-        return `${open_tag}${this.get_text()}</${this.CLASS.custom_element_name}>`;
-    }
-    // === FOCUS LISTENERS / ACTIVE ===
-    #connect_focus_listeners() {
-        // note: this gets called before _set_xb() has been called
-        const self = this;
-        function select_handler(event) {
-            const target = event.target;
-            if (target instanceof Element) {
-                const cell = target.closest(CellElement.custom_element_name);
-                if (cell) {
-                    // self.xb?.set_active_cell() clears the "active" attributes of all other cells
-                    self.xb?.set_active_cell(cell);
-                }
-            }
-        }
-        this.#event_listener_manager.add(this, 'focus', select_handler, { capture: true });
-        this.#event_listener_manager.add(this, 'click', select_handler, { capture: true });
-    }
-    // === WEB COMPONENT LIFECYCLE ===
-    #update_for_connected() {
-        this.#event_listener_manager.attach();
-        this.removeAttribute('tabindex'); // focusable parent for textarea causes SHIFT-Tab not to work
-    }
-    #update_for_disconnected() {
-        this.#event_listener_manager.detach();
-    }
-    // connectedCallback:
-    //     Invoked each time the custom element is appended into a document-connected element.
-    //     This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
-    //     Note: connectedCallback may be called once your element is no longer connected, use Node.isConnected to make sure.
-    connectedCallback() {
-        this.#update_for_connected();
-    }
-    // disconnectedCallback:
-    //     Invoked each time the custom element is disconnected from the document's DOM.
-    disconnectedCallback() {
-        this.#update_for_disconnected();
-    }
-    // adoptedCallback:
-    //     Invoked each time the custom element is moved to a new document.
-    adoptedCallback() {
-        this.#update_for_connected();
-    }
-    // attributeChangedCallback:
-    //     Invoked each time one of the custom element's attributes is added, removed, or changed.
-    //     Which attributes to notice change for is specified in a static get observedAttributes method
-    attributeChangedCallback(name, old_value, new_value) {
-        switch (name) {
-            case 'xyzzy': {
-                //!!!
-                break;
-            }
-        }
-        //!!!
-    }
-    static get observedAttributes() {
-        return [
-            'xyzzy', //!!!
-        ];
-    }
-    // === INITIALIZATION ===
-    static {
-        globalThis.customElements.define(this.custom_element_name, this);
-    }
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 3394:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   l: () => (/* binding */ CodemirrorInterface)
-/* harmony export */ });
-/* harmony import */ var codemirror__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3358);
-/* harmony import */ var _codemirror_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8120);
-/* harmony import */ var _codemirror_view__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6485);
-/* harmony import */ var _codemirror_commands__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5383);
-/* harmony import */ var _replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1226);
-/* harmony import */ var _codemirror_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9119);
-/* harmony import */ var _codemirror_lang_javascript__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8679);
-/* harmony import */ var _codemirror_lang_markdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4054);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
-/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7336);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8165);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_settings___WEBPACK_IMPORTED_MODULE_1__, ___WEBPACK_IMPORTED_MODULE_2__]);
-([src_settings___WEBPACK_IMPORTED_MODULE_1__, ___WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
-
-
-
-
-
-
-
-
-class CodemirrorInterface {
-    static create(cell) {
-        const codemirror_interface = new this(cell);
-        codemirror_interface.set_language_from_type(cell.type);
-        return codemirror_interface;
-    }
-    #view;
-    get view() { return this.#view; }
-    constructor(cell) {
-        if (!(cell instanceof ___WEBPACK_IMPORTED_MODULE_2__/* .CellElement */ .E)) {
-            throw new Error('cell must be an instance of CellElement');
-        }
-        const text = cell.get_text();
-        this.#keymap_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        this.#tab_size_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        this.#indent_unit_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        this.#tab_key_indents_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        this.#line_numbers_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        this.#language_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
-        const state = _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.create({
-            doc: text,
-            extensions: [
-                this.#keymap_compartment.of([]),
-                this.#tab_size_compartment.of(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(8)),
-                this.#indent_unit_compartment.of(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(' '.repeat(2))),
-                this.#tab_key_indents_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc])),
-                this.#line_numbers_compartment.of((0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)()),
-                this.#language_compartment.of([]),
-                _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .defaultKeymap */ .wQ),
-                codemirror__WEBPACK_IMPORTED_MODULE_7__/* .basicSetup */ .Xy,
-            ],
-        });
-        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .clear_element */ .gX)(cell);
-        this.#view = new _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk({
-            parent: cell,
-            state,
-        });
-        setTimeout(() => {
-            this.update_from_settings();
-        });
-    }
-    #keymap_compartment;
-    #tab_size_compartment;
-    #indent_unit_compartment;
-    #tab_key_indents_compartment;
-    #line_numbers_compartment;
-    #language_compartment;
-    get_text() {
-        return this.view.state.doc.toString();
-    }
-    set_text(text) {
-        // no longer works (typescript?): this.view.dispatch({ from: 0, to: this.view.state.doc.length, insert: text });
-        this.view.state.update({ changes: { from: 0, to: this.view.state.doc.length, insert: text } });
-    }
-    get_undo_info() {
-        return {
-            undo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .undoDepth */ .of)(this.view.state),
-            redo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .redoDepth */ .AH)(this.view.state),
-        };
-    }
-    focus() {
-        this.view.focus();
-    }
-    scroll_into_view() {
-        this.view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(0) });
-    }
-    set_language_from_type(type) {
-        switch (type) {
-            case 'javascript':
-                this.#view.dispatch({ effects: this.#language_compartment.reconfigure((0,_codemirror_lang_javascript__WEBPACK_IMPORTED_MODULE_8__/* .javascript */ .eJ)()) });
-                break;
-            case 'markdown':
-                this.#view.dispatch({ effects: this.#language_compartment.reconfigure((0,_codemirror_lang_markdown__WEBPACK_IMPORTED_MODULE_9__/* .markdown */ .JH)()) });
-                break;
-            default:
-                this.#view.dispatch({ effects: this.#language_compartment.reconfigure([]) });
-                break;
-        }
-    }
-    update_from_settings() {
-        const { mode, tab_size, indent, tab_key_indents, line_numbers, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_1__/* .get_settings */ .oj)().editor_options;
-        let keymap_config;
-        switch (mode) {
-            case 'emacs':
-                keymap_config = _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .emacsStyleKeymap */ .BL);
-                break;
-            case 'vim':
-                keymap_config = (0,_replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__/* .vim */ .dV)();
-                break;
-            default:
-                keymap_config = [];
-                break;
-        }
-        const indent_unit_string = ' '.repeat(indent);
-        this.view.dispatch({ effects: [
-                this.#keymap_compartment.reconfigure(keymap_config),
-                this.#tab_size_compartment.reconfigure(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(tab_size)),
-                this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(indent_unit_string)),
-                this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc]) : []),
-                this.#line_numbers_compartment.reconfigure(line_numbers ? (0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)() : []),
-            ] });
-        // Note: the line_numbers setting above does not work, so we resort to this:
-        const css_class_hide_line_numbers = 'codemirror-hide-line-numbers';
-        if (line_numbers) {
-            this.view.dom.classList.remove(css_class_hide_line_numbers);
-        }
-        else {
-            this.view.dom.classList.add(css_class_hide_line_numbers);
-        }
-    }
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
 /***/ 5049:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -11022,13 +10607,13 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   w_: () => (/* binding */ command_handler__delete),
 /* harmony export */   wq: () => (/* binding */ command_handler__reset_all)
 /* harmony export */ });
-/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8165);
+/* harmony import */ var src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3054);
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
 /* harmony import */ var lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6490);
 /* harmony import */ var src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5693);
 /* harmony import */ var src_help_window___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1533);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__]);
-([src_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__]);
+([src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__, src_settings_settings_dialog___WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // === COMMAND HANDLERS ===
 
 
@@ -11037,7 +10622,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 
 // These command_handler__* functions each return a boolean, true iff the command was successfully handled
 function command_handler__reset(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11065,7 +10650,7 @@ async function command_handler__save_as(command_context) {
 }
 async function command_handler__eval(command_context) {
     const cell = command_context.target;
-    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11095,7 +10680,7 @@ async function command_handler__eval_and_refocus(command_context) {
     }
 }
 async function multi_eval_helper(command_context, eval_all = false) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11142,7 +10727,7 @@ async function command_handler__eval_all(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11158,7 +10743,7 @@ function command_handler__stop_all(command_context) {
     return true;
 }
 function command_handler__focus_up(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11174,7 +10759,7 @@ function command_handler__focus_up(command_context) {
     }
 }
 function command_handler__focus_down(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11190,7 +10775,7 @@ function command_handler__focus_down(command_context) {
     }
 }
 function move_helper(command_context, move_down) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11218,7 +10803,7 @@ function command_handler__move_down(command_context) {
     return move_helper(command_context, true);
 }
 function add_cell_helper(command_context, add_before) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11244,7 +10829,7 @@ function command_handler__add_after(command_context) {
     return add_cell_helper(command_context, false);
 }
 async function command_handler__delete(command_context) {
-    if (!(command_context.target instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11267,7 +10852,7 @@ async function command_handler__delete(command_context) {
 }
 function set_mode_helper(command_context, type) {
     const cell = command_context.target;
-    if (!(cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .CellElement */ .E)) {
+    if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
     else {
@@ -11966,7 +11551,7 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
             parent: cell.parentElement,
             before: cell.nextSibling,
             attrs: {
-                class: 'cell-output',
+                class: 'xb-cell-output',
                 'data-source-element': cell.id,
                 'data-source-media-type': media_type,
             },
@@ -33401,6 +32986,421 @@ __webpack_async_result__();
 
 /***/ }),
 
+/***/ 3054:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   d: () => (/* binding */ XbCellElement)
+/* harmony export */ });
+/* unused harmony export load_stylesheet */
+/* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5006);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
+/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(871);
+/* harmony import */ var _codemirror__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(464);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1517);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6667);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__]);
+([src_xb_manager__WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-cell-element/_.ts")); // save for later
+
+
+
+
+
+
+
+async function load_stylesheet() {
+    create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
+}
+/** XbCellElement represents a text-oriented input/source
+ *  It represents media types text/???
+ */
+class XbCellElement extends HTMLElement {
+    get CLASS() { return this.constructor; }
+    static custom_element_name = 'xb-cell';
+    static attribute__active = 'data-active';
+    static #attribute__type = 'data-type';
+    static default_type = 'markdown';
+    #codemirror = undefined;
+    #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__/* .EventListenerManager */ .w();
+    #xb = undefined;
+    get xb() { return this.#xb; }
+    /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
+     */
+    _set_xb(xb) {
+        if (!(xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb must be an instance of XbManager');
+        }
+        this.#xb = xb;
+    }
+    constructor() {
+        super();
+        this.#connect_focus_listeners();
+    }
+    // === UPDATE FROM SETTINGS ===
+    update_from_settings() {
+        if (this.#has_text_container()) {
+            this.#codemirror?.update_from_settings();
+        }
+    }
+    // === TEXT CONTENT ===
+    get_text() {
+        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb not set!');
+        }
+        const text = this.#has_text_container()
+            ? this.#codemirror?.get_text()
+            : this.textContent;
+        return text ?? '';
+    }
+    // this works even if the cell is not editable
+    set_text(text) {
+        if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
+            throw new Error('xb not set!');
+        }
+        if (this.#has_text_container()) {
+            this.#codemirror?.set_text(text);
+        }
+        else {
+            this.textContent = text;
+        }
+    }
+    #has_text_container() { return !!this.#codemirror; }
+    #establish_editable_text_container() {
+        if (!this.#has_text_container()) {
+            this.#codemirror = _codemirror__WEBPACK_IMPORTED_MODULE_2__/* .CodemirrorInterface */ .l.create(this);
+        }
+    }
+    #remove_text_container() {
+        if (this.#has_text_container()) {
+            const text = this.get_text();
+            this.#codemirror = undefined;
+            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .clear_element */ .gX)(this); // remove text_container element, etc
+            this.set_text(text); // will be added directly to this because no text_container
+        }
+    }
+    /** override focus() so that we can direct focus to the contained textarea
+     *  if necessary.  Setting a tabindex="0" attribute on this cell solves the
+     *  problem but then causes another: SHIFT-Tab out of a textarea with a
+     *  tabindex="0" parent fails.  So we just have to do it the hard way.
+     */
+    focus(options) {
+        this.set_active(true); // set "active" right away
+        if (this.#has_text_container()) {
+            this.#codemirror?.focus();
+        }
+        else {
+            super.focus(options); // will most likely fail, but that would be appropriate
+        }
+    }
+    // === EDITABLE ===
+    get editable() {
+        return this.#has_text_container();
+    }
+    set_editable(editable) {
+        this.removeAttribute('contenteditable'); // editability established by text container element
+        if (editable) {
+            this.#establish_editable_text_container();
+        }
+        else {
+            this.#remove_text_container();
+        }
+    }
+    // === ACTIVE ===
+    get active() {
+        return !!this.hasAttribute(this.CLASS.attribute__active);
+    }
+    set_active(state = false) {
+        state = !!state;
+        if (this.active !== state) { // avoid creating an unnecessary dom mutation
+            if (state) {
+                this.setAttribute(this.CLASS.attribute__active, true.toString());
+            }
+            else {
+                this.removeAttribute(this.CLASS.attribute__active);
+            }
+        }
+    }
+    // === ID, TYPE ===
+    ensure_id() {
+        if (!this.id) {
+            this.id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .pk)();
+        }
+    }
+    get type() { return this.getAttribute(XbCellElement.#attribute__type) ?? this.CLASS.default_type; }
+    set type(type) {
+        this.setAttribute(XbCellElement.#attribute__type, type);
+        this.#codemirror?.set_language_from_type(this.type);
+    }
+    // === DOM ===
+    /** reset the cell, removing all associated output elements
+     */
+    reset() {
+        this.xb?.stop_cell(this);
+        if (this.id) {
+            for (const output_element of document.querySelectorAll(`[data-source-element="${this.id}"]`)) {
+                output_element.remove();
+            }
+        }
+    }
+    /** stop any running activities for this cell
+     */
+    stop() {
+        this.xb?.stop_cell(this);
+    }
+    get can_stop() {
+        return this.xb?.can_stop_cell(this) ?? false;
+    }
+    scroll_into_view() {
+        //!!! this needs improvement
+        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
+        if (this.#has_text_container()) {
+            this.#codemirror?.scroll_into_view();
+        }
+        else {
+            //!!! this is too eager...
+            this.scrollIntoView();
+        }
+    }
+    /* Override this.outerHTML to provide clean output for save_serializer() in 'src/init.ts'.
+     * This is done so that CodeMirror stuff does not get included, only the text.
+     */
+    get outerHTML() {
+        const open_tag_segments = [
+            `<${this.CLASS.custom_element_name}`,
+        ];
+        //!!! attributes values' containing " character are incorrectly translated to \"
+        for (const name of this.getAttributeNames()) {
+            const value = this.getAttribute(name);
+            if (value === null) {
+                open_tag_segments.push(name);
+            }
+            else {
+                open_tag_segments.push(`${name}=${(0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .make_string_literal */ .E9)(value, true)}`);
+            }
+        }
+        const open_tag = open_tag_segments.join(' ') + '>';
+        return `${open_tag}${this.get_text()}</${this.CLASS.custom_element_name}>`;
+    }
+    // === FOCUS LISTENERS / ACTIVE ===
+    #connect_focus_listeners() {
+        // note: this gets called before _set_xb() has been called
+        const self = this;
+        function select_handler(event) {
+            const target = event.target;
+            if (target instanceof Element) {
+                const cell = target.closest(XbCellElement.custom_element_name);
+                if (cell) {
+                    // self.xb?.set_active_cell() clears the "active" attributes of all other cells
+                    self.xb?.set_active_cell(cell);
+                }
+            }
+        }
+        this.#event_listener_manager.add(this, 'focus', select_handler, { capture: true });
+        this.#event_listener_manager.add(this, 'click', select_handler, { capture: true });
+    }
+    // === WEB COMPONENT LIFECYCLE ===
+    #update_for_connected() {
+        this.#event_listener_manager.attach();
+        this.removeAttribute('tabindex'); // focusable parent for textarea causes SHIFT-Tab not to work
+    }
+    #update_for_disconnected() {
+        this.#event_listener_manager.detach();
+    }
+    // connectedCallback:
+    //     Invoked each time the custom element is appended into a document-connected element.
+    //     This will happen each time the node is moved, and may happen before the element's contents have been fully parsed.
+    //     Note: connectedCallback may be called once your element is no longer connected, use Node.isConnected to make sure.
+    connectedCallback() {
+        this.#update_for_connected();
+    }
+    // disconnectedCallback:
+    //     Invoked each time the custom element is disconnected from the document's DOM.
+    disconnectedCallback() {
+        this.#update_for_disconnected();
+    }
+    // adoptedCallback:
+    //     Invoked each time the custom element is moved to a new document.
+    adoptedCallback() {
+        this.#update_for_connected();
+    }
+    // attributeChangedCallback:
+    //     Invoked each time one of the custom element's attributes is added, removed, or changed.
+    //     Which attributes to notice change for is specified in a static get observedAttributes method
+    attributeChangedCallback(name, old_value, new_value) {
+        switch (name) {
+            case 'xyzzy': {
+                //!!!
+                break;
+            }
+        }
+        //!!!
+    }
+    static get observedAttributes() {
+        return [
+            'xyzzy', //!!!
+        ];
+    }
+    // === INITIALIZATION ===
+    static {
+        globalThis.customElements.define(this.custom_element_name, this);
+    }
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 464:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   l: () => (/* binding */ CodemirrorInterface)
+/* harmony export */ });
+/* harmony import */ var codemirror__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3358);
+/* harmony import */ var _codemirror_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8120);
+/* harmony import */ var _codemirror_view__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6485);
+/* harmony import */ var _codemirror_commands__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5383);
+/* harmony import */ var _replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1226);
+/* harmony import */ var _codemirror_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9119);
+/* harmony import */ var _codemirror_lang_javascript__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8679);
+/* harmony import */ var _codemirror_lang_markdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4054);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
+/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7336);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3054);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_settings___WEBPACK_IMPORTED_MODULE_1__, ___WEBPACK_IMPORTED_MODULE_2__]);
+([src_settings___WEBPACK_IMPORTED_MODULE_1__, ___WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+
+
+
+
+
+
+
+
+class CodemirrorInterface {
+    static create(cell) {
+        const codemirror_interface = new this(cell);
+        codemirror_interface.set_language_from_type(cell.type);
+        return codemirror_interface;
+    }
+    #view;
+    get view() { return this.#view; }
+    constructor(cell) {
+        if (!(cell instanceof ___WEBPACK_IMPORTED_MODULE_2__/* .XbCellElement */ .d)) {
+            throw new Error('cell must be an instance of XbCellElement');
+        }
+        const text = cell.get_text();
+        this.#keymap_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#tab_size_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#indent_unit_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#tab_key_indents_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#line_numbers_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#language_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        const state = _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.create({
+            doc: text,
+            extensions: [
+                this.#keymap_compartment.of([]),
+                this.#tab_size_compartment.of(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(8)),
+                this.#indent_unit_compartment.of(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(' '.repeat(2))),
+                this.#tab_key_indents_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc])),
+                this.#line_numbers_compartment.of((0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)()),
+                this.#language_compartment.of([]),
+                _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .defaultKeymap */ .wQ),
+                codemirror__WEBPACK_IMPORTED_MODULE_7__/* .basicSetup */ .Xy,
+            ],
+        });
+        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .clear_element */ .gX)(cell);
+        this.#view = new _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk({
+            parent: cell,
+            state,
+        });
+        setTimeout(() => {
+            this.update_from_settings();
+        });
+    }
+    #keymap_compartment;
+    #tab_size_compartment;
+    #indent_unit_compartment;
+    #tab_key_indents_compartment;
+    #line_numbers_compartment;
+    #language_compartment;
+    get_text() {
+        return this.view.state.doc.toString();
+    }
+    set_text(text) {
+        // no longer works (typescript?): this.view.dispatch({ from: 0, to: this.view.state.doc.length, insert: text });
+        this.view.state.update({ changes: { from: 0, to: this.view.state.doc.length, insert: text } });
+    }
+    get_undo_info() {
+        return {
+            undo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .undoDepth */ .of)(this.view.state),
+            redo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .redoDepth */ .AH)(this.view.state),
+        };
+    }
+    focus() {
+        this.view.focus();
+    }
+    scroll_into_view() {
+        this.view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(0) });
+    }
+    set_language_from_type(type) {
+        switch (type) {
+            case 'javascript':
+                this.#view.dispatch({ effects: this.#language_compartment.reconfigure((0,_codemirror_lang_javascript__WEBPACK_IMPORTED_MODULE_8__/* .javascript */ .eJ)()) });
+                break;
+            case 'markdown':
+                this.#view.dispatch({ effects: this.#language_compartment.reconfigure((0,_codemirror_lang_markdown__WEBPACK_IMPORTED_MODULE_9__/* .markdown */ .JH)()) });
+                break;
+            default:
+                this.#view.dispatch({ effects: this.#language_compartment.reconfigure([]) });
+                break;
+        }
+    }
+    update_from_settings() {
+        const { mode, tab_size, indent, tab_key_indents, line_numbers, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_1__/* .get_settings */ .oj)().editor_options;
+        let keymap_config;
+        switch (mode) {
+            case 'emacs':
+                keymap_config = _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .emacsStyleKeymap */ .BL);
+                break;
+            case 'vim':
+                keymap_config = (0,_replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__/* .vim */ .dV)();
+                break;
+            default:
+                keymap_config = [];
+                break;
+        }
+        const indent_unit_string = ' '.repeat(indent);
+        this.view.dispatch({ effects: [
+                this.#keymap_compartment.reconfigure(keymap_config),
+                this.#tab_size_compartment.reconfigure(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(tab_size)),
+                this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(indent_unit_string)),
+                this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc]) : []),
+                this.#line_numbers_compartment.reconfigure(line_numbers ? (0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)() : []),
+            ] });
+        // Note: the line_numbers setting above does not work, so we resort to this:
+        const css_class_hide_line_numbers = 'codemirror-hide-line-numbers';
+        if (line_numbers) {
+            this.view.dom.classList.remove(css_class_hide_line_numbers);
+        }
+        else {
+            this.view.dom.classList.add(css_class_hide_line_numbers);
+        }
+    }
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 5006:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -33418,15 +33418,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_renderer___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8416);
 /* harmony import */ var src_output_context___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3732);
 /* harmony import */ var lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7827);
-/* harmony import */ var src_cell_element___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8165);
+/* harmony import */ var src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3054);
 /* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(871);
 /* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7336);
 /* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(9765);
 /* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(53);
 /* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7654);
 /* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7451);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
-([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
+([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
 
 
@@ -33695,8 +33695,8 @@ class XbManager {
         this.#menubar_selects_subscription = this.#menubar.selects.subscribe(this.#update_menu_state.bind(this));
     }
     #set_initial_active_cell() {
-        const active_cell = (document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name}[data-active]`) ?? // cell currently set as active
-            document.querySelector(`${src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name}`) ?? // first cell
+        const active_cell = (document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d.custom_element_name}[data-active]`) ?? // cell currently set as active
+            document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d.custom_element_name}`) ?? // first cell
             this.create_cell() // new cell
         );
         if (active_cell.xb !== this) {
@@ -33769,7 +33769,7 @@ class XbManager {
         const event_listener = (event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
-            if (refound_cell instanceof src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E) {
+            if (refound_cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d) {
                 if (refound_cell !== this.active_cell && refound_cell.xb === this) {
                     this.set_active_cell(refound_cell);
                 }
@@ -33982,16 +33982,16 @@ class XbManager {
         //!!! do something...  is this observer necessary?
     }
     // === CELL MANAGEMENT ===
-    /** return an ordered list of the CellElement (cell-) cells in the document
+    /** return an ordered list of the XbCellElement (xb-cell) cells in the document
      */
     get_cells() {
-        return [...document.getElementsByTagName(src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name)];
+        return [...document.getElementsByTagName(src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d.custom_element_name)];
     }
     /** return the cell that is adjacent to the given cell, either forward (or
      *  alternately backward) from the reference.
-     * @param {undefined|CellElement} reference (default: this.active_cell)
+     * @param {undefined|XbCellElement} reference (default: this.active_cell)
      * @param {Boolean} forward
-     * @return {undefined|CellElement} the adjacent cell, or undefined if
+     * @return {undefined|XbCellElement} the adjacent cell, or undefined if
      *     reference does not exist in the document or if there is
      *     no such adjacent cell.
      */
@@ -34027,7 +34027,7 @@ class XbManager {
     }
     /** create a new cell in the document
      *  @param (Object|null|undefined} options
-     *  @return {CellElement} new cell
+     *  @return {XbCellElement} new cell
      * options is passed to create_element() but with "parent" and "before"
      * set if not already set.
      */
@@ -34039,7 +34039,7 @@ class XbManager {
                 ...options,
             };
         const cell = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
-            tag: src_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .CellElement */ .E.custom_element_name,
+            tag: src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d.custom_element_name,
             set_id: true,
             ...extended_options,
         });

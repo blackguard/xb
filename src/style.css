@@ -40,7 +40,7 @@ main > :not(:first-child) {
     margin-top: var(--theme-cl-p-inter);
 }
 
-.cell-output {
+.xb-cell-output {
     display: block;
     overflow: auto;  /* enable h/v scrolling */
 
@@ -50,8 +50,8 @@ main > :not(:first-child) {
     color:            var(--theme-ou-fgc);
     background-color: var(--theme-ou-bgc);
 }
-.cell-output:empty,
-.cell-output:not(:has(> *:not(:empty))) {
+.xb-cell-output:empty,
+.xb-cell-output:not(:has(> *:not(:empty))) {
     display: none;
 }
 
@@ -60,7 +60,7 @@ main > :not(:first-child) {
     line-height: 140%;
 }
 
-cell- {
+xb-cell {
     --content-color: lightgray;
 
     overflow: hidden;
@@ -84,41 +84,41 @@ cell- {
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
 }
-cell- > * {
+xb-cell > * {
     /* make sure --content-color is restricted to border and padding,
      * and does not bleed through transparent children
      */
     background-color: var(--theme-cl-bgc);
 }
 
-cell- {
+xb-cell {
     margin-top: 0;
     border-top-width: 0;
 }
-cell-::before {
+xb-cell::before {
     content: "markdown";  /* markdown is the default */
     display: inline-block;
     padding: 0 0 0 0.5em;
     max-width: fit-content;
 }
-cell-[data-type]::before {
+xb-cell[data-type]::before {
     content: attr(data-type);
 }
-cell-[data-active][data-type]::before {
+xb-cell[data-active][data-type]::before {
     font-weight: bold;
 }
 
-cell-,  /* markdown is the default */
-cell-[data-type="markdown"] {
+xb-cell,  /* markdown is the default */
+xb-cell[data-type="markdown"] {
     --content-color: var(--theme-ty-bgc-markdown);
 }
-cell-[data-type="plain"] {
+xb-cell[data-type="plain"] {
     --content-color: var(--theme-ty-bgc-plain);
 }
-cell-[data-type="tex"] {
+xb-cell[data-type="tex"] {
     --content-color: var(--theme-ty-bgc-tex);
 }
-cell-[data-type="javascript"] {
+xb-cell[data-type="javascript"] {
     --content-color: var(--theme-ty-bgc-javascript);
 }
 
@@ -131,10 +131,10 @@ cell-[data-type="javascript"] {
  *   -- in kiosk mode, cells with css class "show-in-kiosk" will be shown as in "normal" mode
  */
 
-html[data-cell-view="none"] cell- {
+html[data-cell-view="none"] xb-cell {
     display: none;
 }
-html[data-cell-view="hide"] cell-:not([data-active]) {
+html[data-cell-view="hide"] xb-cell:not([data-active]) {
     display: block;
     max-height: 0.2rem;
     border-width: 1px;
@@ -145,11 +145,11 @@ html[data-cell-view="hide"] cell-:not([data-active]) {
 html[data-cell-view="kiosk"] header {
     display: none;
 }
-html[data-cell-view="kiosk"] cell- {
+html[data-cell-view="kiosk"] xb-cell {
     display: none;
 }
-cell-,
-html[data-cell-view="kiosk"] cell-.show-in-kiosk {
+xb-cell,
+html[data-cell-view="kiosk"] xb-cell.show-in-kiosk {
     display: block;
     max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
     transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
@@ -168,7 +168,7 @@ html[data-cell-view="kiosk"] cell-.show-in-kiosk {
 }
 
 /* show full content if html[data-cell-view="full"] */
-html[data-cell-view="full"] cell-,
+html[data-cell-view="full"] xb-cell,
 html[data-cell-view="full"] .cm-editor,
 html[data-cell-view="full"] .cm-scroller {
     overflow-y: hidden;

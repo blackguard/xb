@@ -46,13 +46,13 @@ import {
 } from 'src/settings/_';
 
 import {
-    CellElement,
+    XbCellElement,
 } from './_';
 
 
 export class CodemirrorInterface {
 
-    static create(cell: CellElement) {
+    static create(cell: XbCellElement) {
         const codemirror_interface = new this(cell);
         codemirror_interface.set_language_from_type(cell.type)
         return codemirror_interface;
@@ -61,9 +61,9 @@ export class CodemirrorInterface {
     #view: EditorView;
     get view (){ return this.#view; }
 
-    constructor(cell: CellElement) {
-        if (!(cell instanceof CellElement)) {
-            throw new Error('cell must be an instance of CellElement');
+    constructor(cell: XbCellElement) {
+        if (!(cell instanceof XbCellElement)) {
+            throw new Error('cell must be an instance of XbCellElement');
         }
 
         const text = cell.get_text();

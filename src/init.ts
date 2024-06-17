@@ -12,10 +12,6 @@ import {
     reset_to_initial_text_renderer_factories,
 } from 'src/renderer/factories';
 
-import {
-    CellElement,
-} from 'src/cell-element/_';
-
 
 const cell_view_attribute_name   = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
