@@ -448,16 +448,7 @@ export class XbManager {
             cell.reset();
         }
 
-        output_element ??= create_element({
-            tag: 'output',
-            parent: cell.parentElement,
-            before: cell.nextSibling,
-            attrs: {
-                class: 'cell-output',
-                'data-source-element':    cell.id,
-                'data-source-media-type': renderer.media_type,
-            },
-        });
+        output_element ??= OutputContext.create_cell_output(cell, renderer.media_type);
 
         // The following event listeners are not normally explicitly removed.
         // Instead, if the element is removed, we rely on the event listener

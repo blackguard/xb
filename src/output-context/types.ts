@@ -5,6 +5,10 @@ import {
 } from 'src/xb-manager';
 
 import {
+    CellElement,
+} from 'src/cell-element/_';
+
+import {
     clear_element,
     scroll_element_into_view,
     set_element_attrs,
@@ -100,6 +104,22 @@ export abstract class OutputContextLike extends ActivityManager {
         svg_string = svg_string.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink=');  // fix root xlink without namespace
         svg_string = svg_string.replace(/NS\d+:href/g, 'xlink:href');  // Safari NS namespace fix
         return svg_string;
+    }
+
+    static create_cell_output(cell: CellElement, media_type: string): HTMLOutputElement {
+        if (!cell.id) {
+            throw new Error('cell must have an id');
+        }
+        return this.create_element({
+            tag: 'output',
+            parent: cell.parentElement,
+            before: cell.nextSibling,
+            attrs: {
+                class: 'cell-output',
+                'data-source-element':    cell.id,
+                'data-source-media-type': media_type,
+            },
+        }) as HTMLOutputElement;
     }
 
     /** remove all child elements and nodes of element

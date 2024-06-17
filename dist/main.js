@@ -11957,6 +11957,21 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
         svg_string = svg_string.replace(/NS\d+:href/g, 'xlink:href'); // Safari NS namespace fix
         return svg_string;
     }
+    static create_cell_output(cell, media_type) {
+        if (!cell.id) {
+            throw new Error('cell must have an id');
+        }
+        return this.create_element({
+            tag: 'output',
+            parent: cell.parentElement,
+            before: cell.nextSibling,
+            attrs: {
+                class: 'cell-output',
+                'data-source-element': cell.id,
+                'data-source-media-type': media_type,
+            },
+        });
+    }
     /** remove all child elements and nodes of element
      *  @param {Node} element
      *  @return {Node} element
@@ -33743,16 +33758,7 @@ class XbManager {
         if (!output_element && this.#reset_before_render) {
             cell.reset();
         }
-        output_element ??= (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__/* .create_element */ .T1)({
-            tag: 'output',
-            parent: cell.parentElement,
-            before: cell.nextSibling,
-            attrs: {
-                class: 'cell-output',
-                'data-source-element': cell.id,
-                'data-source-media-type': renderer.media_type,
-            },
-        });
+        output_element ??= src_output_context___WEBPACK_IMPORTED_MODULE_6__/* .OutputContext */ .l.create_cell_output(cell, renderer.media_type);
         // The following event listeners are not normally explicitly removed.
         // Instead, if the element is removed, we rely on the event listener
         // resources to be cleaned up, too.  However, the returned function
