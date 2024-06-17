@@ -94,6 +94,10 @@ import {
 } from 'src/renderer/application/d3';
 
 import {
+    load_Plotly,
+} from 'src/renderer/application/plotly';
+
+import {
     Algebrite,
 } from 'lib/sys/algebrite';
 
@@ -261,6 +265,7 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             ApplicationOrientedRenderer,
 
             d3,  // for use with Plotly
+            load_Plotly,
 
             Algebrite,
             rxjs,

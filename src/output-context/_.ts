@@ -111,7 +111,7 @@ export class OutputContext extends OutputContextLike {
      */
     update_style(spec: { [prop: string]: undefined|null|string }): void {
         this.abort_if_stopped();
-        if (! (this instanceof HTMLElement)) {
+        if (! (this.element instanceof HTMLElement)) {
             throw new Error('this.element must be an instance of HTMLElement');
         }
         this.CLASS.update_element_style((this.element as HTMLElement), spec);
