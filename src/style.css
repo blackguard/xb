@@ -76,9 +76,10 @@ xb-cell {
     line-height: var(--theme-cl-lh);
 
     color: var(--theme-cl-fgc);
-    background-color: var(--content-color);
+/*    background-color: var(--content-color); */
+    background-image: linear-gradient(90deg, var(--content-color), transparent);
 
-    max-height:   fit-content;
+    max-height: fit-content;
     padding: 0;
     border: 2px solid var(--content-color);
     border-radius: var(--theme-cl-bdr);
