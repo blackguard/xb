@@ -1,3 +1,9 @@
+/* scrollbar width */
+
+* {
+    scrollbar-width: thin;
+}
+
 p,
 h1, h2, h3, h4, h5, h6, h7, h8, h9 {
     margin-block-start: 0.1em;
