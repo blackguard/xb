@@ -34,6 +34,7 @@ import {
     valid_editor_options_mode_values,
     analyze_editor_options_mode,
     analyze_editor_options_line_numbers,
+    analyze_editor_options_line_wrapping,
     analyze_editor_options_limited_size,
     valid_formatting_options_align_values,
     analyze_formatting_options_align,
@@ -106,6 +107,12 @@ const sections = [
             type: 'checkbox',
             settings_path: [ 'editor_options', 'line_numbers' ],
             analyze: analyze_editor_options_line_numbers,  // (value, label) => complaint
+        }, {
+            id: 'editor_options_line_wrapping',
+            label: 'Line wrapping',
+            type: 'checkbox',
+            settings_path: [ 'editor_options', 'line_wrapping' ],
+            analyze: analyze_editor_options_line_wrapping,  // (value, label) => complaint
         }, {
             id: 'editor_options_limited_size',
             label: 'Window size (%)',

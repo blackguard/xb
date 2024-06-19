@@ -73,6 +73,7 @@ export class CodemirrorInterface {
         this.#indent_unit_compartment     = new Compartment();
         this.#tab_key_indents_compartment = new Compartment();
         this.#line_numbers_compartment    = new Compartment();
+        this.#line_wrapping_compartment   = new Compartment();
         this.#language_compartment        = new Compartment();
 
         const state = EditorState.create({
@@ -83,6 +84,7 @@ export class CodemirrorInterface {
                 this.#indent_unit_compartment.of(indentUnit.of(' '.repeat(2))),
                 this.#tab_key_indents_compartment.of(keymap.of([ indentWithTab ])),
                 this.#line_numbers_compartment.of(lineNumbers()),
+                this.#line_wrapping_compartment.of(EditorView.lineWrapping),
                 this.#language_compartment.of([]),
 
                 keymap.of(defaultKeymap),
@@ -106,6 +108,7 @@ export class CodemirrorInterface {
     #indent_unit_compartment;
     #tab_key_indents_compartment;
     #line_numbers_compartment;
+    #line_wrapping_compartment;
     #language_compartment;
 
     get_text(): string {
@@ -147,6 +150,7 @@ export class CodemirrorInterface {
             indent,
             tab_key_indents,
             line_numbers,
+            line_wrapping,
         } = (get_settings() as any).editor_options as any;
 
         let keymap_config;
@@ -164,6 +168,7 @@ export class CodemirrorInterface {
             this.#indent_unit_compartment.reconfigure(indentUnit.of(indent_unit_string)),
             this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? keymap.of([ indentWithTab ]) : []),
             this.#line_numbers_compartment.reconfigure(line_numbers ? lineNumbers() : []),
+            this.#line_wrapping_compartment.reconfigure(line_wrapping ? EditorView.lineWrapping : []),
         ]});
 
         // Note: the line_numbers setting above does not work, so we resort to this:

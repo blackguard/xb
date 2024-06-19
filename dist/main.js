@@ -31859,6 +31859,12 @@ const sections = [
                 settings_path: ['editor_options', 'line_numbers'],
                 analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_editor_options_line_numbers */ .Mn, // (value, label) => complaint
             }, {
+                id: 'editor_options_line_wrapping',
+                label: 'Line wrapping',
+                type: 'checkbox',
+                settings_path: ['editor_options', 'line_wrapping'],
+                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_editor_options_line_wrapping */ ._m, // (value, label) => complaint
+            }, {
                 id: 'editor_options_limited_size',
                 label: 'Window size (%)',
                 type: 'number',
@@ -32015,6 +32021,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   W6: () => (/* binding */ analyze_editor_options_indent),
 /* harmony export */   WD: () => (/* binding */ theme_light),
 /* harmony export */   ZA: () => (/* binding */ update_settings),
+/* harmony export */   _m: () => (/* binding */ analyze_editor_options_line_wrapping),
 /* harmony export */   fe: () => (/* binding */ analyze_formatting_options_indent),
 /* harmony export */   gd: () => (/* binding */ analyze_editor_options_indent_with_tabs),
 /* harmony export */   hh: () => (/* binding */ analyze_editor_options_mode),
@@ -32046,6 +32053,7 @@ const initial_settings = {
         tab_key_indents: false,
         mode: 'default',
         line_numbers: true,
+        line_wrapping: true,
         limited_size: 33,
     },
     formatting_options: {
@@ -32143,6 +32151,12 @@ function analyze_editor_options_line_numbers(value, name) {
     }
     return undefined;
 }
+function analyze_editor_options_line_wrapping(value, name) {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'line_wrapping'} must be true or false`;
+    }
+    return undefined;
+}
 function analyze_editor_options_limited_size(value, name) {
     if (typeof value !== 'number' || value <= 0) {
         return `${name ?? 'limited_size'} must be a positive number`;
@@ -32154,8 +32168,8 @@ function analyze_editor_options(editor_options, name) {
         return `${name ?? 'editor_options'} must be an object`;
     }
     const keys = Object.keys(editor_options);
-    if (!keys.every(k => ['indent', 'tab_size', 'indent_with_tabs', 'tab_key_indents', 'mode', 'line_numbers', 'limited_size'].includes(k))) {
-        return `${name ?? 'editor_options'} may only have the keys "indent", "tab_size", "indent_with_tabs", "tab_key_indents", "mode", "line_numbers" and "limited_size"`;
+    if (!keys.every(k => ['indent', 'tab_size', 'indent_with_tabs', 'tab_key_indents', 'mode', 'line_numbers', 'line_wrapping', 'limited_size'].includes(k))) {
+        return `${name ?? 'editor_options'} may only have the keys "indent", "tab_size", "indent_with_tabs", "tab_key_indents", "mode", "line_numbers", "line_wrapping" and "limited_size"`;
     }
     if ('indent' in editor_options) {
         const complaint = analyze_editor_options_indent(editor_options.indent);
@@ -32189,6 +32203,12 @@ function analyze_editor_options(editor_options, name) {
     }
     if ('line_numbers' in editor_options) {
         const complaint = analyze_editor_options_line_numbers(editor_options.line_numbers);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    if ('line_wrapping' in editor_options) {
+        const complaint = analyze_editor_options_line_wrapping(editor_options.line_wrapping);
         if (complaint) {
             return complaint;
         }
@@ -32473,7 +32493,7 @@ const db_key_themes = 'themes';
 const db_key_recents = 'recents';
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = '8d0b5990-9b52-42c7-91c1-cde04508b64f';
+const uuid = '41799ac6-c446-405f-8fb6-9eba0f08107a';
 const database_name = `settings-database-${uuid}`;
 const database_store_name = `settings-database-store-${uuid}`;
 const storage_db = new IndexedDBInterface(database_name, database_store_name);
@@ -33312,6 +33332,7 @@ class CodemirrorInterface {
         this.#indent_unit_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
         this.#tab_key_indents_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
         this.#line_numbers_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
+        this.#line_wrapping_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
         this.#language_compartment = new _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .Compartment */ .F6();
         const state = _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.create({
             doc: text,
@@ -33321,6 +33342,7 @@ class CodemirrorInterface {
                 this.#indent_unit_compartment.of(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(' '.repeat(2))),
                 this.#tab_key_indents_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc])),
                 this.#line_numbers_compartment.of((0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)()),
+                this.#line_wrapping_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.lineWrapping),
                 this.#language_compartment.of([]),
                 _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .defaultKeymap */ .wQ),
                 codemirror__WEBPACK_IMPORTED_MODULE_7__/* .basicSetup */ .Xy,
@@ -33340,6 +33362,7 @@ class CodemirrorInterface {
     #indent_unit_compartment;
     #tab_key_indents_compartment;
     #line_numbers_compartment;
+    #line_wrapping_compartment;
     #language_compartment;
     get_text() {
         return this.view.state.doc.toString();
@@ -33374,7 +33397,7 @@ class CodemirrorInterface {
         }
     }
     update_from_settings() {
-        const { mode, tab_size, indent, tab_key_indents, line_numbers, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_1__/* .get_settings */ .oj)().editor_options;
+        const { mode, tab_size, indent, tab_key_indents, line_numbers, line_wrapping, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_1__/* .get_settings */ .oj)().editor_options;
         let keymap_config;
         switch (mode) {
             case 'emacs':
@@ -33394,6 +33417,7 @@ class CodemirrorInterface {
                 this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(indent_unit_string)),
                 this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc]) : []),
                 this.#line_numbers_compartment.reconfigure(line_numbers ? (0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)() : []),
+                this.#line_wrapping_compartment.reconfigure(line_wrapping ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.lineWrapping : []),
             ] });
         // Note: the line_numbers setting above does not work, so we resort to this:
         const css_class_hide_line_numbers = 'codemirror-hide-line-numbers';
