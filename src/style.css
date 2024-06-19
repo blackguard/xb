@@ -61,7 +61,7 @@ main > :not(:first-child) {
 }
 
 xb-cell {
-    --content-color: lightgray;
+    --content-color: lightgrey;
 
     overflow: hidden;
 
@@ -81,7 +81,7 @@ xb-cell {
 
     max-height: fit-content;
     padding: 0;
-    border: 2px solid var(--content-color);
+    border: 1px solid var(--content-color);
     border-radius: var(--theme-cl-bdr);
     border-style:  var(--theme-cl-bds);
 }
@@ -92,10 +92,6 @@ xb-cell > * {
     background-color: var(--theme-cl-bgc);
 }
 
-xb-cell {
-    margin-top: 0;
-    border-top-width: 0;
-}
 xb-cell::before {
     content: "markdown";  /* markdown is the default */
     display: inline-block;
