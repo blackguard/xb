@@ -90,6 +90,8 @@ async function initialize_document(): Promise<void> {
 
     } catch (error: unknown) {
         show_initialization_failed(error);
+    } finally {
+        document.documentElement.removeAttribute('style');
     }
 }
 

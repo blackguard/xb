@@ -10,6 +10,11 @@ const webpack_config = {
     entry: './src/init.ts',
     mode:  'production',
 
+    output: {
+        path: dist_dir_path,
+        filename: 'init.js',
+    },
+
     devtool: 'source-map',
     optimization: {
 //        minimize: true,
@@ -18,11 +23,6 @@ const webpack_config = {
 
     stats: {
         errorDetails: true,
-    },
-
-    output: {
-        path: dist_dir_path,
-        filename: 'main.js',
     },
 
     resolve: {

@@ -107,7 +107,7 @@ export class XbManager {
         return this.#singleton;
     }
 
-    // called and awaited in ./init.js as part of bootstrap process
+    // called and awaited in ./init.js as part of initialization process
     static async _initialize_singleton(): Promise<XbManager> {
         if (!this.#singleton) {
             this.#singleton = new this();

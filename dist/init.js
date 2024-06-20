@@ -11186,6 +11186,9 @@ async function initialize_document() {
     catch (error) {
         show_initialization_failed(error);
     }
+    finally {
+        document.documentElement.removeAttribute('style');
+    }
 }
 function _show_unhandled_event(event, is_unhandled_rejection) {
     const message = is_unhandled_rejection ? 'UNHANDLED REJECTION' : 'UNHANDLED ERROR';
@@ -33507,7 +33510,7 @@ class XbManager {
         }
         return this.#singleton;
     }
-    // called and awaited in ./init.js as part of bootstrap process
+    // called and awaited in ./init.js as part of initialization process
     static async _initialize_singleton() {
         if (!this.#singleton) {
             this.#singleton = new this();
@@ -75719,4 +75722,4 @@ class StyleSet {
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=init.js.map

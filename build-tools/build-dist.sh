@@ -24,6 +24,7 @@ declare ROOT_DIR="${THIS_FILE_DIR}/.."
 declare DIST_DIR="${ROOT_DIR}/dist"
 
 declare -a FILES_TO_COPY=(
+    'src/xb-bootstrap.js'
     'src/index.html'
     'src/help-window/help.html'
     'src/favicon.ico'
