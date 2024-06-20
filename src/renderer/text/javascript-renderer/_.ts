@@ -98,7 +98,7 @@ import {
 } from 'src/renderer/application/plotly';
 
 import {
-    Algebrite,
+    load_Algebrite,
 } from 'lib/sys/algebrite';
 
 import * as rxjs from 'rxjs';
@@ -268,8 +268,7 @@ export class JavaScriptRenderer extends TextBasedRenderer {
 
             d3,  // for use with Plotly
             load_Plotly,
-
-            Algebrite,
+            load_Algebrite,
             rxjs,
 
             // utility functions defined above

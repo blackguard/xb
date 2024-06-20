@@ -9,10 +9,16 @@ import {
 } from 'lib/sys/assets-server-url';
 
 
-await load_script(document.head, new URL('../../dist/algebrite.bundle-for-browser.js', assets_server_url(current_script_url)));
-
 declare global {
     var Algebrite: any;
 }
 
-export const Algebrite = globalThis.Algebrite;
+let script_loaded = false;
+
+export async function load_Algebrite() {
+    if (!script_loaded) {
+        await load_script(document.head, new URL('../../dist/algebrite.bundle-for-browser.js', assets_server_url(current_script_url)));
+        script_loaded = true;
+    }
+    return globalThis.Algebrite;
+}

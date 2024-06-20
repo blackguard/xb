@@ -7441,22 +7441,25 @@ class ActivityManager extends Activity {
 /***/ }),
 
 /***/ 117:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   m: () => (/* binding */ Algebrite)
+/* harmony export */   h: () => (/* binding */ load_Algebrite)
 /* harmony export */ });
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6667);
 const current_script_url = "file:///home/ed/code/xb/lib/sys/algebrite.ts"; // save for later
 
 
-await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../dist/algebrite.bundle-for-browser.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
-const Algebrite = globalThis.Algebrite;
+let script_loaded = false;
+async function load_Algebrite() {
+    if (!script_loaded) {
+        await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../dist/algebrite.bundle-for-browser.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
+        script_loaded = true;
+    }
+    return globalThis.Algebrite;
+}
 
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } }, 1);
 
 /***/ }),
 
@@ -12354,8 +12357,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(117);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7210);
 /* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3751);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_3__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__]);
-([_eval_worker___WEBPACK_IMPORTED_MODULE_3__, lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_3__]);
+_eval_worker___WEBPACK_IMPORTED_MODULE_3__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/_.ts"; // save for later
 
 const lib_dir_path = '../../../lib/';
@@ -12549,7 +12552,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             ApplicationBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationBasedRenderer */ .fv,
             d3, // for use with Plotly
             load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_5__/* .load_Plotly */ .P,
-            Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__/* .Algebrite */ .m,
+            load_Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__/* .load_Algebrite */ .h,
             rxjs: rxjs__WEBPACK_IMPORTED_MODULE_8__,
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
