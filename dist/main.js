@@ -11177,7 +11177,7 @@ async function initialize_document() {
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
         await src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
-        // initialize renderer factories after all the TextOrientedRenderer factories have been registered...
+        // initialize renderer factories after all the TextBasedRenderer factories have been registered...
         (0,src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* .reset_to_initial_text_renderer_factories */ .$F)();
     }
     catch (error) {
@@ -11765,10 +11765,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   GG: () => (/* reexport safe */ _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__.G),
 /* harmony export */   Ih: () => (/* reexport safe */ _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__.I),
 /* harmony export */   LT: () => (/* reexport safe */ _application_graphviz_renderer__WEBPACK_IMPORTED_MODULE_7__.L),
+/* harmony export */   TC: () => (/* reexport safe */ _renderer__WEBPACK_IMPORTED_MODULE_0__.TC),
 /* harmony export */   _T: () => (/* reexport safe */ _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__._),
 /* harmony export */   bi: () => (/* reexport safe */ _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__.b),
 /* harmony export */   f0: () => (/* reexport safe */ _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__.f),
-/* harmony export */   ld: () => (/* reexport safe */ _renderer__WEBPACK_IMPORTED_MODULE_0__.ld),
 /* harmony export */   tV: () => (/* reexport safe */ _text_text_renderer__WEBPACK_IMPORTED_MODULE_1__.t)
 /* harmony export */ });
 /* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
@@ -11810,7 +11810,7 @@ __webpack_async_result__();
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 
-class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationOrientedRenderer */ .T2 {
+class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .fv {
     static get type() { return 'canvas-image'; }
     async _render(ocx, canvas_renderer, options) {
         if (typeof canvas_renderer !== 'function') {
@@ -11890,7 +11890,7 @@ async function load_d3() {
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
 
 
-class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationOrientedRenderer */ .T2 {
+class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .fv {
     get CLASS() { return this.constructor; }
     static get type() { return 'error'; }
     static error_element_class = 'error';
@@ -12016,7 +12016,7 @@ async function render(element_selector, dot, options) {
 ;// CONCATENATED MODULE: ./src/renderer/application/graphviz-renderer.ts
 
 
-class GraphvizRenderer extends renderer/* ApplicationOrientedRenderer */.T2 {
+class GraphvizRenderer extends renderer/* ApplicationBasedRenderer */.fv {
     static get type() { return 'graphviz'; }
     async _render(ocx, graphviz_config, options) {
         const style = options?.style;
@@ -12063,7 +12063,7 @@ class GraphvizRenderer extends renderer/* ApplicationOrientedRenderer */.T2 {
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 
-class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationOrientedRenderer */ .T2 {
+class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .fv {
     static get type() { return 'image-data'; }
     async _render(ocx, config, options) {
         const style = options?.style;
@@ -12101,7 +12101,7 @@ class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0
 /* harmony import */ var _plotly__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4425);
 
 
-class PlotlyRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationOrientedRenderer */ .T2 {
+class PlotlyRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .fv {
     static get type() { return 'plotly'; }
     async _render(ocx, plotly_config, options) {
         if (typeof plotly_config !== 'object') {
@@ -12187,12 +12187,12 @@ async function load_Plotly() {
 /* harmony export */ });
 /* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 
-// === TEXT-ORIENTED RENDERER FACTORY COLLECTION (INITIALIZED BELOW) ===
-// used by TextOrientedRenderer extensions to self-register
+// === TEXT-BASED RENDERER FACTORY COLLECTION (INITIALIZED BELOW) ===
+// used by TextBasedRenderer extensions to self-register
 const _initial_text_renderer_factories = [];
-let text_renderer_factories; // Array of TextOrientedRenderer factories, priority order, all with unique type properties
-let type_to_text_renderer_factory_map; // Map type->TextOrientedRenderer factory, derived from current text renderer factories
-// === TEXT-ORIENTED RENDERER COLLECTION ACCESS/UPDATE ===
+let text_renderer_factories; // Array of TextBasedRenderer factories, priority order, all with unique type properties
+let type_to_text_renderer_factory_map; // Map type->TextBasedRenderer factory, derived from current text renderer factories
+// === TEXT-BASED RENDERER COLLECTION ACCESS/UPDATE ===
 function text_renderer_factory_for_type(type) {
     const renderer_factory = type_to_text_renderer_factory_map.get(type.toLowerCase());
     return renderer_factory ? renderer_factory : undefined;
@@ -12200,8 +12200,8 @@ function text_renderer_factory_for_type(type) {
 function get_text_renderer_factories() {
     return [...text_renderer_factories];
 }
-/** set a new collection of TextOrientedRenderer instances
- *  @param {TextOrientedRenderer[]} new_renderer_factories an array of TextOrientedRenderer instances
+/** set a new collection of TextBasedRenderer instances
+ *  @param {TextBasedRenderer[]} new_renderer_factories an array of TextBasedRenderer instances
  * new_renderer_factories must not contain renderers with duplicated types
  */
 function set_text_renderer_factories(new_renderer_factories) {
@@ -12257,8 +12257,8 @@ reset_to_initial_text_renderer_factories();
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   $3: () => (/* binding */ is_RendererFactory),
-/* harmony export */   T2: () => (/* binding */ ApplicationOrientedRenderer),
-/* harmony export */   ld: () => (/* binding */ TextOrientedRenderer)
+/* harmony export */   TC: () => (/* binding */ TextBasedRenderer),
+/* harmony export */   fv: () => (/* binding */ ApplicationBasedRenderer)
 /* harmony export */ });
 /* unused harmony export Renderer */
 /* harmony import */ var _factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
@@ -12280,7 +12280,7 @@ class Renderer {
      */
     get media_type() { return this.constructor.media_type; }
 }
-class TextOrientedRenderer extends Renderer {
+class TextBasedRenderer extends Renderer {
     static get media_type() { return `text/${this.type}`; }
     static get_renderer_types() { return (0,_factories__WEBPACK_IMPORTED_MODULE_0__/* .get_text_renderer_factories */ .DX)().map(rf => rf.type); }
     static reset_renderer_factories() { (0,_factories__WEBPACK_IMPORTED_MODULE_0__/* .reset_to_initial_text_renderer_factories */ .$F)(); }
@@ -12308,7 +12308,7 @@ class TextOrientedRenderer extends Renderer {
     /** implementation of rendering, to be implemented by subclasses
      * @param {OutputContextLike} ocx,
      * @param {string} value,  // value to be rendered
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
@@ -12316,7 +12316,7 @@ class TextOrientedRenderer extends Renderer {
         return ocx._invoke_renderer(this, value, options); // calls this._render(ocx, value, options)
     }
 }
-class ApplicationOrientedRenderer extends Renderer {
+class ApplicationBasedRenderer extends Renderer {
     static get media_type() { return `application/${this.type}`; }
     /** implementation of rendering, to be implemented by subclasses
      * @param {OutputContextLike} ocx,
@@ -12413,16 +12413,16 @@ const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).con
 
 
 
-class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld {
+class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC {
     static get type() { return 'javascript'; }
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     /** Render by evaluating the given code and outputting to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} code,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
@@ -12545,8 +12545,8 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             ocx,
             source_code, // this evaluation's source code
             // Renderer, etc classes
-            TextOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld,
-            ApplicationOrientedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationOrientedRenderer */ .T2,
+            TextBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC,
+            ApplicationBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationBasedRenderer */ .fv,
             d3, // for use with Plotly
             load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_5__/* .load_Plotly */ .P,
             Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_6__/* .Algebrite */ .m,
@@ -12883,16 +12883,16 @@ _marked__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (a
 const extension_name__inline_tex = 'inline-tex';
 const extension_name__block_tex = 'block-tex';
 const extension_name__eval_code = 'eval-code';
-class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld {
+class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC {
     static get type() { return 'markdown'; }
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     /** Render by evaluating the given markdown and outputting to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} markdown,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
@@ -12922,7 +12922,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                             if (!source_type) {
                                 throw new Error('no source_type given');
                             }
-                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextOrientedRenderer */ .ld.factory_for_type(source_type);
+                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC.factory_for_type(source_type);
                             if (!renderer_factory) {
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
@@ -31677,17 +31677,17 @@ const _katex = katex;
 
 
 
-class TeXRenderer extends renderer/* TextOrientedRenderer */.ld {
+class TeXRenderer extends renderer/* TextBasedRenderer */.TC {
     get CLASS() { return this.constructor; }
     static get type() { return 'tex'; }
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         factories/* _initial_text_renderer_factories */.U0.push(this);
     }
     /** Render the given TeX source to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} tex,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
@@ -31731,10 +31731,10 @@ class TeXRenderer extends renderer/* TextOrientedRenderer */.ld {
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4464);
 
 
-class TextRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextOrientedRenderer */ .ld {
+class TextRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextBasedRenderer */ .TC {
     static get type() { return 'plain'; }
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     async _render(ocx, text, options) {
@@ -33043,7 +33043,7 @@ const current_script_url = (/* unused pure expression or super */ null && ("file
 async function load_stylesheet() {
     create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
 }
-/** XbCellElement represents a text-oriented input/source
+/** XbCellElement represents a text-based input/source
  *  It represents media types text/???
  */
 class XbCellElement extends HTMLElement {
@@ -33597,7 +33597,7 @@ class XbManager {
         catch (error) {
             console.error('error calling this.stop()', error, this);
         }
-        src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextOrientedRenderer */ .ld.reset_renderer_factories();
+        src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextBasedRenderer */ .TC.reset_renderer_factories();
         this.reset_global_state();
         this.#file_handle = undefined;
         for (const cell of this.get_cells()) {
@@ -33765,7 +33765,7 @@ class XbManager {
             throw new Error('unexpected: cell has a different xb');
         }
         type ??= 'plain';
-        const renderer = src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextOrientedRenderer */ .ld.renderer_for_type(type);
+        const renderer = src_renderer___WEBPACK_IMPORTED_MODULE_5__/* .TextBasedRenderer */ .TC.renderer_for_type(type);
         if (!renderer) {
             throw new Error('no renderer found for type "${type}"');
         }

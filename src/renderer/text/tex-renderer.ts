@@ -1,5 +1,5 @@
 import {
-    TextOrientedRenderer,
+    TextBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from 'src/renderer/factories';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/text/types';
 
 import {
@@ -19,24 +19,24 @@ import {
 } from './katex/_';
 
 
-export class TeXRenderer extends TextOrientedRenderer {
+export class TeXRenderer extends TextBasedRenderer {
     get CLASS () { return this.constructor as typeof TeXRenderer; }
 
     static get type (){ return 'tex'; }
 
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         _initial_text_renderer_factories.push(this);
     }
 
     /** Render the given TeX source to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} tex,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
-    async _render(ocx: OutputContextLike, tex: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async _render(ocx: OutputContextLike, tex: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         tex ??= '';
 
         const {

@@ -1,5 +1,5 @@
 import {
-    TextOrientedRenderer,
+    TextBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from 'src/renderer/factories';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/text/types';
 
 import {
@@ -15,15 +15,15 @@ import {
 } from 'src/output-context/types';
 
 
-export class TextRenderer extends TextOrientedRenderer {
+export class TextRenderer extends TextBasedRenderer {
     static get type (){ return 'plain'; }
 
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         _initial_text_renderer_factories.push(this);
     }
 
-    async _render(ocx: OutputContextLike, text: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async _render(ocx: OutputContextLike, text: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         const {
             style,
             inline,

@@ -31,8 +31,8 @@ import {
     CanvasImageRenderer,
     CanvasImageRendererValueType,
     CanvasImageRendererOptionsType,
-    TextOrientedRenderer,
-    TextOrientedRendererOptionsType,
+    TextBasedRenderer,
+    TextBasedRendererOptionsType,
     TextRenderer,
     MarkdownRenderer,
     TeXRenderer,
@@ -179,7 +179,7 @@ export class OutputContext extends OutputContextLike {
 
     // === ADVANCED OPERATIONS ===
 
-    async render_text(text: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async render_text(text: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         text ??= '';
         if (typeof text !== 'string') {
@@ -197,7 +197,7 @@ export class OutputContext extends OutputContextLike {
         return ErrorRenderer.render_sync(this, error, options);
     }
 
-    async render_value(value: any, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async render_value(value: any, options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         // transform value to text and then render as text
         let text: string;
@@ -211,7 +211,7 @@ export class OutputContext extends OutputContextLike {
         return this.render_text(text, options);
     }
 
-    async println(text: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async println(text: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         return this.render_text((text ?? '') + '\n', options);
     }
 
@@ -228,22 +228,22 @@ export class OutputContext extends OutputContextLike {
         return this.render_text(text)
     }
 
-    async print__(options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async print__(options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         return this.create_child({ tag: 'hr' });
     }
 
-    async javascript(code: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async javascript(code: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         return new JavaScriptRenderer().render(this, code, options);
     }
 
-    async markdown(code: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async markdown(code: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         return new MarkdownRenderer().render(this, code, options);
     }
 
-    async tex(code: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async tex(code: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         this.abort_if_stopped();
         return new TeXRenderer().render(this, code, options);
     }

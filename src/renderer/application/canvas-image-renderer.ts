@@ -1,5 +1,5 @@
 import {
-    ApplicationOrientedRenderer,
+    ApplicationBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -12,7 +12,7 @@ import {
 } from 'src/output-context/types';
 
 
-export class CanvasImageRenderer extends ApplicationOrientedRenderer<CanvasImageRendererValueType, CanvasImageRendererOptionsType> {
+export class CanvasImageRenderer extends ApplicationBasedRenderer<CanvasImageRendererValueType, CanvasImageRendererOptionsType> {
     static get type (){ return 'canvas-image'; }
 
     async _render(ocx: OutputContextLike, canvas_renderer: CanvasImageRendererValueType, options?: CanvasImageRendererOptionsType): Promise<Element> {

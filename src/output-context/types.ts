@@ -34,7 +34,7 @@ import {
 } from 'lib/sys/activity-manager';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/text/types';
 
 import {
@@ -345,15 +345,15 @@ export abstract class OutputContextLike extends ActivityManager {
 
     // === ADVANCED OPERATIONS ===
 
-    abstract render_text(text: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
+    abstract render_text(text: string, options?: TextBasedRendererOptionsType): Promise<Element>;
     abstract render_error(error: ErrorRendererValueType, options?: ErrorRendererOptionsType): Promise<Element>;
-    abstract render_value(value: any, options?: TextOrientedRendererOptionsType): Promise<Element>;
-    abstract println(text: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
+    abstract render_value(value: any, options?: TextBasedRendererOptionsType): Promise<Element>;
+    abstract println(text: string, options?: TextBasedRendererOptionsType): Promise<Element>;
     abstract printf(format: string, ...args: any[]): Promise<Element>;
-    abstract print__(options?: TextOrientedRendererOptionsType): Promise<Element>;
-    abstract javascript(code: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
-    abstract markdown(code: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
-    abstract tex(code: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
+    abstract print__(options?: TextBasedRendererOptionsType): Promise<Element>;
+    abstract javascript(code: string, options?: TextBasedRendererOptionsType): Promise<Element>;
+    abstract markdown(code: string, options?: TextBasedRendererOptionsType): Promise<Element>;
+    abstract tex(code: string, options?: TextBasedRendererOptionsType): Promise<Element>;
     abstract image_data(code: ImageDataRendererValueType, options?: ImageDataRendererOptionsType): Promise<Element>;
     abstract graphviz(code: GraphvizRendererValueType, options?: GraphvizRendererOptionsType): Promise<Element>;
     abstract plotly(code: PlotlyRendererValueType, options?: PlotlyRendererOptionsType): Promise<Element>;

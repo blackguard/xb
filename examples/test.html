@@ -133,13 +133,13 @@ await plotly([ trace1, trace2 ]);</xb-cell><output class="xb-cell-output" data-s
 <xb-cell id="id-9b45bea7-d291-44e4-a98a-a4c77c42e30a">## Custom Renderer Example
 ``` javascript!
 const bullet = '\u00b7';  // middle dot
-class ListItemRenderer extends TextOrientedRenderer {
+class ListItemRenderer extends TextBasedRenderer {
     static type = 'list-item';
     async render(ocx, value, options) {
         return ocx.render_text(`${bullet} ${value?.trim()}\n`);
     }
 }
-TextOrientedRenderer.add_renderer_factory(ListItemRenderer);
+TextBasedRenderer.add_renderer_factory(ListItemRenderer);
 ```
 ``` list-item!
 abc

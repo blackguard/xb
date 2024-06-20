@@ -34,7 +34,7 @@ export async function load_stylesheet() {
     create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
 }
 
-/** XbCellElement represents a text-oriented input/source
+/** XbCellElement represents a text-based input/source
  *  It represents media types text/???
  */
 export class XbCellElement extends HTMLElement {

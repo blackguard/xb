@@ -1,20 +1,20 @@
 import {
     RendererFactory,
     is_RendererFactory,
-    TextOrientedRenderer,
+    TextBasedRenderer,
 } from './renderer';
 
 
-// === TEXT-ORIENTED RENDERER FACTORY COLLECTION (INITIALIZED BELOW) ===
+// === TEXT-BASED RENDERER FACTORY COLLECTION (INITIALIZED BELOW) ===
 
-// used by TextOrientedRenderer extensions to self-register
+// used by TextBasedRenderer extensions to self-register
 export const _initial_text_renderer_factories: RendererFactory[] = [];
 
-let text_renderer_factories: Array<RendererFactory>;  // Array of TextOrientedRenderer factories, priority order, all with unique type properties
-let type_to_text_renderer_factory_map: Map<string, RendererFactory>;  // Map type->TextOrientedRenderer factory, derived from current text renderer factories
+let text_renderer_factories: Array<RendererFactory>;  // Array of TextBasedRenderer factories, priority order, all with unique type properties
+let type_to_text_renderer_factory_map: Map<string, RendererFactory>;  // Map type->TextBasedRenderer factory, derived from current text renderer factories
 
 
-// === TEXT-ORIENTED RENDERER COLLECTION ACCESS/UPDATE ===
+// === TEXT-BASED RENDERER COLLECTION ACCESS/UPDATE ===
 
 export function text_renderer_factory_for_type(type: string): undefined|RendererFactory {
     const renderer_factory = type_to_text_renderer_factory_map.get(type.toLowerCase());
@@ -25,8 +25,8 @@ export function get_text_renderer_factories(): RendererFactory[] {
     return [ ...text_renderer_factories ];
 }
 
-/** set a new collection of TextOrientedRenderer instances
- *  @param {TextOrientedRenderer[]} new_renderer_factories an array of TextOrientedRenderer instances
+/** set a new collection of TextBasedRenderer instances
+ *  @param {TextBasedRenderer[]} new_renderer_factories an array of TextBasedRenderer instances
  * new_renderer_factories must not contain renderers with duplicated types
  */
 export function set_text_renderer_factories(new_renderer_factories: RendererFactory[]): void {

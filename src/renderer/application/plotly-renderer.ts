@@ -1,5 +1,5 @@
 import {
-    ApplicationOrientedRenderer,
+    ApplicationBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -16,7 +16,7 @@ import {
 } from './plotly';
 
 
-export class PlotlyRenderer extends ApplicationOrientedRenderer<PlotlyRendererValueType, PlotlyRendererOptionsType> {
+export class PlotlyRenderer extends ApplicationBasedRenderer<PlotlyRendererValueType, PlotlyRendererOptionsType> {
     static get type (){ return 'plotly'; }
 
     async _render(ocx: OutputContextLike, plotly_config: PlotlyRendererValueType, options?: PlotlyRendererOptionsType): Promise<Element> {

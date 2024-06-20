@@ -1,5 +1,5 @@
 import {
-    ApplicationOrientedRenderer,
+    ApplicationBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -16,7 +16,7 @@ import {
 } from './graphviz';
 
 
-export class GraphvizRenderer extends ApplicationOrientedRenderer<GraphvizRendererValueType, GraphvizRendererOptionsType> {
+export class GraphvizRenderer extends ApplicationBasedRenderer<GraphvizRendererValueType, GraphvizRendererOptionsType> {
     static get type (){ return 'graphviz'; }
 
     async _render(ocx: OutputContextLike, graphviz_config: GraphvizRendererValueType, options?: GraphvizRendererOptionsType): Promise<Element> {

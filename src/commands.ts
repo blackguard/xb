@@ -13,10 +13,6 @@ import {
 } from 'lib/ui/key/_';
 
 import {
-    TextOrientedRenderer,
-} from 'src/renderer/_';
-
-import {
     move_node,
 } from 'lib/ui/dom-tools';
 

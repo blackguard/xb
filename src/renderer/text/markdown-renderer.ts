@@ -4,11 +4,11 @@ import {
 
 import {
     RendererFactory,
-    TextOrientedRenderer,
+    TextBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/text/types';
 
 import {
@@ -51,22 +51,22 @@ type walkTokens_token_type = {
     source_type?:  string,
 };
 
-export class MarkdownRenderer extends TextOrientedRenderer {
+export class MarkdownRenderer extends TextBasedRenderer {
     static get type (){ return 'markdown'; }
 
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         _initial_text_renderer_factories.push(this);
     }
 
     /** Render by evaluating the given markdown and outputting to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} markdown,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
-    async _render(ocx: OutputContextLike, markdown: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async _render(ocx: OutputContextLike, markdown: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         markdown ??= '';
 
         const {
@@ -86,8 +86,8 @@ export class MarkdownRenderer extends TextOrientedRenderer {
         let deferred_evaluations: {
             output_element_id: string,
             text:              string,
-            renderer:          TextOrientedRenderer,
-            renderer_options:  TextOrientedRendererOptionsType,
+            renderer:          TextBasedRenderer,
+            renderer_options:  TextBasedRendererOptionsType,
         }[] = [];
 
         const marked_options = {
@@ -112,7 +112,7 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                             if (!source_type) {
                                 throw new Error('no source_type given');
                             }
-                            renderer_factory = TextOrientedRenderer.factory_for_type(source_type);
+                            renderer_factory = TextBasedRenderer.factory_for_type(source_type);
                             if (!renderer_factory) {
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
@@ -122,7 +122,7 @@ export class MarkdownRenderer extends TextOrientedRenderer {
                                 deferred_evaluations.push({
                                     output_element_id,
                                     text: text_to_render,
-                                    renderer: new renderer_factory() as TextOrientedRenderer,
+                                    renderer: new renderer_factory() as TextBasedRenderer,
                                     renderer_options: {
                                         global_state,
                                         background: run_in_background,

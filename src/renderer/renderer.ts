@@ -8,7 +8,7 @@ import {
 } from './factories';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from './text/types';
 
 import {
@@ -44,20 +44,20 @@ export class Renderer {
 }
 
 
-export abstract class TextOrientedRenderer extends Renderer {
+export abstract class TextBasedRenderer extends Renderer {
     static get media_type (){ return `text/${this.type}`; }
 
     static get_renderer_types():       string[] { return get_text_renderer_factories().map(rf => rf.type); }
     static reset_renderer_factories(): void     { reset_to_initial_text_renderer_factories(); }
 
     static factory_for_type(type: string):  undefined|RendererFactory { return text_renderer_factory_for_type(type); }
-    static renderer_for_type(type: string): undefined|TextOrientedRenderer {
+    static renderer_for_type(type: string): undefined|TextBasedRenderer {
         const factory = text_renderer_factory_for_type(type);
         if (!factory) {
             return undefined;
         } else {
             const renderer = new factory();
-            return renderer as TextOrientedRenderer;
+            return renderer as TextBasedRenderer;
         }
     }
 
@@ -76,19 +76,19 @@ export abstract class TextOrientedRenderer extends Renderer {
     /** implementation of rendering, to be implemented by subclasses
      * @param {OutputContextLike} ocx,
      * @param {string} value,  // value to be rendered
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
-    async render(ocx: OutputContextLike, value: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async render(ocx: OutputContextLike, value: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         return ocx._invoke_renderer(this, value, options);  // calls this._render(ocx, value, options)
     }
     // called by ocx._invoke_renderer()
-    abstract /*async*/ _render(ocx: OutputContextLike, value: string, options?: TextOrientedRendererOptionsType): Promise<Element>;
+    abstract /*async*/ _render(ocx: OutputContextLike, value: string, options?: TextBasedRendererOptionsType): Promise<Element>;
 }
 
 
-export abstract class ApplicationOrientedRenderer<ValueType, OptionsType> extends Renderer {
+export abstract class ApplicationBasedRenderer<ValueType, OptionsType> extends Renderer {
     static get media_type (){ return `application/${this.type}`; }
 
     /** implementation of rendering, to be implemented by subclasses

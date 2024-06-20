@@ -14,7 +14,6 @@ import {
 
 // === INITIAL SETTINGS ===
 
-
 export const theme_system = 'system';
 export const theme_light  = 'light';
 export const theme_dark   = 'dark';

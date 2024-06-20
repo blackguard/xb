@@ -36,8 +36,8 @@ import {
 } from 'lib/ui/dom-tools';
 
 import {
-    TextOrientedRenderer,
-    TextOrientedRendererOptionsType,
+    TextBasedRenderer,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/_';
 
 import {
@@ -215,7 +215,7 @@ export class XbManager {
         } catch (error: unknown) {
             console.error('error calling this.stop()', error, this);
         }
-        TextOrientedRenderer.reset_renderer_factories();
+        TextBasedRenderer.reset_renderer_factories();
         this.reset_global_state();
         this.#file_handle = undefined;
         for (const cell of this.get_cells()) {
@@ -406,22 +406,22 @@ export class XbManager {
     // === RENDER INTERFACE ===
 
     invoke_renderer_for_type( type:            string = 'plain',
-                              options?:        null|TextOrientedRendererOptionsType,
+                              options?:        null|TextBasedRendererOptionsType,
                               cell?:           null|XbCellElement,
                               output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         if (cell && cell.xb !== this) {
             throw new Error('unexpected: cell has a different xb');
         }
         type ??= 'plain';
-        const renderer = TextOrientedRenderer.renderer_for_type(type);
+        const renderer = TextBasedRenderer.renderer_for_type(type);
         if (!renderer) {
             throw new Error('no renderer found for type "${type}"');
         }
         return this.invoke_renderer(renderer, options, cell, output_element);
     }
 
-    invoke_renderer( renderer:        TextOrientedRenderer,
-                     options?:        null|TextOrientedRendererOptionsType,
+    invoke_renderer( renderer:        TextBasedRenderer,
+                     options?:        null|TextBasedRendererOptionsType,
                      cell?:           null|XbCellElement,
                      output_element?: Element ): Promise<{ element: Element, remove_event_handlers: () => void }> {
         cell ??= this.active_cell;

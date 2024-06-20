@@ -56,8 +56,8 @@ const AsyncFunction          = Object.getPrototypeOf(async function () {}).const
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () {}).constructor;
 
 import {
-    ApplicationOrientedRenderer,
-    TextOrientedRenderer,
+    ApplicationBasedRenderer,
+    TextBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -65,7 +65,7 @@ import {
 } from 'src/renderer/factories';
 
 import {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from 'src/renderer/text/types';
 
 import {
@@ -106,22 +106,22 @@ import * as rxjs from 'rxjs';
 import * as canvas_tools from 'lib/ui/canvas-tools';
 
 
-export class JavaScriptRenderer extends TextOrientedRenderer {
+export class JavaScriptRenderer extends TextBasedRenderer {
     static get type (){ return 'javascript'; }
 
     static {
-        // required for all TextOrientedRenderer extensions
+        // required for all TextBasedRenderer extensions
         _initial_text_renderer_factories.push(this);
     }
 
     /** Render by evaluating the given code and outputting to ocx.
      * @param {OutputContextLike} ocx,
      * @param {String} code,
-     * @param {TextOrientedRendererOptionsType|undefined} options,
+     * @param {TextBasedRendererOptionsType|undefined} options,
      * @return {Element} element to which output was rendered
      * @throws {Error} if error occurs
      */
-    async _render(ocx: OutputContextLike, code: string, options?: TextOrientedRendererOptionsType): Promise<Element> {
+    async _render(ocx: OutputContextLike, code: string, options?: TextBasedRendererOptionsType): Promise<Element> {
         const {
             style,
             inline,
@@ -263,8 +263,8 @@ export class JavaScriptRenderer extends TextOrientedRenderer {
             source_code,  // this evaluation's source code
 
             // Renderer, etc classes
-            TextOrientedRenderer,
-            ApplicationOrientedRenderer,
+            TextBasedRenderer,
+            ApplicationBasedRenderer,
 
             d3,  // for use with Plotly
             load_Plotly,

@@ -2,8 +2,8 @@
 
 export {
     RendererFactory,
-    TextOrientedRenderer,
-    ApplicationOrientedRenderer,
+    TextBasedRenderer,
+    ApplicationBasedRenderer,
 } from './renderer';
 
 export { TextRenderer        } from './text/text-renderer';
@@ -18,7 +18,7 @@ export { PlotlyRenderer      } from './application/plotly-renderer';
 export { CanvasImageRenderer } from './application/canvas-image-renderer';
 
 export {
-    TextOrientedRendererOptionsType,
+    TextBasedRendererOptionsType,
 } from './text/types';
 
 export {

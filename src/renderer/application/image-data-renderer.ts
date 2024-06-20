@@ -1,5 +1,5 @@
 import {
-    ApplicationOrientedRenderer,
+    ApplicationBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -12,7 +12,7 @@ import {
 } from 'src/output-context/types';
 
 
-export class ImageDataRenderer extends ApplicationOrientedRenderer<ImageDataRendererValueType, ImageDataRendererOptionsType> {
+export class ImageDataRenderer extends ApplicationBasedRenderer<ImageDataRendererValueType, ImageDataRendererOptionsType> {
     static get type (){ return 'image-data'; }
 
     async _render(ocx: OutputContextLike, config: ImageDataRendererValueType, options?: ImageDataRendererOptionsType): Promise<Element> {

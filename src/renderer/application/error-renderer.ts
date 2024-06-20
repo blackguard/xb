@@ -1,5 +1,5 @@
 import {
-    ApplicationOrientedRenderer,
+    ApplicationBasedRenderer,
 } from 'src/renderer/renderer';
 
 import {
@@ -16,7 +16,7 @@ import {
 } from 'lib/ui/dom-tools';
 
 
-export class ErrorRenderer extends ApplicationOrientedRenderer<ErrorRendererValueType, ErrorRendererOptionsType> {
+export class ErrorRenderer extends ApplicationBasedRenderer<ErrorRendererValueType, ErrorRendererOptionsType> {
     get CLASS () { return this.constructor as typeof ErrorRenderer; }
 
     static get type (){ return 'error'; }
