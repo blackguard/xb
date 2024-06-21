@@ -22,7 +22,6 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-markdown": "^6.2.5",
-    "@oddbird/popover-polyfill": "^0.4.3",
     "@replit/codemirror-vim": "^6.1.0",
     "@tsconfig/node20": "^20.1.4",
     "algebrite": "^1.4.0",
