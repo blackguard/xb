@@ -12,6 +12,8 @@ import {
     reset_to_initial_text_renderer_factories,
 } from 'src/renderer/factories';
 
+import 'dist/popover.min.js';  // popover polyfill; see: https://www.npmjs.com/package/@oddbird/popover-polyfill
+
 
 const cell_view_attribute_name   = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
