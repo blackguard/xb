@@ -7486,7 +7486,6 @@ function _setup_assets_server_root() {
 /** @return {URL} url resolved against the running server url
  */
 function assets_server_url(local_url) {
-    console.log('>>> assets_server_url()', local_url); //!!!
     _setup_assets_server_root();
     if (!assets_server_root) { // this is for the sake of typescript
         throw new Error('unexpected: assets_server_root is not set');
