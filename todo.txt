@@ -1,3 +1,5 @@
+menu spec ids should just use the corresponding command (eliminating those ids)
+empty inputs should yield "empty" (0-area) outputs
 make help document
 update README.md
 manage scroll position better

@@ -18,6 +18,7 @@ const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
 
 
 // this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
+//!!! is this true now?
 const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
@@ -91,11 +92,12 @@ async function initialize_document(): Promise<void> {
     } catch (error: unknown) {
         show_initialization_failed(error);
     } finally {
-        document.documentElement.removeAttribute('style');
+        (globalThis as any)._uninhibit_document_display?.();
     }
 }
 
 function _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): void {
+    (globalThis as any)._uninhibit_document_display?.();
     const message = is_unhandled_rejection ? 'UNHANDLED REJECTION' : 'UNHANDLED ERROR';
     console.error(message, event);
     if (XbManager.ready) {
@@ -104,6 +106,7 @@ function _show_unhandled_event(event: Event, is_unhandled_rejection: boolean): v
 }
 
 export function show_initialization_failed(reason: unknown) {
+    (globalThis as any)._uninhibit_document_display?.();
     const error = (reason instanceof Error)
         ? reason
         : new Error((reason as any)?.toString?.() ?? 'INITIALIZATION ERROR');

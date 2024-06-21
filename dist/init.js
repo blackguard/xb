@@ -7470,15 +7470,27 @@ async function load_Algebrite() {
 /* harmony export */   h: () => (/* binding */ assets_server_url)
 /* harmony export */ });
 const current_script_url = "file:///home/ed/code/xb/lib/sys/assets-server-url.ts"; // save for later
-const assets_server_script = document.querySelector('script');
-if (!assets_server_script || !assets_server_script.src) {
-    throw new Error('no script for assets server found in document');
-}
-const assets_server_root = new URL('..', assets_server_script.src); // assumes script src points to is one directory level below the server root
 const local_server_root = new URL('../..', current_script_url); // assumes this script is located two directory levels below server root
+const assets_server_script = document.querySelector('script');
+let assets_server_root = undefined;
+function _setup_assets_server_root() {
+    // because this module is employed when loading resources, and the
+    // fact that we may encounter an error here, this initialization
+    // is deferred until the call to assets_server_url().  Otherwise,
+    // the error is thrown out of webpack code and can't be caught....
+    if (!assets_server_script || !assets_server_script.src) {
+        throw new Error('no script for assets server found in document');
+    }
+    assets_server_root ??= new URL('..', assets_server_script.src); // assumes script src points to is one directory level below the server root
+}
 /** @return {URL} url resolved against the running server url
  */
 function assets_server_url(local_url) {
+    console.log('>>> assets_server_url()', local_url); //!!!
+    _setup_assets_server_root();
+    if (!assets_server_root) { // this is for the sake of typescript
+        throw new Error('unexpected: assets_server_root is not set');
+    }
     if (typeof local_url === 'string') {
         local_url = new URL(local_url, local_server_root);
     }
@@ -11123,6 +11135,7 @@ const current_script_url = "file:///home/ed/code/xb/src/init.ts"; // save for la
 const cell_view_attribute_name = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
 // this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
+//!!! is this true now?
 const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
@@ -11187,10 +11200,11 @@ async function initialize_document() {
         show_initialization_failed(error);
     }
     finally {
-        document.documentElement.removeAttribute('style');
+        globalThis._uninhibit_document_display?.();
     }
 }
 function _show_unhandled_event(event, is_unhandled_rejection) {
+    globalThis._uninhibit_document_display?.();
     const message = is_unhandled_rejection ? 'UNHANDLED REJECTION' : 'UNHANDLED ERROR';
     console.error(message, event);
     if (src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.ready) {
@@ -11198,6 +11212,7 @@ function _show_unhandled_event(event, is_unhandled_rejection) {
     }
 }
 function show_initialization_failed(reason) {
+    globalThis._uninhibit_document_display?.();
     const error = (reason instanceof Error)
         ? reason
         : new Error(reason?.toString?.() ?? 'INITIALIZATION ERROR');
