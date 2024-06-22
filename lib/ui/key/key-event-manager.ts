@@ -161,12 +161,14 @@ export class KeyEventManager<DocumentManager> {
                         if (state !== initial_state) {
                             // beep only if at least one keypress has already been accepted
                             event.preventDefault();
+                            event.stopPropagation();
                             beep();
                         }
                         // if still in initial_state, then no event.preventDefault()
                         reset();
                     } else {
                         event.preventDefault();
+                        event.stopPropagation();
                         if (typeof mapping_result === 'string') {
                             const command = mapping_result;
                             const command_context: CommandContext<DocumentManager> = {
