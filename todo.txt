@@ -1,5 +1,5 @@
+when menu has been used (and is still focused), issuing key command like focus-down also opens menu
 provide feedback for "saved", etc
-menu spec ids should just use the corresponding command (eliminating those ids)
 empty inputs should yield "empty" (0-area) outputs
 make help document
 update README.md
@@ -27,6 +27,7 @@ tsconfig: module, moduleResolution
 
 
 --- DONE ---
+* menu spec ids should just use the corresponding command (eliminating those ids)
 * rework settings-dialog and dialog in general (need to segregate accept/decline controls)
 * fix save-as, etc; fs-interface needs a rewrite (did a little cleanup, no rewrite...)
 * display unhandled rejections and errors

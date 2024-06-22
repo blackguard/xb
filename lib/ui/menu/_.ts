@@ -92,7 +92,7 @@ export class MenuBar<DocumentManager> {
     #get_command_bindings: undefined|null|MenuCommandBindingsGetter;  // set in constructor
     get get_command_bindings (){ return this.#get_command_bindings; }
 
-    #menu_id_to_element = new Map<string, HTMLElement>();
+    #menu_command_to_elements = new Map<string, Set<HTMLElement>>();
     #menubar_container: HTMLElement;  // set in constructor
 
     constructor(dm: DocumentManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
@@ -112,17 +112,6 @@ export class MenuBar<DocumentManager> {
     }
 
     get element (){ return this.#menubar_container; }
-
-    #get_menu_element(menu_id: string) {
-        const element = this.#menu_id_to_element.get(menu_id);
-        if (!element) {
-            throw new Error(`no element found for menu id "${menu_id}"`);
-        }
-        if (!element.classList.contains('menuitem')) {
-            throw new Error(`element for menu id "${menu_id}" is not a menuitem`);
-        }
-        return element;
-    }
 
     /** activate menu
      *  @param {Object} options: {
@@ -159,32 +148,38 @@ export class MenuBar<DocumentManager> {
         this.#deactivate_menu(this.#menubar_container);
     }
 
-    set_menu_state(menu_id: string, state_spec: { enabled?: boolean, checked?: boolean }) {
+    set_menu_state(command: string, state_spec: { enabled?: boolean, checked?: boolean }) {
         state_spec ??= {};
         if (typeof state_spec !== 'object') {
             throw new Error('state_spec must be an object');
         }
-        const element = this.#get_menu_element(menu_id);
-        for (const [ name, value ] of Object.entries(state_spec ?? {})) {
-            switch (name) {
-                case 'enabled': {
-                    if (value) {
-                        element.classList.remove('disabled');
-                    } else {
-                        element.classList.add('disabled');
+        const elements = this.#menu_command_to_elements.get(command);
+        if (!elements) {
+            console.warn('set_menu_state() command does not map to any elements', command);
+        } else {
+            for (const element of elements) {
+                for (const [ name, value ] of Object.entries(state_spec ?? {})) {
+                    switch (name) {
+                        case 'enabled': {
+                            if (value) {
+                                element.classList.remove('disabled');
+                            } else {
+                                element.classList.add('disabled');
+                            }
+                            break;
+                        }
+                        case 'checked': {
+                            if (value) {
+                                element.classList.add('checked');
+                            } else {
+                                element.classList.remove('checked');
+                            }
+                            break;
+                        }
+                        default: {
+                            throw new Error('unknown state specifier');
+                        }
                     }
-                    break;
-                }
-                case 'checked': {
-                    if (value) {
-                        element.classList.add('checked');
-                    } else {
-                        element.classList.remove('checked');
-                    }
-                    break;
-                }
-                default: {
-                    throw new Error('unknown state specifier');
                 }
             }
         }
@@ -306,7 +301,7 @@ export class MenuBar<DocumentManager> {
      *  @param {boolean} (optional) toplevel if the menu is the top-level "menubar" menu
      *         default value: false
      *  @return {HTMLElement} new menu HTMLElement
-     *  Also updates this.#menu_id_to_element
+     *  Also updates this.#menu_command_to_elements
      */
     #build_menu(menu_spec: string|object, parent: Element, toplevel: boolean = false): HTMLElement {
         if (!(parent instanceof Element)) {
@@ -320,7 +315,6 @@ export class MenuBar<DocumentManager> {
             label,
             collection,
             item,
-            id: menu_id,
         } = menu_spec as any;
 
         if (typeof label !== 'string') {
@@ -339,15 +333,19 @@ export class MenuBar<DocumentManager> {
                 throw new Error('item must specify an object with a string property "command"');
             }
         }
-        if (!['undefined', 'string'].includes(typeof menu_id) || menu_id === '') {
-            throw new Error('id must be a non-empty string');
-        }
 
         // both items and collections are menuitem elements, but the collection also has children...
         const element = this.#build_menuitem(label, toplevel);
 
         if (item) {
             this.#add_item_menuitem_annotations_and_click_handler(element, item.command);
+            // update this.#menu_command_to_elements
+            let currently_mapped_elements = this.#menu_command_to_elements.get(item.command);
+            if (!currently_mapped_elements) {
+                currently_mapped_elements = new Set();
+                this.#menu_command_to_elements.set(item.command, currently_mapped_elements);
+            }
+            currently_mapped_elements.add(element);
         } else {
             // collection
             element.classList.add('collection');
@@ -389,10 +387,6 @@ export class MenuBar<DocumentManager> {
                     }
                 });
             }
-        }
-
-        if (menu_id) {
-            this.#menu_id_to_element.set(menu_id, element);
         }
 
         // wait to add to parent until everything else happens without error

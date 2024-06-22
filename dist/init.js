@@ -10116,7 +10116,7 @@ class MenuBar {
     get selects() { return this.#selects; }
     #get_command_bindings; // set in constructor
     get get_command_bindings() { return this.#get_command_bindings; }
-    #menu_id_to_element = new Map();
+    #menu_command_to_elements = new Map();
     #menubar_container; // set in constructor
     constructor(dm, parent, menubar_spec, get_command_bindings) {
         if (!(parent instanceof Element)) {
@@ -10131,16 +10131,6 @@ class MenuBar {
         this.#menubar_container = this.#build_menubar(parent, menubar_spec);
     }
     get element() { return this.#menubar_container; }
-    #get_menu_element(menu_id) {
-        const element = this.#menu_id_to_element.get(menu_id);
-        if (!element) {
-            throw new Error(`no element found for menu id "${menu_id}"`);
-        }
-        if (!element.classList.contains('menuitem')) {
-            throw new Error(`element for menu id "${menu_id}" is not a menuitem`);
-        }
-        return element;
-    }
     /** activate menu
      *  @param {Object} options: {
      *      set_focus?: Boolean,  // set focus, too?
@@ -10173,34 +10163,41 @@ class MenuBar {
     deactivate() {
         this.#deactivate_menu(this.#menubar_container);
     }
-    set_menu_state(menu_id, state_spec) {
+    set_menu_state(command, state_spec) {
         state_spec ??= {};
         if (typeof state_spec !== 'object') {
             throw new Error('state_spec must be an object');
         }
-        const element = this.#get_menu_element(menu_id);
-        for (const [name, value] of Object.entries(state_spec ?? {})) {
-            switch (name) {
-                case 'enabled': {
-                    if (value) {
-                        element.classList.remove('disabled');
+        const elements = this.#menu_command_to_elements.get(command);
+        if (!elements) {
+            console.warn('set_menu_state() command does not map to any elements', command);
+        }
+        else {
+            for (const element of elements) {
+                for (const [name, value] of Object.entries(state_spec ?? {})) {
+                    switch (name) {
+                        case 'enabled': {
+                            if (value) {
+                                element.classList.remove('disabled');
+                            }
+                            else {
+                                element.classList.add('disabled');
+                            }
+                            break;
+                        }
+                        case 'checked': {
+                            if (value) {
+                                element.classList.add('checked');
+                            }
+                            else {
+                                element.classList.remove('checked');
+                            }
+                            break;
+                        }
+                        default: {
+                            throw new Error('unknown state specifier');
+                        }
                     }
-                    else {
-                        element.classList.add('disabled');
-                    }
-                    break;
-                }
-                case 'checked': {
-                    if (value) {
-                        element.classList.add('checked');
-                    }
-                    else {
-                        element.classList.remove('checked');
-                    }
-                    break;
-                }
-                default: {
-                    throw new Error('unknown state specifier');
                 }
             }
         }
@@ -10316,7 +10313,7 @@ class MenuBar {
      *  @param {boolean} (optional) toplevel if the menu is the top-level "menubar" menu
      *         default value: false
      *  @return {HTMLElement} new menu HTMLElement
-     *  Also updates this.#menu_id_to_element
+     *  Also updates this.#menu_command_to_elements
      */
     #build_menu(menu_spec, parent, toplevel = false) {
         if (!(parent instanceof Element)) {
@@ -10325,7 +10322,7 @@ class MenuBar {
         if (typeof menu_spec === 'string') {
             return this.#build_menu_item_separator(parent);
         }
-        const { label, collection, item, id: menu_id, } = menu_spec;
+        const { label, collection, item, } = menu_spec;
         if (typeof label !== 'string') {
             throw new Error('label must be specified as a string');
         }
@@ -10342,13 +10339,17 @@ class MenuBar {
                 throw new Error('item must specify an object with a string property "command"');
             }
         }
-        if (!['undefined', 'string'].includes(typeof menu_id) || menu_id === '') {
-            throw new Error('id must be a non-empty string');
-        }
         // both items and collections are menuitem elements, but the collection also has children...
         const element = this.#build_menuitem(label, toplevel);
         if (item) {
             this.#add_item_menuitem_annotations_and_click_handler(element, item.command);
+            // update this.#menu_command_to_elements
+            let currently_mapped_elements = this.#menu_command_to_elements.get(item.command);
+            if (!currently_mapped_elements) {
+                currently_mapped_elements = new Set();
+                this.#menu_command_to_elements.set(item.command, currently_mapped_elements);
+            }
+            currently_mapped_elements.add(element);
         }
         else {
             // collection
@@ -10391,9 +10392,6 @@ class MenuBar {
                     }
                 });
             }
-        }
-        if (menu_id) {
-            this.#menu_id_to_element.set(menu_id, element);
         }
         // wait to add to parent until everything else happens without error
         if (parent) {
@@ -10968,50 +10966,50 @@ _commands__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? 
 function get_menubar_spec() {
     return [
         { label: 'File', collection: [
-                { label: 'Recent documents', id: 'recents', collection: [
+                { label: 'Recent documents', collection: [
                     // ...
                     ] },
                 '---',
-                { label: 'Clear document', item: { command: 'clear-all' }, id: 'clear-all' },
+                { label: 'Clear document', item: { command: 'clear-all' } },
                 '---',
-                { label: 'Save', item: { command: 'save' }, id: 'save' },
+                { label: 'Save', item: { command: 'save' } },
                 { label: 'Save as...', item: { command: 'save-as' } },
                 '---',
                 { label: 'Settings...', item: { command: 'settings' } },
             ] },
         { label: 'Cell', collection: [
-                { label: 'Eval', item: { command: 'eval-and-refocus' }, id: 'eval-and-refocus' },
-                { label: 'Eval and stay', item: { command: 'eval' }, id: 'eval' },
-                { label: 'Eval before', item: { command: 'eval-before' }, id: 'eval-before' },
-                { label: 'Eval all', item: { command: 'eval-all' }, id: 'eval-all' },
+                { label: 'Eval', item: { command: 'eval-and-refocus' } },
+                { label: 'Eval and stay', item: { command: 'eval' } },
+                { label: 'Eval before', item: { command: 'eval-before' } },
+                { label: 'Eval all', item: { command: 'eval-all' } },
                 '---',
-                { label: 'Stop cell', item: { command: 'stop' }, id: 'stop' },
-                { label: 'Stop all', item: { command: 'stop-all' }, id: 'stop-all' },
+                { label: 'Stop cell', item: { command: 'stop' } },
+                { label: 'Stop all', item: { command: 'stop-all' } },
                 '---',
-                { label: 'Reset cell', item: { command: 'reset' }, id: 'reset' },
-                { label: 'Reset all', item: { command: 'reset-all' }, id: 'reset-all' },
+                { label: 'Reset cell', item: { command: 'reset' } },
+                { label: 'Reset all', item: { command: 'reset-all' } },
                 '---',
-                { label: 'Focus up', item: { command: 'focus-up' }, id: 'focus-up' },
-                { label: 'Focus down', item: { command: 'focus-down' }, id: 'focus-down' },
+                { label: 'Focus up', item: { command: 'focus-up' } },
+                { label: 'Focus down', item: { command: 'focus-down' } },
                 '---',
-                { label: 'Move up', item: { command: 'move-up' }, id: 'move-up' },
-                { label: 'Move down', item: { command: 'move-down' }, id: 'move-down' },
-                { label: 'Add before', item: { command: 'add-before' }, id: 'add-before' },
-                { label: 'Add after', item: { command: 'add-after' }, id: 'add-after' },
-                { label: 'Delete', item: { command: 'delete' }, id: 'delete' },
+                { label: 'Move up', item: { command: 'move-up' } },
+                { label: 'Move down', item: { command: 'move-down' } },
+                { label: 'Add before', item: { command: 'add-before' } },
+                { label: 'Add after', item: { command: 'add-after' } },
+                { label: 'Delete', item: { command: 'delete' } },
             ] },
         { label: 'Mode', collection: [
-                { label: 'Plain text', item: { command: 'set-mode-plain' }, id: 'set-mode-plain' },
-                { label: 'Markdown', item: { command: 'set-mode-markdown' }, id: 'set-mode-markdown' },
-                { label: 'TeX', item: { command: 'set-mode-tex' }, id: 'set-mode-tex' },
-                { label: 'JavaScript', item: { command: 'set-mode-javascript' }, id: 'set-mode-javascript' },
+                { label: 'Plain text', item: { command: 'set-mode-plain' } },
+                { label: 'Markdown', item: { command: 'set-mode-markdown' } },
+                { label: 'TeX', item: { command: 'set-mode-tex' } },
+                { label: 'JavaScript', item: { command: 'set-mode-javascript' } },
             ] },
         { label: 'View', collection: [
-                { label: 'Normal', item: { command: 'set-view-normal' }, id: 'set-view-normal' },
-                { label: 'Hide', item: { command: 'set-view-hide' }, id: 'set-view-hide' },
-                { label: 'Full', item: { command: 'set-view-full' }, id: 'set-view-full' },
-                { label: 'None', item: { command: 'set-view-none' }, id: 'set-view-none' },
-                { label: 'Kiosk', item: { command: 'set-view-kiosk' }, id: 'set-view-kiosk' },
+                { label: 'Normal', item: { command: 'set-view-normal' } },
+                { label: 'Hide', item: { command: 'set-view-hide' } },
+                { label: 'Full', item: { command: 'set-view-full' } },
+                { label: 'None', item: { command: 'set-view-none' } },
+                { label: 'Kiosk', item: { command: 'set-view-kiosk' } },
             ] },
         { label: 'Help', collection: [
                 { label: 'Help...', item: { command: 'help', } },
