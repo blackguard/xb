@@ -159,7 +159,14 @@ class FsInterface {
      */
     async prompt_for_save(options?: object) {
         this.CLASS.ensure_fsaapi_available();
-        const result = await this.#prompt<FileSystemFileHandle>((globalThis as any).showSaveFilePicker, options);
+        const result = await this.#prompt<FileSystemFileHandle>((globalThis as any).showSaveFilePicker, options)
+            .catch((error) => {
+                if (error instanceof DOMException) {
+                    return undefined;
+                } else {
+                    throw error;
+                }
+            });
         return result
             ? { file_handle: result }
             : { canceled: true };

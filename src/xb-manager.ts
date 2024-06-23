@@ -398,9 +398,12 @@ export class XbManager {
             file_handle,
             stats,
         } = (save_result as any);
-        if (!canceled) {
+        if (canceled) {
+            this.notification_manager.add('save canceled');
+        } else {
             //!!!
             this.#file_handle = file_handle ?? undefined;
+            this.notification_manager.add('document saved');
         }
         return !canceled;
     }
@@ -593,7 +596,7 @@ export class XbManager {
                                 }
                             })
                             .catch((error: unknown) => {
-                                console.error('error while performing command', error, command_context);
+                                console.error('error performing command', error, command_context);
                             });
                         success = true;  // so far..., a failure may yet happen asynchronously
                     } else {

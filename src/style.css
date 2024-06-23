@@ -332,10 +332,11 @@ html[data-cell-view="full"] .cm-scroller {
     max-width: fit-content;
     padding: 0.5em;
     margin:  0.5rem;
+    white-space: pre-wrap;
     border: 1px solid black;
     border-radius: 0.25rem;
-    color:            var(--theme-cl-fgc);
-    background-color: var(--theme-cl-bgc);
+    color:            var(--theme-nt-fgc);
+    background-color: var(--theme-nt-bgc);
 }
 
 

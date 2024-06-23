@@ -51,7 +51,7 @@ export class NotificationManager {
             before: area.firstElementChild,
             innerText: message,
             attrs: {
-                class:  this.CLASS.notification_message_css_class,
+                class: this.CLASS.notification_message_css_class,
             },
         });
         const timeout_id = setTimeout(() => {
@@ -81,7 +81,7 @@ export class NotificationManager {
             parent: this.#parent,
             set_id: true,
             attrs: {
-                class:  this.CLASS.notification_area_css_class,
+                class: this.CLASS.notification_area_css_class,
             },
         });
         this.#area_id = area.id;

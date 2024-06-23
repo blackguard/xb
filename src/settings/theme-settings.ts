@@ -79,20 +79,16 @@ const theme_property_name_documentation = `\
   ELEMENT:
   by -- body
   hd -- header
-  tl -- tool-bar
-  ts -- tool-bar toggle-switch
-  ty -- tool-bar type selector
-  ti -- tool-bar indicator
+  ty -- type indicator
   cl -- cell
   ou -- output element
-  mb -- menubar
   mu -- menu
   mi -- menuitem
   ms -- menuitem separator
   dg -- dialog
+  nt -- notification
   st -- settings dialog
   gr -- general graphics element
-  rh -- resize handle
 
   STYLE FEATURE:        STYLE FEATURE ATTRIBUTE:
   bg -- background      c -- color
@@ -145,14 +141,6 @@ const standard_themes_spec = {
     "--theme-hd-bgc":                  [ '#f8f8f8',                       '#2e2e2e' ],
     "--theme-hd-bdc":                  [ '#ccc',                          '#4a4a4a' ],
 
-    "--theme-rh-bgc":                  [ 'grey',                          'grey' ],
-    "--theme-rh-bgc-hover":            [ 'black',                         'lightgrey' ],
-
-    "--theme-tl-p":                    [ '0',                             '0' ],
-    "--theme-tl-g":                    [ '0.5em',                         '0.5em' ],
-    "--theme-tl-bgc":                  [ '#f8f8f8',                       '#1e1e1e' ],
-    "--theme-tl-bgc-mix":              [ '10%',                           '25%' ],
-
     "--theme-cl-p":                    [ '0.25em',                        '0.25em' ],
     "--theme-cl-lh":                   [ '140%',                          '140%' ],
     "--theme-cl-ff":                   [ 'monospace',                     'monospace' ],
@@ -171,6 +159,7 @@ const standard_themes_spec = {
     "--theme-ou-fgc":                  [ 'black',                         '#eee' ],
     "--theme-ou-bgc":                  [ 'white',                         'black' ],
 
+    "--theme-ty-bgc":                  [ 'hsl(  0deg   0%  97% / 100%)',  'hsl(  0deg   0%  97% / 100%)' ],
     "--theme-ty-fgc-tex":              [ 'black',                         'white' ],
     "--theme-ty-bgc-tex":              [ 'hsl(205deg  85%  85% / 100%)',  'hsl(205deg  80%  12% / 100%)' ],
     "--theme-ty-fgc-markdown":         [ 'black',                         'white' ],
@@ -179,22 +168,6 @@ const standard_themes_spec = {
     "--theme-ty-bgc-plain":            [ 'lightgrey',                     'hsl(  0deg   0%  20% / 100%)' ],
     "--theme-ty-fgc-javascript":       [ 'black',                         'white' ],
     "--theme-ty-bgc-javascript":       [ 'hsl(105deg 55% 85% / 1)',       'hsl(135deg  45%  15% / 100%)' ],
-
-    "--theme-ts-w":                    [ '1.5rem',                        '1.5rem' ],
-    "--theme-ts-h":                    [ '1.5rem',                        '1.5rem' ],
-    "--theme-ts-flc-autoeval":         [ 'transparent',                   'transparent' ],
-    "--theme-ts-stc-autoeval":         [ 'hsl(  0deg   9%  82% / 100%)',  'hsl(  0deg   9%  82% / 100%)' ],
-    "--theme-ts-flc-autoeval-checked": [ 'transparent',                   'transparent' ],
-    "--theme-ts-stc-autoeval-checked": [ 'hsl(  0deg  60%  70% / 100%)',  'hsl(  0deg  60%  70% / 100%)' ],
-
-    "--theme-ti-bdc":                  [ 'hsl(  0deg   9%  82% / 100%)',  'hsl(  0deg   0%  60% / 100%)' ],
-    "--theme-ti-bgc":                  [ 'transparent',                   'transparent' ],
-    "--theme-ti-bdc-running":          [ 'black',                         '#d5d5d5' ],
-    "--theme-ti-bgc-running":          [ 'hsl(120deg  94%  40% / 100%)',  'hsl(120deg  94%  40% / 100%)' ],
-    "--theme-ti-bdc-modified":         [ 'black',                         '#d5d5d5' ],
-    "--theme-ti-bgc-modified":         [ 'hsl(  0deg  60%  85% / 100%)',  'hsl(  0deg  55%  45% / 100%)' ],
-
-    "--theme-ty-bgc":                  [ 'hsl(  0deg   0%  97% / 100%)',  'hsl(  0deg   0%  97% / 100%)' ],
 
     "--theme-mu-bgc":                  [ '#f8f8f8',                       '#2e2e2e' ],
     "--theme-mu-bdc":                  [ 'grey',                          'grey' ],
@@ -205,6 +178,9 @@ const standard_themes_spec = {
     "--theme-ms-bgc":                  [ '#3334',                         '#ccc4' ],
 
     "--theme-dg-shc":                  [ 'grey',                          'grey' ],
+
+    "--theme-nt-fgc":                  [ 'black',                         '#ccc' ],
+    "--theme-nt-bgc":                  [ 'hsl(  0deg   0%  99% / 100%)',  '#333' ],
 
     "--theme-st-bgc":                  [ 'canvas',                        'canvas' ],
     "--theme-st-bdc-section":          [ 'hsl(  0deg   0%   0% / 100%)',  'hsl(  0deg   0%   0% / 100%)' ],
