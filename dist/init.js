@@ -548,6 +548,30 @@ html[data-cell-view="full"] .cm-scroller {
 }
 
 
+/* === notification === */
+
+.notification-area {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;  /* enable scrollbars */
+    display: flex;
+    flex-direction:  column;
+    justify-content: flex-start;
+    align-items:     flex-end;
+}
+
+.notification-message {
+    max-width: fit-content;
+    padding: 0.5em;
+    margin:  0.5rem;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    color:            var(--theme-cl-fgc);
+    background-color: var(--theme-cl-bgc);
+}
+
+
 /* === dialog === */
 
 dialog {
@@ -703,7 +727,7 @@ body > .error-message {
     }
 
 }
-`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    margin-top: 0;\n}\nmain > :not(:first-child) {\n    margin-top: var(--theme-cl-p-inter);\n}\n\n.xb-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.xb-cell-output:empty,\n.xb-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\nxb-cell {\n    --content-color: lightgrey;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n/*    background-color: var(--content-color); */\n    background-image: linear-gradient(90deg, var(--content-color), transparent);\n\n    max-height: fit-content;\n    padding: 0;\n    border: 1px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\nxb-cell > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\nxb-cell::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\nxb-cell[data-type]::before {\n    content: attr(data-type);\n}\nxb-cell[data-active][data-type]::before {\n    font-weight: bold;\n}\n\nxb-cell,  /* markdown is the default */\nxb-cell[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\nxb-cell[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\nxb-cell[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\nxb-cell[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] xb-cell {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] xb-cell:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] xb-cell {\n    display: none;\n}\nxb-cell,\nhtml[data-cell-view=\"kiosk\"] xb-cell.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] xb-cell,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-size: 120%;\n    font-weight: bold;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */\n\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > :first-child {\n    margin-top: 0;\n}\nmain > :not(:first-child) {\n    margin-top: var(--theme-cl-p-inter);\n}\n\n.xb-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n\n    height: fit-content;\n\n    padding: var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.xb-cell-output:empty,\n.xb-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 140%;\n}\n\nxb-cell {\n    --content-color: lightgrey;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: var(--theme-cl-ff);\n    line-height: var(--theme-cl-lh);\n\n    color: var(--theme-cl-fgc);\n/*    background-color: var(--content-color); */\n    background-image: linear-gradient(90deg, var(--content-color), transparent);\n\n    max-height: fit-content;\n    padding: 0;\n    border: 1px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\nxb-cell > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\nxb-cell::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\nxb-cell[data-type]::before {\n    content: attr(data-type);\n}\nxb-cell[data-active][data-type]::before {\n    font-weight: bold;\n}\n\nxb-cell,  /* markdown is the default */\nxb-cell[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\nxb-cell[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\nxb-cell[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\nxb-cell[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] xb-cell {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] xb-cell:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] xb-cell {\n    display: none;\n}\nxb-cell,\nhtml[data-cell-view=\"kiosk\"] xb-cell.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] xb-cell,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon {\n    fill:   var(--theme-gr-bgc);\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menubar .menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menubar .menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: 2rem;\n    float: right;\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === notification === */\n\n.notification-area {\n    pointer-events: none;\n    position: absolute;\n    inset: 0;\n    overflow-y: auto;  /* enable scrollbars */\n    display: flex;\n    flex-direction:  column;\n    justify-content: flex-start;\n    align-items:     flex-end;\n}\n\n.notification-message {\n    max-width: fit-content;\n    padding: 0.5em;\n    margin:  0.5rem;\n    border: 1px solid black;\n    border-radius: 0.25rem;\n    color:            var(--theme-cl-fgc);\n    background-color: var(--theme-cl-bgc);\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-size: 120%;\n    font-weight: bold;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10583,6 +10607,89 @@ class MenuBar {
             capture: true,
         });
         return menubar_container;
+    }
+}
+
+
+/***/ }),
+
+/***/ 90:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   f: () => (/* binding */ NotificationManager)
+/* harmony export */ });
+/* unused harmony export load_stylesheet */
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8401);
+const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/lib/ui/notification-manager/_.ts")); // save for later
+
+
+
+async function load_stylesheet() {
+    create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
+}
+class NotificationManager {
+    get CLASS() { return this.constructor; }
+    static notification_area_css_class = 'notification-area';
+    static notification_message_css_class = 'notification-message';
+    static notification_message_default_timeout_ms = 3000;
+    /** @param {Element} parent for notification area (default: document.body)
+     */
+    constructor(parent = document.body) {
+        if (!(parent instanceof Element)) {
+            throw new Error('parent must be an instance of Element');
+        }
+        this.#parent = parent;
+    }
+    #parent;
+    #area_id;
+    add(message, timeout = this.CLASS.notification_message_default_timeout_ms) {
+        if (typeof message !== 'string') {
+            throw new Error('message must be an instance of string');
+        }
+        if (typeof timeout !== 'number' || timeout <= 0) {
+            throw new Error('timeout must be a positive number');
+        }
+        const area = this.#establish_area();
+        const notification = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+            parent: area,
+            before: area.firstElementChild,
+            innerText: message,
+            attrs: {
+                class: this.CLASS.notification_message_css_class,
+            },
+        });
+        const timeout_id = setTimeout(() => {
+            notification.remove();
+            this.update_after_remove();
+        }, timeout);
+    }
+    update_after_remove() {
+        const area = this.#get_area();
+        if (area && area.getElementsByClassName(this.CLASS.notification_message_css_class).length <= 0) {
+            this.#area_id = undefined;
+            area.remove();
+        }
+    }
+    #get_area() {
+        if (!this.#area_id) {
+            return undefined;
+        }
+        else {
+            return document.getElementById(this.#area_id) ?? undefined;
+        }
+    }
+    #establish_area() {
+        const area = this.#get_area() ?? (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+            parent: this.#parent,
+            set_id: true,
+            attrs: {
+                class: this.CLASS.notification_area_css_class,
+            },
+        });
+        this.#area_id = area.id;
+        return area;
     }
 }
 
@@ -33464,8 +33571,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var src_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6178);
 /* harmony import */ var lib_sys_fs_interface__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9979);
-/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(2682);
-/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9638);
+/* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(2682);
+/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(9638);
 /* harmony import */ var lib_ui_key___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2636);
 /* harmony import */ var lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6490);
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8401);
@@ -33473,15 +33580,17 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_output_context___WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3732);
 /* harmony import */ var lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7827);
 /* harmony import */ var src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3054);
-/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(871);
-/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7336);
-/* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(9765);
-/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(53);
-/* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7654);
-/* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7451);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__]);
-([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_9__, src_global_bindings__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(871);
+/* harmony import */ var lib_ui_notification_manager___WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(90);
+/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7336);
+/* harmony import */ var src_global_bindings__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(9765);
+/* harmony import */ var lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(53);
+/* harmony import */ var src_style_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7654);
+/* harmony import */ var src_style_hacks_css__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(7451);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_10__, src_global_bindings__WEBPACK_IMPORTED_MODULE_11__]);
+([src_init__WEBPACK_IMPORTED_MODULE_0__, src_renderer___WEBPACK_IMPORTED_MODULE_5__, src_output_context___WEBPACK_IMPORTED_MODULE_6__, src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__, src_settings___WEBPACK_IMPORTED_MODULE_10__, src_global_bindings__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-manager.ts")); // save for later
+
 
 
 
@@ -33533,8 +33642,8 @@ class XbManager {
         return this.#singleton;
     }
     #initialize_called = false;
-    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_13__/* .ActivityManager */ .c(true); // true --> multiple_stops
-    #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_14__/* .SerialDataSource */ .B();
+    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_14__/* .ActivityManager */ .c(true); // true --> multiple_stops
+    #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_15__/* .SerialDataSource */ .B();
     #eval_states_subscription;
     #command_bindings;
     #key_event_manager;
@@ -33547,6 +33656,8 @@ class XbManager {
     #global_state = {}; // persistent state for renderers
     // the following map is maintained by this.invoke_renderer()
     #cell_ocx_map = new WeakMap();
+    #notification_manager = new lib_ui_notification_manager___WEBPACK_IMPORTED_MODULE_9__/* .NotificationManager */ .f();
+    get notification_manager() { return this.#notification_manager; }
     #reset_before_render = false; // from settings, kept up-to-date via settings_updated_events
     get reset_before_render() { return this.#reset_before_render; }
     constructor() {
@@ -33557,11 +33668,11 @@ class XbManager {
         this.reset_global_state();
         this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
         // listen for settings changed events and trigger update in cells
-        src_settings___WEBPACK_IMPORTED_MODULE_9__/* .settings_updated_events */ .Ll.subscribe(this.update_from_settings.bind(this)); //!!! never unsubscribed
+        src_settings___WEBPACK_IMPORTED_MODULE_10__/* .settings_updated_events */ .Ll.subscribe(this.update_from_settings.bind(this)); //!!! never unsubscribed
         this.update_from_settings(); // establish initial settings right away
-        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_command_bindings */ .$R)();
+        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
         this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
-        const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD)());
+        const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD)());
         this.push_key_map(key_map);
         this.#key_event_manager.attach();
         this.set_editable(true);
@@ -33742,7 +33853,7 @@ class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null; //!!! implement this
-        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .MenuBar */ .j.create(this, this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_10__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
+        this.#menubar = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .MenuBar */ .j.create(this, this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_menubar_spec */ .p7)(), src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD /*, get_recents */);
         //!!! this.#menubar_commands_subscription is never unsubscribed
         this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menubar_selects_subscription is never unsubscribed
@@ -33819,7 +33930,7 @@ class XbManager {
         // remove_event_handlers() can be called to explicitly remove the
         // handlers.  This is useful if the output_element is passed in
         // from the outside and that sort of control is desired.
-        const event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_15__/* .EventListenerManager */ .w();
+        const event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_16__/* .EventListenerManager */ .w();
         const event_listener = (event) => {
             // use querySelector() to re-find the cell in case it is no longer present
             const refound_cell = document.querySelector(`#${cell_id}`);
@@ -33935,7 +34046,7 @@ class XbManager {
                         bindings_fn(updated_command_context)
                             .then((success) => {
                             if (!success) {
-                                (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__/* .beep */ .V)();
+                                (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
                             }
                         })
                             .catch((error) => {
@@ -33950,7 +34061,7 @@ class XbManager {
             }
         }
         if (!success) {
-            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_16__/* .beep */ .V)();
+            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
         }
     }
     #command_observer(command_context) {
@@ -34009,7 +34120,7 @@ class XbManager {
         }
     }
     update_from_settings() {
-        const { editor_options, render_options, } = ((0,src_settings___WEBPACK_IMPORTED_MODULE_9__/* .get_settings */ .oj)() ?? {});
+        const { editor_options, render_options, } = ((0,src_settings___WEBPACK_IMPORTED_MODULE_10__/* .get_settings */ .oj)() ?? {});
         for (const cell of this.get_cells()) {
             cell.update_from_settings();
         }

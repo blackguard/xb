@@ -1,8 +1,10 @@
+search for uses for XbManager.singleton
 provide feedback for "saved", etc
 empty inputs should yield "empty" (0-area) outputs
 make help document
 update README.md
 manage scroll position better
+discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)
 what about x- media-types?
 TeX formatting settings no longer work
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog

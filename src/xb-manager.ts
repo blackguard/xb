@@ -57,6 +57,10 @@ import {
 } from 'lib/sys/event-listener-manager';
 
 import {
+    NotificationManager,
+} from 'lib/ui/notification-manager/_';
+
+import {
     settings_updated_events,
     get_settings,
 } from 'src/settings/_';
@@ -131,6 +135,9 @@ export class XbManager {
     #global_state: object = {};  // persistent state for renderers
     // the following map is maintained by this.invoke_renderer()
     #cell_ocx_map = new WeakMap<XbCellElement, Set<OutputContext>>();
+
+    #notification_manager = new NotificationManager();
+    get notification_manager (){ return this.#notification_manager; }
 
     #reset_before_render: boolean = false;  // from settings, kept up-to-date via settings_updated_events
     get reset_before_render (){ return this.#reset_before_render; }

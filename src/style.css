@@ -315,6 +315,30 @@ html[data-cell-view="full"] .cm-scroller {
 }
 
 
+/* === notification === */
+
+.notification-area {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;  /* enable scrollbars */
+    display: flex;
+    flex-direction:  column;
+    justify-content: flex-start;
+    align-items:     flex-end;
+}
+
+.notification-message {
+    max-width: fit-content;
+    padding: 0.5em;
+    margin:  0.5rem;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    color:            var(--theme-cl-fgc);
+    background-color: var(--theme-cl-bgc);
+}
+
+
 /* === dialog === */
 
 dialog {
