@@ -62,10 +62,18 @@ main > xb-cell:not(:first-child) {
 .xb-cell-output h7,
 .xb-cell-output h8,
 .xb-cell-output h9 {
+    /* eliminate spacing for empty output case */
     margin-block-start: 0;
     margin-block-end:   0;
 }
-
+.xb-cell-output .katex-display {
+    /* eliminate spacing for empty output case */
+    margin: 0;
+}
+.xb-cell-output .katex-display .katex-html:not(:empty) {
+    /* add spacing back to more interior element for "display" output */
+    margin: 1rem 0;
+}
 
 .plain-text {
     white-space: pre-wrap;  /* display white-space properly */
