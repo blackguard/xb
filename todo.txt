@@ -1,10 +1,7 @@
-search for uses for XbManager.singleton
-provide feedback for "saved", etc
-empty inputs should yield "empty" (0-area) outputs
 make help document
 update README.md
-manage scroll position better
 discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)
+manage scroll position better
 what about x- media-types?
 TeX formatting settings no longer work
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
@@ -25,9 +22,12 @@ determine if the component attribute observers would be useful in CellElement
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 implement recents?  or not?
 tsconfig: module, moduleResolution
+search for uses for XbManager.singleton
 
 
 --- DONE ---
+* empty inputs should yield "empty" (0-area) outputs (mostly true for tex, true for markdown and javascript, not true for text)
+* provide feedback for "saved", etc
 * when menu has been used (and is still focused), issuing key command like focus-down also opens menu
 * menu spec ids should just use the corresponding command (eliminating those ids)
 * rework settings-dialog and dialog in general (need to segregate accept/decline controls)
