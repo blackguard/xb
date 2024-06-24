@@ -228,8 +228,10 @@ html[data-cell-view="full"] .cm-scroller {
 
 /* theme-aware graphics */
 
-[data-source-media-type="application/graphviz"] svg polygon {
-    fill:   var(--theme-gr-bgc);
+[data-source-media-type="application/graphviz"] svg polygon:not([fill="none"]) {
+    fill: var(--theme-gr-bgc);
+}
+[data-source-media-type="application/graphviz"] svg polygon:not([stroke="none"]) {
     stroke: var(--theme-gr-fgc);
 }
 [data-source-media-type="application/graphviz"] svg path,
