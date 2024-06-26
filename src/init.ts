@@ -93,7 +93,7 @@ async function initialize_document(): Promise<void> {
 
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
-        await XbManager._initialize_singleton();
+        XbManager._initialize_singleton();
 
         // initialize renderer factories after all the TextBasedRenderer factories have been registered...
         reset_to_initial_text_renderer_factories();

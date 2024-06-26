@@ -70,6 +70,7 @@ export class TeXRenderer extends TextBasedRenderer {
             flush_left,
         } = (get_settings() as any).formatting_options as any;
 
+//!!! fix usage of katex_options
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options = {
             macros: (global_state[this.type] ??= {}),

@@ -10498,7 +10498,7 @@ class MenuBar {
                             tag: 'kbd',
                             innerText: binding_glyphs,
                             attrs: {
-                                title: binding,
+                                title: binding, // "tooltip" with modifier names instead of symbols
                             },
                         });
                     });
@@ -11335,7 +11335,7 @@ async function initialize_document() {
         // document restructuring complete
         // The document is now in the expected format.
         // Initialize XbManager to enable interaction.
-        await src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
+        src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
         // initialize renderer factories after all the TextBasedRenderer factories have been registered...
         (0,src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* .reset_to_initial_text_renderer_factories */ .$F)();
     }
@@ -31885,6 +31885,7 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
     }
     static render_to_string(tex, global_state, katex_options) {
         const { flush_left, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_2__/* .get_settings */ .oj)().formatting_options;
+        //!!! fix usage of katex_options
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options = {
             macros: (global_state[this.type] ??= {}),
@@ -33616,18 +33617,15 @@ class XbManager {
     static get ready() { return !!this.#singleton; }
     static get singleton() {
         if (!this.#singleton) {
-            // this._initialize_singleton() is async and will run after this function exits (not ideal)
-            console.warn('XbManager.singleton accessed before XbManager._initialize_singleton() called');
-            // the singleton instance will not be fully initialized by the time we return....
             this._initialize_singleton();
         }
         return this.#singleton;
     }
     // called and awaited in ./init.js as part of initialization process
-    static async _initialize_singleton() {
+    static _initialize_singleton() {
         if (!this.#singleton) {
             this.#singleton = new this();
-            await this.#singleton.#initialize();
+            this.#singleton.#initialize();
         }
         return this.#singleton;
     }
@@ -33777,7 +33775,7 @@ class XbManager {
             }
         }
     }
-    async #initialize() {
+    #initialize() {
         if (this.#initialize_called) {
             throw new Error('initialize() called more than once');
         }

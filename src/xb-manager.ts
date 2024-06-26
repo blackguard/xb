@@ -103,19 +103,16 @@ export class XbManager {
 
     static get singleton (){
         if (!this.#singleton) {
-            // this._initialize_singleton() is async and will run after this function exits (not ideal)
-            console.warn('XbManager.singleton accessed before XbManager._initialize_singleton() called');
-            // the singleton instance will not be fully initialized by the time we return....
             this._initialize_singleton();
         }
         return this.#singleton;
     }
 
     // called and awaited in ./init.js as part of initialization process
-    static async _initialize_singleton(): Promise<XbManager> {
+    static _initialize_singleton(): XbManager {
         if (!this.#singleton) {
             this.#singleton = new this();
-            await this.#singleton.#initialize();
+            this.#singleton.#initialize();
         }
         return this.#singleton;
     }
@@ -281,7 +278,7 @@ export class XbManager {
         }
     }
 
-    async #initialize() {
+    #initialize() {
         if (this.#initialize_called) {
             throw new Error('initialize() called more than once');
         }
