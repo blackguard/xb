@@ -1,19 +1,19 @@
 make help document
 update README.md
 manage scroll position better
-what about x- media-types?
 TeX formatting settings no longer work
+fix syntax coloring in CodeMirror
+beforeunload warning not working (but works after interacting with menu...)
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
+what about x- media-types?
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
-fix syntax coloring in CodeMirror
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 XbManager: root element (use instead of document, etc, for e.g., querySelector())
 allow multiple disjoint XbManager instances controlling different documents (e.g., for Help)
 think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
 how does parent ActivityManager get notified if a child stops?  necessary?
-beforeunload warning not working (but works after interacting with menu...)
 CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
 KeySpec.#is_on_macos needs to be fixed
 settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
