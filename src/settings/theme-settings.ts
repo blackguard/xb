@@ -142,8 +142,6 @@ const standard_themes_spec = {
     "--theme-hd-bdc":                  [ '#ccc',                          '#4a4a4a' ],
 
     "--theme-cl-p":                    [ '0.25em',                        '0.25em' ],
-    "--theme-cl-lh":                   [ '140%',                          '140%' ],
-    "--theme-cl-ff":                   [ 'monospace',                     'monospace' ],
     "--theme-cl-bdw":                  [ '1px',                           '1px' ],
     "--theme-cl-bdr":                  [ '0.5em',                         '0.5em' ],
     "--theme-cl-bds":                  [ 'solid',                         'solid' ],
