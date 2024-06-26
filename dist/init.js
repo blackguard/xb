@@ -10493,7 +10493,14 @@ class MenuBar {
                         const binding_glyphs = keys
                             .map(key => new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeySpec */ .k7(key).glyphs)
                             .join(this.CLASS.small_right_triangle);
-                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
+                        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
+                            parent: kbd_container,
+                            tag: 'kbd',
+                            innerText: binding_glyphs,
+                            attrs: {
+                                title: binding,
+                            },
+                        });
                     });
                 }
             }

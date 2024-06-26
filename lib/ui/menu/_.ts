@@ -446,7 +446,14 @@ export class MenuBar<DocumentManager> {
                         const binding_glyphs = keys
                             .map(key => new KeySpec(key).glyphs)
                             .join(this.CLASS.small_right_triangle);
-                        create_element({ parent: kbd_container, tag: 'kbd' }).textContent = binding_glyphs;
+                        create_element({
+                            parent: kbd_container,
+                            tag: 'kbd',
+                            innerText: binding_glyphs,
+                            attrs: {
+                                title: binding,  // "tooltip" with modifier names instead of symbols
+                            },
+                        });
                     });
                 }
             }
