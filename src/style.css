@@ -88,7 +88,7 @@ xb-cell {
 
     white-space: pre-wrap;  /* properly display white-space */
     font-family: monospace;
-    font-size: 120%;
+    font-size: 120%;  /* monospace looks smaller otherwise */
 
     color: var(--theme-cl-fgc);
 /*    background-color: var(--content-color); */
@@ -217,13 +217,6 @@ html[data-cell-view="full"] .cm-scroller {
     }
     .cm-editor .cm-cursor {
         border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */
-    }
-}
-
-/* responsivity for varying resolutions */
-@media (min-width: 480px) {
-    :root {
-        font-size: 36px;
     }
 }
 

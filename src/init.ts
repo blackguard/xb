@@ -61,6 +61,15 @@ async function initialize_document(): Promise<void> {
             document.head.appendChild(link_element);
         }
 
+        // establish <meta name="viewport" content="width=device-width, initial-scale=1"> if not already present
+        // this enables @media queries for responsiveness to size changes
+        if (!document.querySelector('meta[name="viewport"]')) {
+            const meta_viewport_element = document.createElement('meta');
+            meta_viewport_element.name  = 'viewport';
+            meta_viewport_element.content = 'width=device-width, initial-scale=1';
+            document.head.appendChild(meta_viewport_element);
+        }
+
         // establish body element if not already present
         if (!document.body) {
             document.documentElement.appendChild(document.createElement('body'));
