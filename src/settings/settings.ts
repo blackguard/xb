@@ -31,8 +31,7 @@ const initial_settings = {
         limited_size:     33,
     },
     formatting_options: {
-        align:  'left',
-        indent: '0em',
+        flush_left: true,
     },
     render_options: {
         reset_before_render: true,
@@ -215,39 +214,14 @@ export function analyze_editor_options(editor_options: any, name?: string): unde
     return undefined;
 }
 
-export const valid_formatting_options_align_values = ['left', 'center', 'right'];
-/** analyze/validate a formatting_options align property
- *  @param {string} value
- *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
- */
-export function analyze_formatting_options_align(value: any, name?: string): undefined|string {
-    return analyze_contained(value, valid_formatting_options_align_values, (name ?? 'align'));
-}
-export const valid_formatting_options_indent_units = ['pt', 'pc', 'in', 'cm', 'mm', 'em', 'ex', 'mu'];
-/** analyze/validate a formatting_options indent property
- *  @param {string} value
- *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
- */
-export function analyze_formatting_options_indent(value: any, name?: string): undefined|string {
-    if (!valid_formatting_options_indent_units.every(s => (s.length === 2))) {
-        throw new Error('unexpected: valid units contains a string whose length is not 2');
-    }
-    const complaint = `${name ?? 'indent'} must be a string containing a non-negative number followed by one of: ${valid_formatting_options_indent_units.join(', ')}`;
-    if (typeof value !== 'string') {
-        return complaint;
-    }
-    // all valid units strings are length 2
-    value = value.trim();
-    const amount_str = value.slice(0, -2);
-    const units      = value.slice(-2);
-    if ( !validate_numeric(amount_str, { reject_negative: true }) ||
-         !valid_formatting_options_indent_units.includes(units) ) {
-        return complaint;
+export function analyze_formatting_options_flush_left(value: any, name?: string): undefined|string {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'flush_left'} must be true or false`;
     }
     return undefined;
 }
 /** analyze/validate a formatting_options object
- *  @param {Object} formatting_options: { align?: string, indent?: string }
+ *  @param {Object} formatting_options: { flush_left?: boolean }
  *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
  */
 export function analyze_formatting_options(formatting_options: any, name?: string): undefined|string {
@@ -255,17 +229,11 @@ export function analyze_formatting_options(formatting_options: any, name?: strin
         return `${name ?? 'formatting_options'} must be an object`;
     }
     const keys = Object.keys(formatting_options);
-    if (!keys.every(k => ['align', 'indent'].includes(k))) {
-        return `${name ?? 'formatting_options'} may only have the keys "align" and "indent"`;
+    if (!keys.every(k => ['flush_left'].includes(k))) {
+        return `${name ?? 'formatting_options'} may only have the key "flush_left"`;
     }
-    if ('align' in formatting_options) {
-        const complaint = analyze_formatting_options_align(formatting_options.align);
-        if (complaint) {
-            return complaint;
-        }
-    }
-    if ('indent' in formatting_options) {
-        const complaint = analyze_formatting_options_indent(formatting_options.indent);
+    if ('flush_left' in formatting_options) {
+        const complaint = analyze_formatting_options_flush_left(formatting_options.flush_left);
         if (complaint) {
             return complaint;
         }

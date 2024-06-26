@@ -11931,7 +11931,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
 /* harmony import */ var _text_text_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6308);
 /* harmony import */ var _text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9465);
-/* harmony import */ var _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8092);
+/* harmony import */ var _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7286);
 /* harmony import */ var _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3633);
 /* harmony import */ var _application_error_renderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9284);
 /* harmony import */ var _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(258);
@@ -11939,8 +11939,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1243);
 /* harmony import */ var _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5087);
 /* harmony import */ var _factories__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4464);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__]);
-([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__]);
+([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // === RE-EXPORTS ===
 
 
@@ -13013,258 +13013,15 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9465:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   $: () => (/* binding */ MarkdownRenderer)
-/* harmony export */ });
-/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
-/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3947);
-/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9284);
-/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8092);
-/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8121);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1517);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_marked__WEBPACK_IMPORTED_MODULE_4__]);
-_marked__WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-
-
-
-
-
-
-// TeX handling adapted from: marked-katex-extension/index.js
-// https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
-// See also: https://marked.js.org/using_pro#async
-const extension_name__inline_tex = 'inline-tex';
-const extension_name__block_tex = 'block-tex';
-const extension_name__eval_code = 'eval-code';
-class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC {
-    static get type() { return 'markdown'; }
-    static {
-        // required for all TextBasedRenderer extensions
-        src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
-    }
-    /** Render by evaluating the given markdown and outputting to ocx.
-     * @param {OutputContextLike} ocx,
-     * @param {String} markdown,
-     * @param {TextBasedRendererOptionsType|undefined} options,
-     * @return {Element} element to which output was rendered
-     * @throws {Error} if error occurs
-     */
-    async _render(ocx, markdown, options) {
-        markdown ??= '';
-        const { style, inline, global_state = ocx.xb.global_state, } = (options ?? {});
-        const parent = ocx.create_child({
-            tag: inline ? 'span' : 'div',
-            attrs: {
-                'data-source-media-type': this.media_type,
-            },
-            style,
-        });
-        let deferred_evaluations = [];
-        const marked_options = {
-            walkTokens(token) {
-                switch (token.type) {
-                    case extension_name__inline_tex:
-                    case extension_name__block_tex: {
-                        token.global_state = global_state;
-                        break;
-                    }
-                    case extension_name__eval_code: {
-                        let renderer_factory = undefined;
-                        try {
-                            const { source_type, text = '', show = false, background = false, } = token;
-                            if (!source_type) {
-                                throw new Error('no source_type given');
-                            }
-                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC.factory_for_type(source_type);
-                            if (!renderer_factory) {
-                                throw new Error(`cannot find renderer for source type "${source_type}"`);
-                            }
-                            const markup_segments = [];
-                            function add_segment(renderer_factory, text_to_render, run_in_background) {
-                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .pk)();
-                                deferred_evaluations.push({
-                                    output_element_id,
-                                    text: text_to_render,
-                                    renderer: new renderer_factory(),
-                                    renderer_options: {
-                                        global_state,
-                                        background: run_in_background,
-                                    },
-                                });
-                                // this is the element we will render to from deferred_evaluations:
-                                markup_segments.push(`<div id="${output_element_id}"></div>`);
-                            }
-                            if (token.show && text) {
-                                // render the source text without executing
-                                add_segment(MarkdownRenderer, '```' + source_type + '\n' + text + '\n```\n', false);
-                            }
-                            // render/execute the source text
-                            add_segment(renderer_factory, text, background);
-                            token.markup = markup_segments.join('\n');
-                        }
-                        catch (error) {
-                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
-                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(error_ocx, error);
-                            token.markup = error_ocx.element.innerHTML;
-                        }
-                        break;
-                    }
-                }
-            }
-        };
-        const markup = _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
-        parent.innerHTML = markup;
-        // now run the deferred_evaluations
-        // by setting up the output elements for each of deferred_evaluations, we
-        // are now free to render asynchronously and in the background
-        // Note: we are assuming that parent (and ocx.element) are already in the DOM
-        // so that we can find the output element through document.getElementById().
-        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
-            const output_element = document.getElementById(output_element_id);
-            if (!output_element) {
-                // unexpected...
-                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
-            }
-            else {
-                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
-                await renderer.render(sub_ocx, text, renderer_options)
-                    .catch((error) => {
-                    sub_ocx.keepalive = false; // in case this got set prior to the error
-                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(sub_ocx, error);
-                });
-                if (!sub_ocx.keepalive) {
-                    sub_ocx.stop(); // stop background processing, if any
-                }
-            }
-        }
-        return parent;
-    }
-}
-_marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
-    extensions: [
-        {
-            name: extension_name__inline_tex,
-            level: 'inline',
-            start(src) { return src.indexOf('$'); },
-            tokenizer(src, tokens) {
-                const match = src.match(/^\$+([^$]+?)\$+/);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    return {
-                        type: extension_name__inline_tex,
-                        raw: match[0],
-                        text: match[1].trim(),
-                        global_state: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
-                    displayMode: false,
-                    throwOnError: false,
-                });
-            },
-        },
-        {
-            name: extension_name__block_tex,
-            level: 'block',
-            start(src) { return src.indexOf('$$'); },
-            tokenizer(src, tokens) {
-                const match = src.match(/^\$\$([^$]+?)\$\$/);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    return {
-                        type: extension_name__block_tex,
-                        raw: match[0],
-                        text: match[1].trim(),
-                        global_state: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
-                    displayMode: true,
-                    throwOnError: false,
-                });
-                return `<p>${markup}</p>`;
-            },
-        },
-        {
-            name: extension_name__eval_code,
-            level: 'block',
-            start(src) { return src.match(/^[`]{3}[^$!&\n]*([\s]*[$])?([!]|[&])[\s]*[\n]/)?.index; },
-            tokenizer(src, tokens) {
-                const match_re = /^[`]{3}[\s]*(?<source_type>[^$!&\n]*)[\s]*((?<flags_b>[!])|(?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_bg>[&])|(?<flags_show_bg>[$][\s]*[&]))[\s]*[\n](?<code>.*?)[`]{3}/s;
-                const match = src.match(match_re);
-                if (!match) {
-                    return undefined;
-                }
-                else {
-                    const source_type = (match.groups?.source_type?.trim() ?? '') || 'javascript';
-                    return {
-                        type: extension_name__eval_code,
-                        source_type,
-                        raw: match[0],
-                        text: match.groups?.code ?? '',
-                        show: !!match.groups?.flags_show_exec || !!match.groups?.flags_show_bg,
-                        background: !!match.groups?.flags_bg || !!match.groups?.flags_show_bg,
-                        markup: undefined, // filled in later by walkTokens
-                    };
-                }
-            },
-            renderer(token) {
-                return token.markup; // now already filled in by walkTokens
-            },
-        },
-    ],
-});
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 8121:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   T: () => (/* binding */ marked)
-/* harmony export */ });
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
-/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6667);
-const current_script_url = "file:///home/ed/code/xb/src/renderer/text/marked.ts"; // save for later
-
-
-await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../../dist/marked.min.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
-const marked = globalThis.marked;
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } }, 1);
-
-/***/ }),
-
-/***/ 8092:
+/***/ 3946:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  _: () => (/* binding */ TeXRenderer)
+  j: () => (/* binding */ _katex)
 });
 
-// EXTERNAL MODULE: ./src/renderer/renderer.ts
-var renderer = __webpack_require__(3947);
-// EXTERNAL MODULE: ./src/renderer/factories.ts
-var factories = __webpack_require__(4464);
 ;// CONCATENATED MODULE: ./dist/katex/dist/katex.mjs
 /**
  * Lexing or parsing positional information for error reporting.
@@ -31830,16 +31587,271 @@ await load_stylesheet();  // load stylesheet now
 */
 const _katex = katex;
 
-;// CONCATENATED MODULE: ./src/renderer/text/tex-renderer.ts
+
+/***/ }),
+
+/***/ 9465:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   $: () => (/* binding */ MarkdownRenderer)
+/* harmony export */ });
+/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4464);
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3947);
+/* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9284);
+/* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7286);
+/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8121);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1517);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__]);
+([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
-class TeXRenderer extends renderer/* TextBasedRenderer */.TC {
+
+
+
+// TeX handling adapted from: marked-katex-extension/index.js
+// https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
+// See also: https://marked.js.org/using_pro#async
+const extension_name__inline_tex = 'inline-tex';
+const extension_name__block_tex = 'block-tex';
+const extension_name__eval_code = 'eval-code';
+class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC {
+    static get type() { return 'markdown'; }
+    static {
+        // required for all TextBasedRenderer extensions
+        src_renderer_factories__WEBPACK_IMPORTED_MODULE_0__/* ._initial_text_renderer_factories */ .U0.push(this);
+    }
+    /** Render by evaluating the given markdown and outputting to ocx.
+     * @param {OutputContextLike} ocx,
+     * @param {String} markdown,
+     * @param {TextBasedRendererOptionsType|undefined} options,
+     * @return {Element} element to which output was rendered
+     * @throws {Error} if error occurs
+     */
+    async _render(ocx, markdown, options) {
+        markdown ??= '';
+        const { style, inline, global_state = ocx.xb.global_state, } = (options ?? {});
+        const parent = ocx.create_child({
+            tag: inline ? 'span' : 'div',
+            attrs: {
+                'data-source-media-type': this.media_type,
+            },
+            style,
+        });
+        let deferred_evaluations = [];
+        const marked_options = {
+            walkTokens(token) {
+                switch (token.type) {
+                    case extension_name__inline_tex:
+                    case extension_name__block_tex: {
+                        token.global_state = global_state;
+                        break;
+                    }
+                    case extension_name__eval_code: {
+                        let renderer_factory = undefined;
+                        try {
+                            const { source_type, text = '', show = false, background = false, } = token;
+                            if (!source_type) {
+                                throw new Error('no source_type given');
+                            }
+                            renderer_factory = src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .TC.factory_for_type(source_type);
+                            if (!renderer_factory) {
+                                throw new Error(`cannot find renderer for source type "${source_type}"`);
+                            }
+                            const markup_segments = [];
+                            function add_segment(renderer_factory, text_to_render, run_in_background) {
+                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .pk)();
+                                deferred_evaluations.push({
+                                    output_element_id,
+                                    text: text_to_render,
+                                    renderer: new renderer_factory(),
+                                    renderer_options: {
+                                        global_state,
+                                        background: run_in_background,
+                                    },
+                                });
+                                // this is the element we will render to from deferred_evaluations:
+                                markup_segments.push(`<div id="${output_element_id}"></div>`);
+                            }
+                            if (token.show && text) {
+                                // render the source text without executing
+                                add_segment(MarkdownRenderer, '```' + source_type + '\n' + text + '\n```\n', false);
+                            }
+                            // render/execute the source text
+                            add_segment(renderer_factory, text, background);
+                            token.markup = markup_segments.join('\n');
+                        }
+                        catch (error) {
+                            const error_ocx = ocx.create_new_ocx(document.createElement('div'), ocx); // temporary, for renderering error
+                            src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(error_ocx, error);
+                            token.markup = error_ocx.element.innerHTML;
+                        }
+                        break;
+                    }
+                }
+            }
+        };
+        const markup = _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.parse(markdown, marked_options); // using extensions, see below
+        parent.innerHTML = markup;
+        // now run the deferred_evaluations
+        // by setting up the output elements for each of deferred_evaluations, we
+        // are now free to render asynchronously and in the background
+        // Note: we are assuming that parent (and ocx.element) are already in the DOM
+        // so that we can find the output element through document.getElementById().
+        for (const { output_element_id, text, renderer, renderer_options } of deferred_evaluations) {
+            const output_element = document.getElementById(output_element_id);
+            if (!output_element) {
+                // unexpected...
+                src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(ocx, new Error(`deferred_evaluations: cannot find output element with id "${output_element_id}"`));
+            }
+            else {
+                const sub_ocx = ocx.create_new_ocx(output_element, ocx);
+                await renderer.render(sub_ocx, text, renderer_options)
+                    .catch((error) => {
+                    sub_ocx.keepalive = false; // in case this got set prior to the error
+                    src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__/* .ErrorRenderer */ .F.render_sync(sub_ocx, error);
+                });
+                if (!sub_ocx.keepalive) {
+                    sub_ocx.stop(); // stop background processing, if any
+                }
+            }
+        }
+        return parent;
+    }
+}
+_marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .T.use({
+    extensions: [
+        {
+            name: extension_name__inline_tex,
+            level: 'inline',
+            start(src) { return src.indexOf('$'); },
+            tokenizer(src, tokens) {
+                const match = src.match(/^\$+([^$]+?)\$+/);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    return {
+                        type: extension_name__inline_tex,
+                        raw: match[0],
+                        text: match[1].trim(),
+                        global_state: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                return src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                    displayMode: false,
+                    throwOnError: false,
+                });
+            },
+        },
+        {
+            name: extension_name__block_tex,
+            level: 'block',
+            start(src) { return src.indexOf('$$'); },
+            tokenizer(src, tokens) {
+                const match = src.match(/^\$\$([^$]+?)\$\$/);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    return {
+                        type: extension_name__block_tex,
+                        raw: match[0],
+                        text: match[1].trim(),
+                        global_state: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                const markup = src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__/* .TeXRenderer */ ._.render_to_string(token.text ?? '', token.global_state, {
+                    displayMode: true,
+                    throwOnError: false,
+                });
+                return `<p>${markup}</p>`;
+            },
+        },
+        {
+            name: extension_name__eval_code,
+            level: 'block',
+            start(src) { return src.match(/^[`]{3}[^$!&\n]*([\s]*[$])?([!]|[&])[\s]*[\n]/)?.index; },
+            tokenizer(src, tokens) {
+                const match_re = /^[`]{3}[\s]*(?<source_type>[^$!&\n]*)[\s]*((?<flags_b>[!])|(?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_bg>[&])|(?<flags_show_bg>[$][\s]*[&]))[\s]*[\n](?<code>.*?)[`]{3}/s;
+                const match = src.match(match_re);
+                if (!match) {
+                    return undefined;
+                }
+                else {
+                    const source_type = (match.groups?.source_type?.trim() ?? '') || 'javascript';
+                    return {
+                        type: extension_name__eval_code,
+                        source_type,
+                        raw: match[0],
+                        text: match.groups?.code ?? '',
+                        show: !!match.groups?.flags_show_exec || !!match.groups?.flags_show_bg,
+                        background: !!match.groups?.flags_bg || !!match.groups?.flags_show_bg,
+                        markup: undefined, // filled in later by walkTokens
+                    };
+                }
+            },
+            renderer(token) {
+                return token.markup; // now already filled in by walkTokens
+            },
+        },
+    ],
+});
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 8121:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   T: () => (/* binding */ marked)
+/* harmony export */ });
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6667);
+const current_script_url = "file:///home/ed/code/xb/src/renderer/text/marked.ts"; // save for later
+
+
+await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .load_script */ .h0)(document.head, new URL('../../../dist/marked.min.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .h)(current_script_url)));
+const marked = globalThis.marked;
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } }, 1);
+
+/***/ }),
+
+/***/ 7286:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ TeXRenderer)
+/* harmony export */ });
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3947);
+/* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4464);
+/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7336);
+/* harmony import */ var _katex___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3946);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_settings___WEBPACK_IMPORTED_MODULE_2__]);
+src_settings___WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+
+
+class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextBasedRenderer */ .TC {
     get CLASS() { return this.constructor; }
     static get type() { return 'tex'; }
     static {
         // required for all TextBasedRenderer extensions
-        factories/* _initial_text_renderer_factories */.U0.push(this);
+        src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__/* ._initial_text_renderer_factories */ .U0.push(this);
     }
     /** Render the given TeX source to ocx.
      * @param {OutputContextLike} ocx,
@@ -31865,16 +31877,20 @@ class TeXRenderer extends renderer/* TextBasedRenderer */.TC {
         return parent;
     }
     static render_to_string(tex, global_state, katex_options) {
+        const { flush_left, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_2__/* .get_settings */ .oj)().formatting_options;
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options = {
             macros: (global_state[this.type] ??= {}),
+            fleqn: flush_left,
             ...(katex_options ?? {}),
         };
         katex_options.macros ??= (global_state[this.type] ??= {}); // for persistent \gdef macros
-        return _katex.renderToString(tex, katex_options);
+        return _katex___WEBPACK_IMPORTED_MODULE_3__/* .katex */ .j.renderToString(tex, katex_options);
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -32032,18 +32048,11 @@ const sections = [
     }, {
         name: 'TeX Formatting',
         settings: [{
-                id: 'formatting_options_align',
-                label: 'Horizontal alignment',
-                type: 'select',
-                options: _settings__WEBPACK_IMPORTED_MODULE_3__/* .valid_formatting_options_align_values */ .Kp.map(value => ({ value, label: value })),
-                settings_path: ['formatting_options', 'align'],
-                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_formatting_options_align */ .yj, // (value, label) => complaint
-            }, {
-                id: 'formatting_options_indent',
-                label: 'Indentation',
-                type: 'text',
-                settings_path: ['formatting_options', 'indent'],
-                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_formatting_options_indent */ .fe, // (value, label) => complaint
+                id: 'formatting_options_flush_left',
+                label: 'Flush left',
+                type: 'checkbox',
+                settings_path: ['formatting_options', 'flush_left'],
+                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_formatting_options_flush_left */ .Ac, // (value, label) => complaint
             }],
     }, {
         name: 'Render',
@@ -32167,8 +32176,8 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   $A: () => (/* binding */ analyze_theme),
+/* harmony export */   Ac: () => (/* binding */ analyze_formatting_options_flush_left),
 /* harmony export */   Dn: () => (/* binding */ analyze_editor_options_tab_size),
-/* harmony export */   Kp: () => (/* binding */ valid_formatting_options_align_values),
 /* harmony export */   Ll: () => (/* binding */ settings_updated_events),
 /* harmony export */   Mn: () => (/* binding */ analyze_editor_options_line_numbers),
 /* harmony export */   N5: () => (/* binding */ valid_editor_options_mode_values),
@@ -32179,16 +32188,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   WD: () => (/* binding */ theme_light),
 /* harmony export */   ZA: () => (/* binding */ update_settings),
 /* harmony export */   _m: () => (/* binding */ analyze_editor_options_line_wrapping),
-/* harmony export */   fe: () => (/* binding */ analyze_formatting_options_indent),
 /* harmony export */   gd: () => (/* binding */ analyze_editor_options_indent_with_tabs),
 /* harmony export */   hh: () => (/* binding */ analyze_editor_options_mode),
 /* harmony export */   m3: () => (/* binding */ analyze_render_options_reset_before_render),
 /* harmony export */   oj: () => (/* binding */ get_settings),
 /* harmony export */   xR: () => (/* binding */ analyze_editor_options_limited_size),
-/* harmony export */   yj: () => (/* binding */ analyze_formatting_options_align),
 /* harmony export */   zi: () => (/* binding */ analyze_editor_options_tab_key_indents)
 /* harmony export */ });
-/* unused harmony exports validate_numeric, analyze_contained, analyze_editor_options, valid_formatting_options_indent_units, analyze_formatting_options, analyze_render_options, analyze_settings, _reset_settings */
+/* unused harmony exports validate_numeric, analyze_contained, analyze_editor_options, analyze_formatting_options, analyze_render_options, analyze_settings, _reset_settings */
 /* harmony import */ var src_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6178);
 /* harmony import */ var lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2682);
 /* harmony import */ var _storage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6477);
@@ -32214,8 +32221,7 @@ const initial_settings = {
         limited_size: 33,
     },
     formatting_options: {
-        align: 'left',
-        indent: '0em',
+        flush_left: true,
     },
     render_options: {
         reset_before_render: true,
@@ -32378,39 +32384,14 @@ function analyze_editor_options(editor_options, name) {
     }
     return undefined;
 }
-const valid_formatting_options_align_values = ['left', 'center', 'right'];
-/** analyze/validate a formatting_options align property
- *  @param {string} value
- *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
- */
-function analyze_formatting_options_align(value, name) {
-    return analyze_contained(value, valid_formatting_options_align_values, (name ?? 'align'));
-}
-const valid_formatting_options_indent_units = ['pt', 'pc', 'in', 'cm', 'mm', 'em', 'ex', 'mu'];
-/** analyze/validate a formatting_options indent property
- *  @param {string} value
- *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
- */
-function analyze_formatting_options_indent(value, name) {
-    if (!valid_formatting_options_indent_units.every(s => (s.length === 2))) {
-        throw new Error('unexpected: valid units contains a string whose length is not 2');
-    }
-    const complaint = `${name ?? 'indent'} must be a string containing a non-negative number followed by one of: ${valid_formatting_options_indent_units.join(', ')}`;
-    if (typeof value !== 'string') {
-        return complaint;
-    }
-    // all valid units strings are length 2
-    value = value.trim();
-    const amount_str = value.slice(0, -2);
-    const units = value.slice(-2);
-    if (!validate_numeric(amount_str, { reject_negative: true }) ||
-        !valid_formatting_options_indent_units.includes(units)) {
-        return complaint;
+function analyze_formatting_options_flush_left(value, name) {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'flush_left'} must be true or false`;
     }
     return undefined;
 }
 /** analyze/validate a formatting_options object
- *  @param {Object} formatting_options: { align?: string, indent?: string }
+ *  @param {Object} formatting_options: { flush_left?: boolean }
  *  @return {string|undefined} returns a complaint string if invalid, or undefined if valid
  */
 function analyze_formatting_options(formatting_options, name) {
@@ -32418,17 +32399,11 @@ function analyze_formatting_options(formatting_options, name) {
         return `${name ?? 'formatting_options'} must be an object`;
     }
     const keys = Object.keys(formatting_options);
-    if (!keys.every(k => ['align', 'indent'].includes(k))) {
-        return `${name ?? 'formatting_options'} may only have the keys "align" and "indent"`;
+    if (!keys.every(k => ['flush_left'].includes(k))) {
+        return `${name ?? 'formatting_options'} may only have the key "flush_left"`;
     }
-    if ('align' in formatting_options) {
-        const complaint = analyze_formatting_options_align(formatting_options.align);
-        if (complaint) {
-            return complaint;
-        }
-    }
-    if ('indent' in formatting_options) {
-        const complaint = analyze_formatting_options_indent(formatting_options.indent);
+    if ('flush_left' in formatting_options) {
+        const complaint = analyze_formatting_options_flush_left(formatting_options.flush_left);
         if (complaint) {
             return complaint;
         }
@@ -32650,7 +32625,7 @@ const db_key_themes = 'themes';
 const db_key_recents = 'recents';
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = '24411416-d24e-449b-b0d2-57f203c22739';
+const uuid = 'ec2334e4-2754-4970-a645-b250f44ed9b3';
 const database_name = `settings-database-${uuid}`;
 const database_store_name = `settings-database-store-${uuid}`;
 const storage_db = new IndexedDBInterface(database_name, database_store_name);

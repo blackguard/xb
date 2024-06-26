@@ -36,9 +36,7 @@ import {
     analyze_editor_options_line_numbers,
     analyze_editor_options_line_wrapping,
     analyze_editor_options_limited_size,
-    valid_formatting_options_align_values,
-    analyze_formatting_options_align,
-    analyze_formatting_options_indent,
+    analyze_formatting_options_flush_left,
     analyze_render_options_reset_before_render,
     get_valid_theme_values,
     analyze_theme,
@@ -124,18 +122,11 @@ const sections = [
     }, {
         name: 'TeX Formatting',
         settings: [{
-            id: 'formatting_options_align',
-            label: 'Horizontal alignment',
-            type: 'select',
-            options: valid_formatting_options_align_values.map(value => ({ value, label: value })),
-            settings_path: [ 'formatting_options', 'align' ],
-            analyze: analyze_formatting_options_align,  // (value, label) => complaint
-        }, {
-            id: 'formatting_options_indent',
-            label: 'Indentation',
-            type: 'text',
-            settings_path: [ 'formatting_options', 'indent' ],
-            analyze: analyze_formatting_options_indent,  // (value, label) => complaint
+            id: 'formatting_options_flush_left',
+            label: 'Flush left',
+            type: 'checkbox',
+            settings_path: [ 'formatting_options', 'flush_left' ],
+            analyze: analyze_formatting_options_flush_left,  // (value, label) => complaint
         }],
     }, {
         name: 'Render',

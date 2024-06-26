@@ -1,9 +1,8 @@
 make help document
 update README.md
-manage scroll position better
-TeX formatting settings no longer work
 fix syntax coloring in CodeMirror
 beforeunload warning not working (but works after interacting with menu...)
+manage scroll position better
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
 what about x- media-types?
@@ -26,6 +25,7 @@ search for uses for XbManager.singleton (should be few; instead: access through 
 
 
 --- DONE ---
+* TeX formatting settings no longer work
 * discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)
 * empty inputs should yield "empty" (0-area) outputs
 * provide feedback for "saved", etc

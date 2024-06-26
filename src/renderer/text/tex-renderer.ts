@@ -15,6 +15,10 @@ import {
 } from 'src/output-context/types';
 
 import {
+    get_settings,
+} from 'src/settings/_';
+
+import {
     katex,
 } from './katex/_';
 
@@ -62,9 +66,14 @@ export class TeXRenderer extends TextBasedRenderer {
     }
 
     static render_to_string(tex: string, global_state: any, katex_options?: object): string {
+        const {
+            flush_left,
+        } = (get_settings() as any).formatting_options as any;
+
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options = {
             macros: (global_state[this.type] ??= {}),
+            fleqn: flush_left,
             ...(katex_options ?? {}),
         };
         (katex_options as any).macros ??= (global_state[this.type] ??= {});  // for persistent \gdef macros
