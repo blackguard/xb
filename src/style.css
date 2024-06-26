@@ -88,7 +88,6 @@ xb-cell {
 
     white-space: pre-wrap;  /* properly display white-space */
     font-family: monospace;
-    font-size: 120%;  /* monospace looks smaller otherwise */
 
     color: var(--theme-cl-fgc);
 /*    background-color: var(--content-color); */
