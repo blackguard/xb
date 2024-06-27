@@ -11261,9 +11261,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
 /* harmony import */ var src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5006);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4464);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8401);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager__WEBPACK_IMPORTED_MODULE_1__]);
 src_xb_manager__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 const current_script_url = "file:///home/ed/code/xb/src/init.ts"; // save for later
+
 
 
 
@@ -11271,7 +11273,7 @@ const cell_view_attribute_name = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
 // this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
 //!!! is this true now?
-const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
+const bootstrap_script_markup = _get_bootstrap_script_markup();
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
 }
@@ -11405,6 +11407,21 @@ ${contents}
 </body>
 </html>
 `;
+}
+function _get_bootstrap_script_markup() {
+    const markup_segments = [];
+    const bootstrap_script_element = document.querySelector('head script');
+    if (bootstrap_script_element) {
+        markup_segments.push('<script');
+        for (const name of bootstrap_script_element.getAttributeNames()) {
+            const value = (name === 'src')
+                ? bootstrap_script_element.src // this will resolve to a full absolute URL
+                : bootstrap_script_element.getAttribute(name);
+            markup_segments.push(` ${name}=${(0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .make_string_literal */ .E9)((value ?? ''), true)}`);
+        }
+        markup_segments.push('></script>');
+    }
+    return markup_segments.join('');
 }
 
 __webpack_async_result__();

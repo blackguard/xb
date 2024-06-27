@@ -12,6 +12,10 @@ import {
     reset_to_initial_text_renderer_factories,
 } from 'src/renderer/factories';
 
+import {
+    make_string_literal,
+} from 'lib/ui/dom-tools';
+
 
 const cell_view_attribute_name   = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
@@ -19,7 +23,7 @@ const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
 
 // this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
 //!!! is this true now?
-const bootstrap_script_markup = document.querySelector('head script')?.outerHTML;
+const bootstrap_script_markup = _get_bootstrap_script_markup();
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
 } else {
@@ -164,4 +168,20 @@ ${contents}
 </body>
 </html>
 `;
+}
+
+function _get_bootstrap_script_markup() {
+    const markup_segments: string[] = [];
+    const bootstrap_script_element = document.querySelector('head script') as null|HTMLScriptElement;
+    if (bootstrap_script_element) {
+        markup_segments.push('<script');
+        for (const name of bootstrap_script_element.getAttributeNames()) {
+            const value = (name === 'src')
+                ? bootstrap_script_element.src  // this will resolve to a full absolute URL
+                : bootstrap_script_element.getAttribute(name);
+            markup_segments.push(` ${name}=${make_string_literal((value ?? ''), true)}`);
+        }
+        markup_segments.push('></script>');
+    }
+    return markup_segments.join('');
 }
