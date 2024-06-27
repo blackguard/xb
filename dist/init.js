@@ -34206,7 +34206,6 @@ class XbManager {
     }
     // === SHOW UNHANDLED EVENT ===
     _show_unhandled_event(event, is_unhandled_rejection) {
-        lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .ConfirmDialog */ .QH.run('now is the time for all good men to come to the aid of their party').then(console.log); //!!!
         const message = `Unhandled ${is_unhandled_rejection ? 'rejection' : 'error'}: ${event?.reason?.message}`;
         lib_ui_dialog___WEBPACK_IMPORTED_MODULE_3__/* .AlertDialog */ .aR.run(message);
     }

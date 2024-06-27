@@ -1,42 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" data-cell-view="normal">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <script src="../dist/xb-bootstrap.js"></script>
 </head>
-<body>
-
-<xb-cell data-type="markdown" data-active="true">
-# $x\textrm{b}$
-$$
-a x^2 + b x + c = 0
-$$
-$$
-x = \frac{-b \pm \sqrt{b^2 - 4 a c}}{2 a}
-$$
-``` javascript!
-    await markdown(`## Seconds since 1 Jan 1970: ${Date.now()/1000}`);
-    function test(x) { return `--- ${x} ---`; }
-    await print__();
-    for (let i = 1000; i < 2000; i++) {
-        await printf(' %s', test(i));
-        await sleep(0.3);
-    }
-```
-</xb-cell>
-<xb-cell data-type="javascript">
-bg(async () => {
-    for (let i = 1000; i < 2000; i++) {
-        await printf(' %d', i);
-        await sleep(0.3);
-    }
-});
-</xb-cell>
-<xb-cell data-type="tex" id="id-46ce33b8-7483-4206-a5de-f57fe773d1db"></xb-cell><output class="xb-cell-output" data-source-element="id-46ce33b8-7483-4206-a5de-f57fe773d1db" data-source-media-type="text/tex"><div data-source-media-type="text/tex"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow></mrow><annotation encoding="application/x-tex"></annotation></semantics></math></span><span class="katex-html" aria-hidden="true"></span></span></span></div></output>
-<xb-cell id="id-955b630c-a2b8-4389-9a01-3685b8016b61">$\gdef\xb{x\textrm{b}}$</xb-cell><output class="xb-cell-output" data-source-element="id-955b630c-a2b8-4389-9a01-3685b8016b61" data-source-media-type="text/markdown"><div data-source-media-type="text/markdown"><p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow></mrow><annotation encoding="application/x-tex">\gdef\xb{x\textrm{b}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"></span></span></p>
-</div></output><xb-cell data-type="plain">The quick brown fox jumped over the lazy dog's back.</xb-cell>
-
-
-
-</body>
 </html>
