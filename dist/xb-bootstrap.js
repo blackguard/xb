@@ -54,4 +54,5 @@ globalThis._uninhibit_document_display = function _uninhibit_document_display() 
 }
 
 // finally, import the rest of the application
-import('../dist/init.js').catch(show_bootstrap_failed);
+const init_url = new URL('../dist/init.js', document.querySelector('head script')?.src);
+import(init_url).catch(show_bootstrap_failed);
