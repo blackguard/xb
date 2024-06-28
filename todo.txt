@@ -23,7 +23,7 @@ determine if the component attribute observers would be useful in CellElement
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 implement recents?  or not?
 tsconfig: module, moduleResolution
-search for uses for XbManager.singleton (should be few; instead: access through OutputContext, CellElement, KeyEventManager or MenuBar)
+search for uses for XbManager.singleton (should be few; instead: access through OutputContext, XbCellElement, KeyEventManager or MenuBar)
 
 
 --- DONE ---

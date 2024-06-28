@@ -33631,22 +33631,54 @@ const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 class XbManager {
     get CLASS() { return this.constructor; }
     static #singleton;
-    static get ready() { return !!this.#singleton; }
     static get singleton() {
         if (!this.#singleton) {
             this._initialize_singleton();
         }
         return this.#singleton;
     }
+    static get ready() { return !!this.#singleton; }
     // called and awaited in ./init.js as part of initialization process
     static _initialize_singleton() {
         if (!this.#singleton) {
             this.#singleton = new this();
-            this.#singleton.#initialize();
         }
         return this.#singleton;
     }
-    #initialize_called = false;
+    constructor() {
+        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
+        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
+        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
+        try {
+            // must set xb on all incoming cells
+            for (const cell of this.get_cells()) {
+                cell._set_xb(this);
+            }
+            this.reset_global_state();
+            // listen for settings changed events and trigger update in cells
+            src_settings___WEBPACK_IMPORTED_MODULE_10__/* .settings_updated_events */ .Ll.subscribe(this.update_from_settings.bind(this)); //!!! never unsubscribed
+            this.update_from_settings(); // establish initial settings right away
+            const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD)());
+            this.push_key_map(key_map);
+            this.#key_event_manager.attach();
+            this.set_editable(true);
+            this.#setup_csp();
+            this.#setup_header();
+            this.#set_initial_active_cell();
+            // add "changes may not be saved" prompt for when document is being closed while modified
+            window.addEventListener('beforeunload', (event) => {
+                if (this.cell_view_mode !== 'kiosk') {
+                    const warn = true; //!!! always warn for now
+                    event.preventDefault();
+                    event.returnValue = !warn; // indicate: if false, default action prevented
+                    return warn; // indicate: if true, default action prevented
+                }
+            }); //!!! event handler never removed
+        }
+        catch (error) {
+            (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .show_initialization_failed */ .R)(error);
+        }
+    }
     #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_14__/* .ActivityManager */ .c(true); // true --> multiple_stops
     #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_15__/* .SerialDataSource */ .B();
     #eval_states_subscription;
@@ -33665,23 +33697,6 @@ class XbManager {
     get notification_manager() { return this.#notification_manager; }
     #reset_before_render = false; // from settings, kept up-to-date via settings_updated_events
     get reset_before_render() { return this.#reset_before_render; }
-    constructor() {
-        // must set xb on all incoming cells
-        for (const cell of this.get_cells()) {
-            cell._set_xb(this);
-        }
-        this.reset_global_state();
-        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
-        // listen for settings changed events and trigger update in cells
-        src_settings___WEBPACK_IMPORTED_MODULE_10__/* .settings_updated_events */ .Ll.subscribe(this.update_from_settings.bind(this)); //!!! never unsubscribed
-        this.update_from_settings(); // establish initial settings right away
-        this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
-        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
-        const key_map = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyMap */ .d4((0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD)());
-        this.push_key_map(key_map);
-        this.#key_event_manager.attach();
-        this.set_editable(true);
-    }
     get header_element() {
         const el = document.querySelector('header');
         if (!el) {
@@ -33790,29 +33805,6 @@ class XbManager {
             else {
                 return [...ocxs.values()].some(ocx => !ocx.stopped);
             }
-        }
-    }
-    #initialize() {
-        if (this.#initialize_called) {
-            throw new Error('initialize() called more than once');
-        }
-        this.#initialize_called = true;
-        try {
-            this.#setup_csp();
-            this.#setup_header();
-            this.#set_initial_active_cell();
-            // add "changes may not be saved" prompt for when document is being closed while modified
-            window.addEventListener('beforeunload', (event) => {
-                if (this.cell_view_mode !== 'kiosk') {
-                    const warn = true; //!!! always warn for now
-                    event.preventDefault();
-                    event.returnValue = !warn; // indicate: if false, default action prevented
-                    return warn; // indicate: if true, default action prevented
-                }
-            }); //!!! event handler never removed
-        }
-        catch (error) {
-            (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .show_initialization_failed */ .R)(error);
         }
     }
     // === KEY MAP STACK ===

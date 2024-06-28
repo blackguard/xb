@@ -98,8 +98,6 @@ export class XbManager {
 
     static #singleton: XbManager;
 
-    static get ready (){ return !!this.#singleton; }
-
     static get singleton (){
         if (!this.#singleton) {
             this._initialize_singleton();
@@ -107,16 +105,61 @@ export class XbManager {
         return this.#singleton;
     }
 
+    static get ready (){ return !!this.#singleton; }
+
     // called and awaited in ./init.js as part of initialization process
     static _initialize_singleton(): XbManager {
         if (!this.#singleton) {
             this.#singleton = new this();
-            this.#singleton.#initialize();
         }
         return this.#singleton;
     }
 
-    #initialize_called = false;
+    constructor() {
+        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! this.#eval_states_subscription is never unsubscribed
+
+        this.#command_bindings = get_global_command_bindings();
+
+        this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#command_observer.bind(this));
+
+        try {
+
+            // must set xb on all incoming cells
+            for (const cell of this.get_cells()) {
+                cell._set_xb(this);
+            }
+
+            this.reset_global_state();
+
+            // listen for settings changed events and trigger update in cells
+            settings_updated_events.subscribe(this.update_from_settings.bind(this));  //!!! never unsubscribed
+            this.update_from_settings();  // establish initial settings right away
+
+            const key_map = new KeyMap(get_global_initial_key_map_bindings());
+            this.push_key_map(key_map);
+            this.#key_event_manager.attach();
+
+            this.set_editable(true);
+
+            this.#setup_csp();
+            this.#setup_header();
+            this.#set_initial_active_cell();
+
+            // add "changes may not be saved" prompt for when document is being closed while modified
+            window.addEventListener('beforeunload', (event: Event): any => {
+                if (this.cell_view_mode !== 'kiosk') {
+                   const warn = true;  //!!! always warn for now
+                   event.preventDefault();
+                   event.returnValue = !warn;  // indicate: if false, default action prevented
+                   return warn;                // indicate: if true, default action prevented
+                }
+            });  //!!! event handler never removed
+
+        } catch (error) {
+            show_initialization_failed(error);
+        }
+    }
+
     #activity_manager: ActivityManager = new ActivityManager(true);  // true --> multiple_stops
     #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
     #eval_states_subscription: Subscription;
@@ -137,30 +180,6 @@ export class XbManager {
 
     #reset_before_render: boolean = false;  // from settings, kept up-to-date via settings_updated_events
     get reset_before_render (){ return this.#reset_before_render; }
-
-    constructor() {
-        // must set xb on all incoming cells
-        for (const cell of this.get_cells()) {
-            cell._set_xb(this);
-        }
-
-        this.reset_global_state();
-
-        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! this.#eval_states_subscription is never unsubscribed
-
-        // listen for settings changed events and trigger update in cells
-        settings_updated_events.subscribe(this.update_from_settings.bind(this));  //!!! never unsubscribed
-        this.update_from_settings();  // establish initial settings right away
-
-        this.#command_bindings = get_global_command_bindings();
-
-        this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#command_observer.bind(this));
-        const key_map = new KeyMap(get_global_initial_key_map_bindings());
-        this.push_key_map(key_map);
-        this.#key_event_manager.attach();
-
-        this.set_editable(true);
-    }
 
     get header_element (){
         const el = document.querySelector('header');
@@ -274,33 +293,6 @@ export class XbManager {
             } else {
                 return [ ...ocxs.values() ].some(ocx => !ocx.stopped);
             }
-        }
-    }
-
-    #initialize() {
-        if (this.#initialize_called) {
-            throw new Error('initialize() called more than once');
-        }
-        this.#initialize_called = true;
-
-        try {
-
-            this.#setup_csp();
-            this.#setup_header();
-            this.#set_initial_active_cell();
-
-            // add "changes may not be saved" prompt for when document is being closed while modified
-            window.addEventListener('beforeunload', (event: Event): any => {
-                if (this.cell_view_mode !== 'kiosk') {
-                   const warn = true;  //!!! always warn for now
-                   event.preventDefault();
-                   event.returnValue = !warn;  // indicate: if false, default action prevented
-                   return warn;                // indicate: if true, default action prevented
-                }
-            });  //!!! event handler never removed
-
-        } catch (error) {
-            show_initialization_failed(error);
         }
     }
 
