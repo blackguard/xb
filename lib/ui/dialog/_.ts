@@ -154,7 +154,6 @@ export class Dialog {
         }) as HTMLDialogElement;
         this._dialog_text_container = create_element({
             parent: this._dialog_element,
-            tag: 'h2',
             attrs: {
                 class: 'dialog-message-text',
             },

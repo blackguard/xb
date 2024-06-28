@@ -1,10 +1,12 @@
 make help document
 update README.md
 fix syntax coloring in CodeMirror
-beforeunload warning not working (but works after interacting with menu...)
 manage scroll position better
+beforeunload: make less strict
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
+mobile: menus are not updated after reloaded
+mobile: need long-press (right-click) menu
 what about x- media-types?
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
@@ -25,6 +27,7 @@ search for uses for XbManager.singleton (should be few; instead: access through 
 
 
 --- DONE ---
+* beforeunload warning not working (but works after interacting with menu...)
 * TeX formatting settings no longer work
 * discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)
 * empty inputs should yield "empty" (0-area) outputs

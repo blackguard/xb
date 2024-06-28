@@ -387,6 +387,7 @@ dialog .dialog-controls-form-terminals .dialog-decline {
 
 dialog .dialog-message-text {
     font-weight: bold;
+    font-size: larger;
 }
 
 dialog .dialog-text {
