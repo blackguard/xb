@@ -11271,8 +11271,7 @@ const current_script_url = "file:///home/ed/code/xb/src/init.ts"; // save for la
 
 const cell_view_attribute_name = 'data-cell-view';
 const allowable_cell_view_values = ['normal', 'hide', 'full', 'none', 'kiosk'];
-// this script is itself (part of) the bootstrap script, so we can go ahead and grab its markup now...
-//!!! is this true now?
+// this script is itself (part of or loaded by) the bootstrap script, so we can go ahead and grab its markup now...
 const bootstrap_script_markup = _get_bootstrap_script_markup();
 if (!bootstrap_script_markup) {
     show_initialization_failed('unexpected: failed to find bootstrap script');
@@ -33646,7 +33645,7 @@ class XbManager {
         return this.#singleton;
     }
     constructor() {
-        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! this.#eval_states_subscription is never unsubscribed
+        this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! never unsubscribed
         this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
         this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
         try {
@@ -33681,7 +33680,6 @@ class XbManager {
     }
     #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_14__/* .ActivityManager */ .c(true); // true --> multiple_stops
     #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_15__/* .SerialDataSource */ .B();
-    #eval_states_subscription;
     #command_bindings;
     #key_event_manager;
     #menubar = undefined;

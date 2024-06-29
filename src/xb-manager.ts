@@ -116,7 +116,7 @@ export class XbManager {
     }
 
     constructor() {
-        this.#eval_states_subscription = this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! this.#eval_states_subscription is never unsubscribed
+        this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! never unsubscribed
 
         this.#command_bindings = get_global_command_bindings();
 
@@ -162,7 +162,6 @@ export class XbManager {
 
     #activity_manager: ActivityManager = new ActivityManager(true);  // true --> multiple_stops
     #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
-    #eval_states_subscription: Subscription;
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
     #key_event_manager: KeyEventManager<XbManager>;
     #menubar: undefined|MenuBar<XbManager> = undefined;
