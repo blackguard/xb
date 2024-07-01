@@ -1,3 +1,4 @@
+copy/paste: readText() not available in Firefox in an unsecure context
 make help document
 update README.md
 fix syntax coloring in CodeMirror

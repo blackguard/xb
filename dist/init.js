@@ -10736,11 +10736,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   C2: () => (/* binding */ command_handler__add_before),
 /* harmony export */   CV: () => (/* binding */ command_handler__set_mode_plain),
 /* harmony export */   EK: () => (/* binding */ command_handler__set_view_kiosk),
+/* harmony export */   EU: () => (/* binding */ command_handler__paste),
 /* harmony export */   Ey: () => (/* binding */ command_handler__eval_and_refocus),
 /* harmony export */   Lm: () => (/* binding */ command_handler__set_view_normal),
 /* harmony export */   MB: () => (/* binding */ command_handler__eval_all),
 /* harmony export */   N2: () => (/* binding */ command_handler__clear_all),
+/* harmony export */   NF: () => (/* binding */ command_handler__copy),
 /* harmony export */   Nr: () => (/* binding */ command_handler__set_mode_tex),
+/* harmony export */   Ol: () => (/* binding */ command_handler__cut),
 /* harmony export */   On: () => (/* binding */ command_handler__save_as),
 /* harmony export */   Pp: () => (/* binding */ command_handler__set_view_none),
 /* harmony export */   QK: () => (/* binding */ command_handler__move_down),
@@ -10816,6 +10819,16 @@ async function command_handler__eval(command_context) {
         }
         return true;
     }
+}
+async function command_handler__cut(command_context) {
+    return document.execCommand('cut');
+}
+async function command_handler__copy(command_context) {
+    return document.execCommand('copy');
+}
+async function command_handler__paste(command_context) {
+    const text = await navigator.clipboard.readText();
+    return document.execCommand('insertText', true, text); //!!!
 }
 /** eval target cell and refocus to next cell (or a new one if at the end of the document)
  *  @return {Boolean} true iff command successfully handled
@@ -11115,6 +11128,13 @@ function get_menubar_spec() {
                 '---',
                 { label: 'Settings...', item: { command: 'settings' } },
             ] },
+        { label: 'Edit', collection: [
+                { label: 'Cut', item: { command: 'cut' } },
+                { label: 'Copy', item: { command: 'copy' } },
+                { label: 'Paste', item: { command: 'paste' } },
+                '---',
+                { label: 'Settings...', item: { command: 'settings' } },
+            ] },
         { label: 'Cell', collection: [
                 { label: 'Eval', item: { command: 'eval-and-refocus' } },
                 { label: 'Eval and stay', item: { command: 'eval' } },
@@ -11162,6 +11182,9 @@ function get_global_initial_key_map_bindings() {
         'reset': ['CmdOrCtrl-Shift-#'],
         'reset-all': ['CmdOrCtrl-Alt-Shift-#'],
         'clear-all': ['CmdOrCtrl-Shift-!'],
+        'cut': ['CmdOrCtrl-X'],
+        'copy': ['CmdOrCtrl-C'],
+        'paste': ['CmdOrCtrl-V'],
         'save': ['CmdOrCtrl-S'],
         'save-as': ['CmdOrCtrl-Shift-S'],
         'eval': ['CmdOrCtrl-Enter'],
@@ -11201,6 +11224,9 @@ function get_global_command_bindings() {
         'clear-all': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__clear_all */ .N2,
         'save': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__save */ .pv,
         'save-as': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__save_as */ .On,
+        'cut': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__cut */ .Ol,
+        'copy': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__copy */ .NF,
+        'paste': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__paste */ .EU,
         'eval': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__eval */ .$0,
         'eval-and-refocus': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__eval_and_refocus */ .Ey,
         'eval-before': _commands__WEBPACK_IMPORTED_MODULE_0__/* .command_handler__eval_before */ .BC,

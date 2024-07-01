@@ -78,6 +78,21 @@ export async function command_handler__eval(command_context: CommandContext<XbMa
     }
 }
 
+export async function command_handler__cut(command_context: CommandContext<XbManager>): Promise<boolean> {
+    return document.execCommand('cut');
+}
+export async function command_handler__copy(command_context: CommandContext<XbManager>): Promise<boolean> {
+    return document.execCommand('copy');
+}
+export async function command_handler__paste(command_context: CommandContext<XbManager>): Promise<boolean> {
+    if (!navigator.clipboard.readText) {
+        return false;
+    } else {
+        const text = await navigator.clipboard.readText();
+        return document.execCommand('insertText', true, text);
+    }
+}
+
 /** eval target cell and refocus to next cell (or a new one if at the end of the document)
  *  @return {Boolean} true iff command successfully handled
  */

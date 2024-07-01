@@ -18,6 +18,14 @@ export function get_menubar_spec() {
             { label: 'Settings...',     item: { command: 'settings'            } },
         ] },
 
+        { label: 'Edit', collection: [
+            { label: 'Cut',             item: { command: 'cut'                 } },
+            { label: 'Copy',            item: { command: 'copy'                } },
+            { label: 'Paste',           item: { command: 'paste'               } },
+            '---',
+            { label: 'Settings...',     item: { command: 'settings'            } },
+        ] },
+
         { label: 'Cell', collection: [
             { label: 'Eval',            item: { command: 'eval-and-refocus'    } },
             { label: 'Eval and stay',   item: { command: 'eval'                } },
@@ -71,6 +79,10 @@ export function get_global_initial_key_map_bindings() {
         'reset-all':           [ 'CmdOrCtrl-Alt-Shift-#' ],
         'clear-all':           [ 'CmdOrCtrl-Shift-!' ],
 
+        'cut':                 [ 'CmdOrCtrl-X' ],
+        'copy':                [ 'CmdOrCtrl-C' ],
+        'paste':               [ 'CmdOrCtrl-V' ],
+
         'save':                [ 'CmdOrCtrl-S' ],
         'save-as':             [ 'CmdOrCtrl-Shift-S' ],
 
@@ -119,6 +131,10 @@ export function get_global_command_bindings() {
 
         'save':                commands.command_handler__save,
         'save-as':             commands.command_handler__save_as,
+
+        'cut':                 commands.command_handler__cut,
+        'copy':                commands.command_handler__copy,
+        'paste':               commands.command_handler__paste,
 
         'eval':                commands.command_handler__eval,
         'eval-and-refocus':    commands.command_handler__eval_and_refocus,
