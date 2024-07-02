@@ -10312,15 +10312,26 @@ class MenuBar {
                         collection.style.left = `${menuitem_element_br.x}px`;
                     }
                     else {
+                        const collection_br = collection.getBoundingClientRect();
                         const parent_br = parent.getBoundingClientRect();
+                        // menu elements with class "menu" are position: absolute
+                        let rside_left = menuitem_element_br.width; // relative to menuitem_element_br.x
+                        let lside_left = -collection_br.width; // relative to menuitem_element_br.x
+                        const rside_hidden = menuitem_element_br.x + rside_left + collection_br.width - document.documentElement.clientWidth;
+                        const lside_hidden = -(menuitem_element_br.x + lside_left);
+                        // minimize the amount of the collection submenu that is hidden (if any)
+                        const left = (rside_hidden <= 0)
+                            ? rside_left
+                            : ((lside_hidden <= 0)
+                                ? lside_left
+                                : ((rside_hidden <= lside_hidden)
+                                    ? (rside_left - rside_hidden)
+                                    : (lside_left + lside_hidden)));
                         const top = menuitem_element_br.y - parent_br.y;
-                        const available_width = document.documentElement.clientWidth - menuitem_element_br.x - menuitem_element_br.width;
-                        const left = Math.min(available_width, menuitem_element_br.width);
-                        collection.style.top = `${top}px`;
                         collection.style.left = `${left}px`;
+                        collection.style.top = `${top}px`;
                     }
                 }
-                console.log('collection', collection, 'getComputedStyle(collection).position', getComputedStyle(collection).position, 'getComputedStyle(collection).left', getComputedStyle(collection).left, 'menuitem_element', menuitem_element, 'menuitem_element_br', menuitem_element_br, 'parent?.classList', parent?.classList, 'menuitem_element?.classList', menuitem_element?.classList); //!!!
             }
             // we updated menuitem_element first so that we don't erroneously
             // fire a selects event with select: false while we deselect all
