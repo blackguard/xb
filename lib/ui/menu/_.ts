@@ -64,12 +64,13 @@ export class MenuBar<DocumentManager> {
     }
 
     /** call this static method, not the constructor directly
+     *  Create a new MenuBar that represents a top-level menu
      *  @param {Element} parent
      *  @param {Array<object>} menubar_spec: [{
      *      ...
      *  }, ... ]
      *  @param {Function|null|undefined} get_command_bindings
-     *  @return {MenuBar} menu bar instance
+     *  @return {MenuBar} menu bar instance initialized as a top-level menu bar
      */
     static create<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
                                           parent:                Element,
@@ -77,6 +78,27 @@ export class MenuBar<DocumentManager> {
                                           get_command_bindings?: MenuCommandBindingsGetter
                                         ) {
         const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
+        return menubar;
+    }
+
+    /** call this static method, not the constructor directly
+     *  Create a new MenuBar that represents a context menu
+     *  @param {Element} parent
+     *  @param {Array<object>} menubar_spec: [{
+     *      ...
+     *  }, ... ]
+     *  @param {Function|null|undefined} get_command_bindings
+     *  @return {MenuBar} menu bar instance
+     */
+    static createContextMenu<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                                     parent:                Element,
+                                                     menubar_spec:          (string|object)[],
+                                                     get_command_bindings?: MenuCommandBindingsGetter
+                                                   ) {
+        const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
+        menubar.element.classList.remove('active');
+        menubar.element.classList.add('menu');
+        menubar.element.classList.remove('menubar');
         return menubar;
     }
 
@@ -95,6 +117,8 @@ export class MenuBar<DocumentManager> {
     #menu_command_to_elements = new Map<string, Set<HTMLElement>>();
     #menubar_container: HTMLElement;  // set in constructor
 
+    get element (){ return this.#menubar_container; }
+
     constructor(dm: DocumentManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
@@ -110,8 +134,6 @@ export class MenuBar<DocumentManager> {
 
         this.#menubar_container = this.#build_menubar(parent, menubar_spec);
     }
-
-    get element (){ return this.#menubar_container; }
 
     /** activate menu
      *  @param {Object} options: {
@@ -200,7 +222,9 @@ export class MenuBar<DocumentManager> {
                  (!menu_element.classList.contains('menubar') && !menu_element.classList.contains('menu')) ) {
                 throw new Error('menu_element must be an HTMLElement with class "menubar" or "menu"');
             }
-            menu_element.classList.remove('active');
+            if (!menu_element.classList.contains('menubar')) {
+                menu_element.classList.remove('active');
+            }
             menu_element.classList.remove('selected');
             for (const mi of menu_element.children) {
                 mi.classList.remove('selected');

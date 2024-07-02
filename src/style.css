@@ -32,7 +32,7 @@ main {
     max-width:  100vw;
 }
 main > xb-cell {
-    margin: var(--theme-cl-p-inter) 0;
+    margin: 0 0 var(--theme-cl-p-inter) 0;
 }
 
 .xb-cell-output {
@@ -46,20 +46,6 @@ main > xb-cell {
 .xb-cell-output:empty,
 .xb-cell-output:not(:has(> *:not(:empty))) {
     display: none;
-}
-.xb-cell-output p,
-.xb-cell-output h1,
-.xb-cell-output h2,
-.xb-cell-output h3,
-.xb-cell-output h4,
-.xb-cell-output h5,
-.xb-cell-output h6,
-.xb-cell-output h7,
-.xb-cell-output h8,
-.xb-cell-output h9 {
-    /* eliminate spacing for empty output case */
-    margin-block-start: 0;
-    margin-block-end:   0;
 }
 .xb-cell-output .katex-display {
     /* eliminate spacing for empty output case */

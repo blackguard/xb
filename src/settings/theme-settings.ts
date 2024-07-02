@@ -153,7 +153,7 @@ const standard_themes_spec = {
     "--theme-cl-p-inter":              [ '0.25em',                        '0.25em' ],
     "--theme-cl-ctc":                  [ 'red',                           'red' ],
 
-    "--theme-ou-p":                    [ '0.25em',                        '0.25em' ],
+    "--theme-ou-p":                    [ '1em',                           '1em' ],
     "--theme-ou-fgc":                  [ 'black',                         '#eee' ],
     "--theme-ou-bgc":                  [ 'white',                         'black' ],
 
