@@ -225,15 +225,15 @@ html[data-cell-view="full"] .cm-scroller {
 
 /* === menu === */
 
-.menu:not(.active) {
-    display: none;
-}
-
 .menubar {
     user-select: none;
     margin: 0;
     padding: 0.1rem 0 0.1rem 0;
     background-color: var(--theme-mu-bgc);
+}
+
+.menubar div {
+    display: inline;
 }
 
 .menubar > li {
@@ -242,7 +242,7 @@ html[data-cell-view="full"] .cm-scroller {
     padding: 0 0.5rem 0 0.5rem;
 }
 
-.menubar .menuitem {
+.menuitem {
     user-select: none;
     list-style-type: none;
     min-width: max-content;
@@ -257,14 +257,20 @@ html[data-cell-view="full"] .cm-scroller {
     font-size: 90%;
 }
 
-.menubar .menuitem.checked::before {
+.menuitem.checked::before {
     content: "\2713";  /* unicode check mark */
     position: absolute;
     left: 0.5em;
 }
 
-.menubar div {
-    display: inline;
+.menuitem {
+    color: var(--theme-mi-fgc);
+}
+.menuitem.disabled {
+    color: var(--theme-mi-fgc-disabled);
+}
+.menuitem.selected {
+    background-color: var(--theme-mi-bgc-selected);
 }
 
 .menu {
@@ -284,16 +290,8 @@ html[data-cell-view="full"] .cm-scroller {
     padding-inline-start: 0;
 }
 
-.menuitem {
-    color: var(--theme-mi-fgc);
-}
-
-.menuitem.disabled {
-    color: var(--theme-mi-fgc-disabled);
-}
-
-.menuitem.selected {
-    background-color: var(--theme-mi-bgc-selected);
+.menu:not(.active) {
+    display: none;
 }
 
 .menu li.menuitem {  /* .menu selects menu items but not menubar items */

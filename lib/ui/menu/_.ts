@@ -270,14 +270,16 @@ export class MenuBar<DocumentManager> {
                         const collection_br = collection.getBoundingClientRect();
                         const parent_br     = parent.getBoundingClientRect();
 
-                        // menu elements with class "menu" are position: absolute
+                        // menu elements with class "menu" are set to position: absolute
+                        // this means that left/top will be relative to menuitem_element x/y
 
-                        let rside_left = menuitem_element_br.width;  // relative to menuitem_element_br.x
-                        let lside_left = -collection_br.width;       // relative to menuitem_element_br.x
+                        const rside_left = menuitem_element_br.width;  // relative to menuitem_element_br.x
+                        const lside_left = -collection_br.width;       // relative to menuitem_element_br.x
                         const rside_hidden = menuitem_element_br.x + rside_left + collection_br.width - document.documentElement.clientWidth;
                         const lside_hidden = -(menuitem_element_br.x + lside_left);
 
                         // minimize the amount of the collection submenu that is hidden (if any)
+                        // prefer the right side
 
                         const left = (rside_hidden <= 0)
                             ? rside_left

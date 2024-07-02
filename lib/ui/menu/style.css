@@ -1,18 +1,22 @@
-.menu:not(.active) {
-    display: none;
-}
-
 .menubar {
+    user-select: none;
     margin: 0;
     padding: 0.1rem 0 0.1rem 0;
+    background-color: #f8f8f8;
 }
 
-.menubar>li {
+.menubar div {
+    display: inline;
+}
+
+.menubar > li {
+    user-select: none;
     display: inline;  /* horizontal orientation for top-level items of menubar */
     padding: 0 0.5rem 0 0.5rem;
 }
 
-.menubar .menuitem {
+.menuitem {
+    user-select: none;
     list-style-type: none;
     min-width: max-content;
 }
@@ -26,23 +30,29 @@
     font-size: 90%;
 }
 
-.menubar .menuitem.checked::before {
+.menuitem.checked::before {
     content: "\2713";  /* unicode check mark */
     position: absolute;
     left: 0.5em;
 }
 
-.menubar div {
-    display: inline;
+.menuitem {
+    color: black;
+}
+.menuitem.disabled {
+    color: #bbb;
+}
+.menuitem.selected {
+    background-color: #0004;
 }
 
 .menu {
     position: absolute;
     z-index: 999;
-    background-color: #f0f0f0;
+    background-color: #f8f8f8;
     padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */
     border-radius: 0.25rem;
-    border: 1px solid grey;
+    border: 1px solid grey);
     box-shadow: 3px 3px 16px lightgrey;
 
     /* eliminate default styling for menu elements */
@@ -53,12 +63,12 @@
     padding-inline-start: 0;
 }
 
-.menuitem.disabled {
-    color: #bbb;
+.menu:not(.active) {
+    display: none;
 }
 
-.menuitem.selected {
-    background-color: #0004;
+.menu li.menuitem {  /* .menu selects menu items but not menubar items */
+    display: flex;
 }
 
 .menu .menuitem:not(.menuitem-separator) {
@@ -73,8 +83,8 @@
 }
 
 .menu .menuitem .menuitem-annotation {
-    margin-left: 2rem;
-    float: right;
+    margin-left: auto;   /* right justify */
+    padding-left: 1rem;  /* add a little extra space between menu command and keyboard shortcut */
 }
 
 .menu .menuitem kbd {
