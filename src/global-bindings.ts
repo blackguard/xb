@@ -23,6 +23,17 @@ export function get_menubar_spec() {
             { label: 'Copy',            item: { command: 'copy'                } },
             { label: 'Paste',           item: { command: 'paste'               } },
             '---',
+            { label: 'File', collection: [
+                { label: 'Settings...',     item: { command: 'settings'            } },
+                { label: 'Edit', collection: [
+                    { label: 'Cut',             item: { command: 'cut'                 } },
+                    { label: 'Copy',            item: { command: 'copy'                } },
+                    { label: 'Paste',           item: { command: 'paste'               } },
+                    '---',
+                    { label: 'Settings...',     item: { command: 'settings'            } },
+                ] },
+            ] },
+            '---',
             { label: 'Settings...',     item: { command: 'settings'            } },
         ] },
 

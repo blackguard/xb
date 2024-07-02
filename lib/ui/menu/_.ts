@@ -267,8 +267,12 @@ export class MenuBar<DocumentManager> {
                         collection.style.top  = `${menuitem_element_br.y + menuitem_element_br.height}px`;
                         collection.style.left = `${menuitem_element_br.x}px`;
                     } else {
-                        collection.style.top  = `${menuitem_element_br.y - menuitem_element_br.height}px`;
-                        collection.style.left = `${menuitem_element_br.x + menuitem_element_br.width}px`;
+                        const parent_br = parent.getBoundingClientRect();
+                        const top = menuitem_element_br.y - parent_br.y;
+                        const available_width = document.documentElement.clientWidth - menuitem_element_br.x - menuitem_element_br.width;
+                        const left = Math.min(available_width, menuitem_element_br.width);
+                        collection.style.top  = `${top}px`;
+                        collection.style.left = `${left}px`;
                     }
                 }
             }
@@ -425,8 +429,8 @@ export class MenuBar<DocumentManager> {
         // both items and collections are menuitem elements, but the collection also has children...
         const menuitem = create_element({
             tag: this.CLASS.menuitem_element_tag_name,
+            set_id: true,
             attrs: {
-                set_id: true,
                 class: 'menuitem',
             },
         }) as HTMLElement;

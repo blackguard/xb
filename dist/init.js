@@ -10312,10 +10312,15 @@ class MenuBar {
                         collection.style.left = `${menuitem_element_br.x}px`;
                     }
                     else {
-                        collection.style.top = `${menuitem_element_br.y - menuitem_element_br.height}px`;
-                        collection.style.left = `${menuitem_element_br.x + menuitem_element_br.width}px`;
+                        const parent_br = parent.getBoundingClientRect();
+                        const top = menuitem_element_br.y - parent_br.y;
+                        const available_width = document.documentElement.clientWidth - menuitem_element_br.x - menuitem_element_br.width;
+                        const left = Math.min(available_width, menuitem_element_br.width);
+                        collection.style.top = `${top}px`;
+                        collection.style.left = `${left}px`;
                     }
                 }
+                console.log('collection', collection, 'getComputedStyle(collection).position', getComputedStyle(collection).position, 'getComputedStyle(collection).left', getComputedStyle(collection).left, 'menuitem_element', menuitem_element, 'menuitem_element_br', menuitem_element_br, 'parent?.classList', parent?.classList, 'menuitem_element?.classList', menuitem_element?.classList); //!!!
             }
             // we updated menuitem_element first so that we don't erroneously
             // fire a selects event with select: false while we deselect all
@@ -10457,8 +10462,8 @@ class MenuBar {
         // both items and collections are menuitem elements, but the collection also has children...
         const menuitem = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             tag: this.CLASS.menuitem_element_tag_name,
+            set_id: true,
             attrs: {
-                set_id: true,
                 class: 'menuitem',
             },
         });
@@ -11143,6 +11148,17 @@ function get_menubar_spec() {
                 { label: 'Cut', item: { command: 'cut' } },
                 { label: 'Copy', item: { command: 'copy' } },
                 { label: 'Paste', item: { command: 'paste' } },
+                '---',
+                { label: 'File', collection: [
+                        { label: 'Settings...', item: { command: 'settings' } },
+                        { label: 'Edit', collection: [
+                                { label: 'Cut', item: { command: 'cut' } },
+                                { label: 'Copy', item: { command: 'copy' } },
+                                { label: 'Paste', item: { command: 'paste' } },
+                                '---',
+                                { label: 'Settings...', item: { command: 'settings' } },
+                            ] },
+                    ] },
                 '---',
                 { label: 'Settings...', item: { command: 'settings' } },
             ] },
