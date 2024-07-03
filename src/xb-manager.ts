@@ -44,7 +44,7 @@ import {
 } from 'src/output-context/_';
 
 import {
-    MenuBar,
+    Menu,
 } from 'lib/ui/menu/_';
 
 import {
@@ -164,9 +164,9 @@ export class XbManager {
     #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
     #key_event_manager: KeyEventManager<XbManager>;
-    #menubar: undefined|MenuBar<XbManager> = undefined;
-    #menubar_commands_subscription: undefined|Subscription = undefined;
-    #menubar_selects_subscription:  undefined|Subscription = undefined;
+    #menu: undefined|Menu<XbManager> = undefined;
+    #menu_commands_subscription: undefined|Subscription = undefined;
+    #menu_selects_subscription:  undefined|Subscription = undefined;
     #file_handle: any = null;
     #editable: boolean = true;
     #active_cell: null|XbCellElement = null;
@@ -348,11 +348,12 @@ export class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null;//!!! implement this
-        this.#menubar = MenuBar.create<XbManager>(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
-        //!!! this.#menubar_commands_subscription is never unsubscribed
-        this.#menubar_commands_subscription = this.#menubar.commands.subscribe(this.#command_observer.bind(this));
-        //!!! this.#menubar_selects_subscription is never unsubscribed
-        this.#menubar_selects_subscription = this.#menubar.selects.subscribe(this.#update_menu_state.bind(this));
+        this.header_element.classList.add('with-menubar');
+        this.#menu = Menu.create_menu_bar<XbManager>(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
+        //!!! this.#menu_commands_subscription is never unsubscribed
+        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#command_observer.bind(this));
+        //!!! this.#menu_selects_subscription is never unsubscribed
+        this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
     }
 
     #set_initial_active_cell() {
@@ -368,6 +369,7 @@ export class XbManager {
         // this.set_active_cell() will establish the active cell correctly,
         // and reset "active" on all other cells.
         this.set_active_cell(active_cell);
+        this.#update_menu_state();
     }
 
 
@@ -608,8 +610,8 @@ export class XbManager {
 
     #update_menu_state() {
         //!!! review this !!!
-        const menubar = this.#menubar;
-        if (menubar) {
+        const menu = this.#menu;
+        if (menu) {
             const cells           = this.get_cells();
             const active_cell     = this.active_cell;
             const active_index    = active_cell ? cells.indexOf(active_cell) : -1;
@@ -618,41 +620,41 @@ export class XbManager {
             const cell_view_mode  = this.cell_view_mode;
             const has_save_handle = !!this.#file_handle;
 
-            menubar.set_menu_state('reset',               { enabled: editable });
-            menubar.set_menu_state('reset-all',           { enabled: editable });
-            menubar.set_menu_state('clear-all',           { enabled: editable });
+            menu.set_menu_state('reset',               { enabled: editable });
+            menu.set_menu_state('reset-all',           { enabled: editable });
+            menu.set_menu_state('clear-all',           { enabled: editable });
 
             const neutral = false;  //!!! until we figure out how to detect a changed document
-            menubar.set_menu_state('save', { enabled: !neutral && has_save_handle });
+            menu.set_menu_state('save', { enabled: !neutral && has_save_handle });
             // no update to command 'save-as'
 
-            menubar.set_menu_state('eval',                { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('eval-and-refocus',    { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('eval-before',         { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('eval-all',            { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('eval',                { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('eval-and-refocus',    { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('eval-before',         { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('eval-all',            { enabled: !!(editable && active_cell) });
 
-            menubar.set_menu_state('stop',                { enabled: active_cell?.can_stop });
-            menubar.set_menu_state('stop-all',            { enabled: cells.some(cell => cell.can_stop) });
+            menu.set_menu_state('stop',                { enabled: active_cell?.can_stop });
+            menu.set_menu_state('stop-all',            { enabled: cells.some(cell => cell.can_stop) });
 
-            menubar.set_menu_state('focus-up',            { enabled: !!(active_cell && active_index > 0) });
-            menubar.set_menu_state('focus-down',          { enabled: !!(active_cell && active_index < cells.length-1) });
+            menu.set_menu_state('focus-up',            { enabled: !!(active_cell && active_index > 0) });
+            menu.set_menu_state('focus-down',          { enabled: !!(active_cell && active_index < cells.length-1) });
 
-            menubar.set_menu_state('move-up',             { enabled: !!(active_cell && active_index > 0) });
-            menubar.set_menu_state('move-down',           { enabled: !!(active_cell && active_index < cells.length-1) });
-            menubar.set_menu_state('add-before',          { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('add-after',           { enabled: !!(editable && active_cell) });
-            menubar.set_menu_state('delete',              { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('move-up',             { enabled: !!(active_cell && active_index > 0) });
+            menu.set_menu_state('move-down',           { enabled: !!(active_cell && active_index < cells.length-1) });
+            menu.set_menu_state('add-before',          { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('add-after',           { enabled: !!(editable && active_cell) });
+            menu.set_menu_state('delete',              { enabled: !!(editable && active_cell) });
 
-            menubar.set_menu_state('set-mode-plain',      { checked: (cell_mode === 'plain')      });
-            menubar.set_menu_state('set-mode-markdown',   { checked: (cell_mode === 'markdown')   });
-            menubar.set_menu_state('set-mode-tex',        { checked: (cell_mode === 'tex')        });
-            menubar.set_menu_state('set-mode-javascript', { checked: (cell_mode === 'javascript') });
+            menu.set_menu_state('set-mode-plain',      { checked: (cell_mode === 'plain')      });
+            menu.set_menu_state('set-mode-markdown',   { checked: (cell_mode === 'markdown')   });
+            menu.set_menu_state('set-mode-tex',        { checked: (cell_mode === 'tex')        });
+            menu.set_menu_state('set-mode-javascript', { checked: (cell_mode === 'javascript') });
 
-            menubar.set_menu_state('set-view-normal',     { checked: (cell_view_mode === 'normal') });
-            menubar.set_menu_state('set-view-hide',       { checked: (cell_view_mode === 'hide')   });
-            menubar.set_menu_state('set-view-full',       { checked: (cell_view_mode === 'full')   });
-            menubar.set_menu_state('set-view-none',       { checked: (cell_view_mode === 'none')   });
-            menubar.set_menu_state('set-view-kiosk',      { checked: (cell_view_mode === 'kiosk')   });
+            menu.set_menu_state('set-view-normal',     { checked: (cell_view_mode === 'normal') });
+            menu.set_menu_state('set-view-hide',       { checked: (cell_view_mode === 'hide')   });
+            menu.set_menu_state('set-view-full',       { checked: (cell_view_mode === 'full')   });
+            menu.set_menu_state('set-view-none',       { checked: (cell_view_mode === 'none')   });
+            menu.set_menu_state('set-view-kiosk',      { checked: (cell_view_mode === 'kiosk')   });
 
             // no update to command 'settings'
             // no update to command 'help'

@@ -39,8 +39,8 @@ export type MenuCommandBindingsGetter = {
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
-export class MenuBar<DocumentManager> {
-    get CLASS (){ return this.constructor as typeof MenuBar; }
+export class Menu<DocumentManager> {
+    get CLASS (){ return this.constructor as typeof Menu; }
 
     static menu_element_tag_name     = 'menu';
     static menuitem_element_tag_name = 'li';
@@ -64,37 +64,37 @@ export class MenuBar<DocumentManager> {
     }
 
     /** call this static method, not the constructor directly
-     *  Create a new MenuBar that represents a top-level menu
+     *  Create a new Menu that represents a top-level menu bar
      *  @param {Element} parent
      *  @param {Array<object>} menubar_spec: [{
      *      ...
      *  }, ... ]
      *  @param {Function|null|undefined} get_command_bindings
-     *  @return {MenuBar} menu bar instance initialized as a top-level menu bar
+     *  @return {Menu} menu bar instance initialized as a top-level menu bar
      */
-    static create<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
-                                          parent:                Element,
-                                          menubar_spec:          (string|object)[],
-                                          get_command_bindings?: MenuCommandBindingsGetter
-                                        ) {
+    static create_menu_bar<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                                   parent:                Element,
+                                                   menubar_spec:          (string|object)[],
+                                                   get_command_bindings?: MenuCommandBindingsGetter
+                                                 ) {
         const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
         return menubar;
     }
 
     /** call this static method, not the constructor directly
-     *  Create a new MenuBar that represents a context menu
+     *  Create a new Menu that represents a context menu
      *  @param {Element} parent
      *  @param {Array<object>} menubar_spec: [{
      *      ...
      *  }, ... ]
      *  @param {Function|null|undefined} get_command_bindings
-     *  @return {MenuBar} menu bar instance
+     *  @return {Menu} menu bar instance initialized as a context menu
      */
-    static createContextMenu<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
-                                                     parent:                Element,
-                                                     menubar_spec:          (string|object)[],
-                                                     get_command_bindings?: MenuCommandBindingsGetter
-                                                   ) {
+    static create_context_menu<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                                       parent:                Element,
+                                                       menubar_spec:          (string|object)[],
+                                                       get_command_bindings?: MenuCommandBindingsGetter
+                                                     ) {
         const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
         menubar.element.classList.remove('active');
         menubar.element.classList.add('menu');
@@ -403,13 +403,13 @@ export class MenuBar<DocumentManager> {
             }) as HTMLElement;
             collection_element.classList.add('menu');
             if (!toplevel) {
-                const el = create_element({
+                create_element({
                     parent: element,
+                    innerText: '\u25b8',  // right-pointing triangle
                     attrs: {
                         class: [ 'menuitem-annotation', 'collection-arrow' ],
                     },
-                }) as HTMLElement;
-                el.textContent = '\u25b8';  // right-pointing triangle
+                });
             }
             if (collection) {
                 collection.forEach((spec: unknown) => {
@@ -448,7 +448,6 @@ export class MenuBar<DocumentManager> {
         // both items and collections are menuitem elements, but the collection also has children...
         const menuitem = create_element({
             tag: this.CLASS.menuitem_element_tag_name,
-            set_id: true,
             attrs: {
                 class: 'menuitem',
             },
