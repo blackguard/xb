@@ -10138,7 +10138,7 @@ class Menu {
      */
     static create_menubar(dm, // static members cannot reference class type parameters
     parent, toplevel_menu_spec, get_command_bindings) {
-        return new this(dm, parent, toplevel_menu_spec, get_command_bindings);
+        return new this(dm, parent, toplevel_menu_spec, true, get_command_bindings);
     }
     /** call this static method, not the constructor directly
      *  Create a new Menu that represents a context menu
@@ -10151,11 +10151,7 @@ class Menu {
      */
     static create_context_menu(dm, // static members cannot reference class type parameters
     parent, toplevel_menu_spec, get_command_bindings) {
-        const menu = new this(dm, parent, toplevel_menu_spec, get_command_bindings);
-        menu.element.classList.remove('active');
-        menu.element.classList.add('menu');
-        menu.element.classList.remove('menubar'); //!!!
-        return menu;
+        return new this(dm, parent, toplevel_menu_spec, false, get_command_bindings);
     }
     #dm;
     get dm() { return this.#dm; }
@@ -10168,7 +10164,7 @@ class Menu {
     #menu_command_to_elements = new Map();
     #menu_container; // set in constructor
     get element() { return this.#menu_container; }
-    constructor(dm, parent, toplevel_menu_spec, get_command_bindings) {
+    constructor(dm, parent, toplevel_menu_spec, is_menubar, get_command_bindings) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -10178,7 +10174,7 @@ class Menu {
         this.#dm = dm;
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
-        this.#menu_container = this.#build_menubar(parent, toplevel_menu_spec);
+        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, is_menubar);
     }
     /** activate menu
      *  @param {Object} options: {
@@ -10186,9 +10182,6 @@ class Menu {
      *  }
      */
     async activate(options) {
-        if (!(this.#menu_container instanceof HTMLElement) || !this.#menu_container.classList.contains('menubar')) {
-            throw new Error('this.#menu_container must be an HTMLElement with class "menubar"');
-        }
         const { set_focus, } = (options ?? {});
         if (!this.#menu_container.querySelector('.selected')) {
             // select the first menuitem of the menubar
@@ -10541,7 +10534,7 @@ class Menu {
             event.preventDefault();
         });
     }
-    #build_menubar(parent, toplevel_menu_spec) {
+    #build_toplevel_menu(parent, toplevel_menu_spec, is_menubar) {
         const menu_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
             parent,
             tag: this.CLASS.menu_element_tag_name,

@@ -77,7 +77,7 @@ export class Menu<DocumentManager> {
                                                   toplevel_menu_spec:    (string|object)[],
                                                   get_command_bindings?: MenuCommandBindingsGetter
                                                 ) {
-        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, get_command_bindings);
+        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, true, get_command_bindings);
     }
 
     /** call this static method, not the constructor directly
@@ -94,11 +94,7 @@ export class Menu<DocumentManager> {
                                                        toplevel_menu_spec:    (string|object)[],
                                                        get_command_bindings?: MenuCommandBindingsGetter
                                                      ) {
-        const menu = new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, get_command_bindings);
-        menu.element.classList.remove('active');
-        menu.element.classList.add('menu');
-        menu.element.classList.remove('menubar');//!!!
-        return menu;
+        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, false, get_command_bindings);
     }
 
     #dm: DocumentManager;
@@ -118,7 +114,11 @@ export class Menu<DocumentManager> {
 
     get element (){ return this.#menu_container; }
 
-    constructor(dm: DocumentManager, parent: Element, toplevel_menu_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
+    constructor( dm:                    DocumentManager,
+                 parent:                Element,
+                 toplevel_menu_spec:    (string|object)[],
+                 is_menubar:            boolean,
+                 get_command_bindings?: MenuCommandBindingsGetter ) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -131,7 +131,7 @@ export class Menu<DocumentManager> {
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
 
-        this.#menu_container = this.#build_menubar(parent, toplevel_menu_spec);
+        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, is_menubar);
     }
 
     /** activate menu
@@ -140,9 +140,6 @@ export class Menu<DocumentManager> {
      *  }
      */
     async activate(options?: object): Promise<void> {
-        if (!(this.#menu_container instanceof HTMLElement) || !this.#menu_container.classList.contains('menubar')) {
-            throw new Error('this.#menu_container must be an HTMLElement with class "menubar"');
-        }
         const {
             set_focus,
         } = (options ?? {}) as any;
@@ -521,7 +518,7 @@ export class Menu<DocumentManager> {
         });
     }
 
-    #build_menubar(parent: Element, toplevel_menu_spec: (string|object)[]): HTMLElement {
+    #build_toplevel_menu(parent: Element, toplevel_menu_spec: (string|object)[], is_menubar: boolean): HTMLElement {
         const menu_container = create_element({
             parent,
             tag: this.CLASS.menu_element_tag_name,
