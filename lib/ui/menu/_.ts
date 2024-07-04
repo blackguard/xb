@@ -35,7 +35,7 @@ export type MenuCommandBindingsGetter = {
     }
 };
 
-// css classification classes: menubar, contextmenu, menu, menuitem
+// css classification classes: toplevel, menubar, menu, menuitem
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
@@ -117,7 +117,7 @@ export class Menu<DocumentManager> {
     constructor( dm:                    DocumentManager,
                  parent:                Element,
                  toplevel_menu_spec:    (string|object)[],
-                 is_menubar:            boolean,
+                 as_menubar:            boolean,
                  get_command_bindings?: MenuCommandBindingsGetter ) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
@@ -131,7 +131,7 @@ export class Menu<DocumentManager> {
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
 
-        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, is_menubar);
+        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, as_menubar);
     }
 
     /** activate menu
@@ -144,10 +144,10 @@ export class Menu<DocumentManager> {
             set_focus,
         } = (options ?? {}) as any;
         if (!this.#menu_container.querySelector('.selected')) {
-            // select the first menuitem of the menubar
-            const menubar_first_menuitem = this.#menu_container.querySelector('.menuitem') as HTMLElement;
-            if (menubar_first_menuitem) {
-                this.#select_menuitem(menubar_first_menuitem);
+            // select the first menuitem of the menu
+            const menu_first_menuitem = this.#menu_container.querySelector('.menuitem') as HTMLElement;
+            if (menu_first_menuitem) {
+                this.#select_menuitem(menu_first_menuitem);
             }
         }
         if (set_focus) {
@@ -206,19 +206,16 @@ export class Menu<DocumentManager> {
 
     // === INTERNAL ===
 
-    /** deactivate the menubar or menu that contains the given menuitem
-     *  and reset all subordinate state.
-     *  @param {HTMLElement|undefined|null} menu_element an HTMLElement object with class either .menubar or .menu
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
+    /** deactivate the menu that contains the given menuitem and reset all
+     *  subordinate state.
+     *  @param {HTMLElement|undefined|null} menu_element an HTMLElement object with class "menu"
      */
     #deactivate_menu(menu_element: HTMLElement): void {
         if (menu_element) {
-            if ( !(menu_element instanceof HTMLElement) ||
-                 (!menu_element.classList.contains('menubar') && !menu_element.classList.contains('menu')) ) {
-                throw new Error('menu_element must be an HTMLElement with class "menubar" or "menu"');
+            if (!(menu_element instanceof HTMLElement) || !menu_element.classList.contains('menu')) {
+                throw new Error('menu_element must be an HTMLElement with class "menu"');
             }
-            if (!menu_element.classList.contains('menubar')) {
+            if (!menu_element.classList.contains('menubar')) {  // menubar always remains active
                 menu_element.classList.remove('active');
             }
             menu_element.classList.remove('selected');
@@ -228,7 +225,7 @@ export class Menu<DocumentManager> {
                     this.#deactivate_menu(mi.querySelector('.menu') as HTMLElement);
                 }
             }
-            if (menu_element.classList.contains('menubar')) {
+            if (menu_element.classList.contains('toplevel')) {  // dispatch once, for toplevel menu element
                 this.selects.dispatch({ select: false, target: menu_element });
             }
         }
@@ -236,17 +233,15 @@ export class Menu<DocumentManager> {
 
     /** select the given menuitem and deselect all others
      *  @param {HTMLElement} menuitem_element
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
      */
     #select_menuitem(menuitem_element: HTMLElement): void {
         if (!menuitem_element.classList.contains('selected')) {
             // change selection only if not already selected
-            const container = menuitem_element.closest('.menubar, .menu');
+            const container = menuitem_element.closest('.menu');
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -306,14 +301,12 @@ export class Menu<DocumentManager> {
 
     /** deselect the given menuitem
      *  @param {HTMLElement} menuitem_element
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
      */
     #deselect_menuitem(menuitem_element: HTMLElement): void {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -341,8 +334,7 @@ export class Menu<DocumentManager> {
      *  @param {object|string} menu_spec specification for menu item or collection.
      *         If a string, then create a separator (regardless of the string contents).
      *  @param {Element} parent
-     *  @param {boolean} (optional) toplevel if the menu is the top-level "menubar" menu
-     *         default value: false
+     *  @param {boolean} (optional) toplevel if the menu is the top-level menu; default: false
      *  @return {HTMLElement} new menu HTMLElement
      *  Also updates this.#menu_command_to_elements
      */
@@ -502,9 +494,9 @@ export class Menu<DocumentManager> {
         }
 
         menuitem.addEventListener('click', (event) => {
-            const closest_menubar = menuitem.closest('.menubar');
-            if (closest_menubar instanceof HTMLElement) {
-                this.#deactivate_menu(closest_menubar);
+            const closest_toplevel = menuitem.closest('.toplevel');
+            if (closest_toplevel instanceof HTMLElement) {
+                this.#deactivate_menu(closest_toplevel);
             }
             const command_context: CommandContext<DocumentManager> = {
                 dm:      this.dm,
@@ -518,18 +510,27 @@ export class Menu<DocumentManager> {
         });
     }
 
-    #build_toplevel_menu(parent: Element, toplevel_menu_spec: (string|object)[], is_menubar: boolean): HTMLElement {
+    #build_toplevel_menu(parent: Element, toplevel_menu_spec: (string|object)[], as_menubar: boolean): HTMLElement {
+        const menu_container_css_class = [ 'toplevel', 'menu' ];
+        if (as_menubar) {
+            menu_container_css_class.push('menubar');
+            menu_container_css_class.push('active');  // menubar is always active
+        }
         const menu_container = create_element({
-            parent,
             tag: this.CLASS.menu_element_tag_name,
+            parent,
+            before: parent.firstChild,  // prepend
             attrs: {
                 role:     'navigation',
                 tabindex: 0,
-                class: [ 'active', 'menubar' ],
+                class:    menu_container_css_class,
             },
-            before: parent.firstChild,  // prepend
         }) as HTMLElement;
-        toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
+        if (as_menubar) {
+            toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
+        } else {
+            this.#build_menu({ label: '*', collection: toplevel_menu_spec }, menu_container, false);
+        }
 
         // add event listener to close menu when focus is lost
         menu_container.addEventListener('blur', (event) => {
@@ -543,16 +544,16 @@ export class Menu<DocumentManager> {
                 if (! ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', ' '].includes(event.key)) {
                     return;  // do not handle or alter propagation
                 } else {
-                    // select the first menuitem of the menubar
-                    const menubar_first_menuitem = menu_container.querySelector('.menuitem');
-                    if (menubar_first_menuitem instanceof HTMLElement) {
-                        this.#select_menuitem(menubar_first_menuitem);
+                    // select the first menuitem in the menu_container
+                    const menu_first_menuitem = menu_container.querySelector('.menuitem');
+                    if (menu_first_menuitem instanceof HTMLElement) {
+                        this.#select_menuitem(menu_first_menuitem);
                     }
                 }
             } else {
                 const menuitem = selected_elements[selected_elements.length-1];
 
-                const is_in_menubar = (menuitem.parentElement === menu_container);
+                const is_in_menubar = as_menubar && (menuitem.parentElement === menu_container);
 
                 let key_menu_prev, key_menu_next, key_cross_prev, key_cross_next;
                 if (is_in_menubar) {

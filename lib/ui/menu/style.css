@@ -46,7 +46,11 @@
     background-color: #0004;
 }
 
-.menu {
+.menu:not(.active) {
+    display: none;
+}
+
+.menu:not(.menubar) {
     position: absolute;
     z-index: 999;
     background-color: #f8f8f8;
@@ -63,30 +67,26 @@
     padding-inline-start: 0;
 }
 
-.menu:not(.active) {
-    display: none;
-}
-
-.menu li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
+.menu:not(.menubar) li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
     display: flex;
 }
 
-.menu .menuitem:not(.menuitem-separator) {
+.menu:not(.menubar) .menuitem:not(.menuitem-separator) {
     padding: 0 0.5rem 0 1.5rem;
 }
 
-.menu .menuitem.menuitem-separator {
+.menu:not(.menubar) .menuitem.menuitem-separator {
     margin: 0.2rem 0 0.2rem 0;
     height: 0px;
     color: transparent;
     border-bottom: 1px solid #3334;
 }
 
-.menu .menuitem .menuitem-annotation {
+.menu:not(.menubar) .menuitem .menuitem-annotation {
     margin-left: auto;   /* right justify */
     padding-left: 1rem;  /* add a little extra space between menu command and keyboard shortcut */
 }
 
-.menu .menuitem kbd {
+.menu:not(.menubar) .menuitem kbd {
     margin: 0 0 0 0.5rem;
 }

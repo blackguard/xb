@@ -500,7 +500,11 @@ html[data-cell-view="full"] .cm-scroller {
     background-color: var(--theme-mi-bgc-selected);
 }
 
-.menu {
+.menu:not(.active) {
+    display: none;
+}
+
+.menu:not(.menubar) {
     position: absolute;
     z-index: 999;
     background-color: var(--theme-mu-bgc);
@@ -517,31 +521,27 @@ html[data-cell-view="full"] .cm-scroller {
     padding-inline-start: 0;
 }
 
-.menu:not(.active) {
-    display: none;
-}
-
-.menu li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
+.menu:not(.menubar) li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
     display: flex;
 }
 
-.menu .menuitem:not(.menuitem-separator) {
+.menu:not(.menubar) .menuitem:not(.menuitem-separator) {
     padding: 0 0.5rem 0 1.5rem;
 }
 
-.menu .menuitem.menuitem-separator {
+.menu:not(.menubar) .menuitem.menuitem-separator {
     margin: 0.2rem 0 0.2rem 0;
     height: 0px;
     color: transparent;
     border-bottom: 1px solid var(--theme-ms-bgc);
 }
 
-.menu .menuitem .menuitem-annotation {
+.menu:not(.menubar) .menuitem .menuitem-annotation {
     margin-left: auto;   /* right justify */
     padding-left: 1rem;  /* add a little extra space between menu command and keyboard shortcut */
 }
 
-.menu .menuitem kbd {
+.menu:not(.menubar) .menuitem kbd {
     margin: 0 0 0 0.5rem;
 }
 
@@ -726,7 +726,7 @@ body > .error-message {
     }
 
 }
-`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader.with-menubar {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > xb-cell {\n    margin: 0 0 var(--theme-cl-p-inter) 0;\n}\n\n.xb-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n    height: fit-content;\n    padding: 0 var(--theme-ou-p) 0 var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.xb-cell-output:empty,\n.xb-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n.xb-cell-output .katex-display {\n    /* eliminate spacing for empty output case */\n    margin: 0;\n}\n.xb-cell-output .katex-display .katex-html:not(:empty) {\n    /* add spacing back to more interior element for \"display\" output */\n    margin: 1rem 0;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 125%;\n}\n\nxb-cell {\n    --content-color: lightgrey;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: monospace;\n\n    color: var(--theme-cl-fgc);\n/*    background-color: var(--content-color); */\n    background-image: linear-gradient(90deg, var(--content-color), transparent);\n\n    max-height: fit-content;\n    padding: 0;\n    border: 1px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\nxb-cell > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\nxb-cell::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\nxb-cell[data-type]::before {\n    content: attr(data-type);\n}\nxb-cell[data-active][data-type]::before {\n    font-weight: bold;\n}\n\nxb-cell,  /* markdown is the default */\nxb-cell[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\nxb-cell[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\nxb-cell[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\nxb-cell[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] xb-cell {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] xb-cell:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] xb-cell {\n    display: none;\n}\nxb-cell,\nhtml[data-cell-view=\"kiosk\"] xb-cell.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] xb-cell,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon:not([fill=\"none\"]) {\n    fill: var(--theme-gr-bgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg polygon:not([stroke=\"none\"]) {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menu li.menuitem {  /* .menu selector selects .menu items but not .menubar items */\n    display: flex;\n}\n\n.menu .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu .menuitem .menuitem-annotation {\n    margin-left: auto;   /* right justify */\n    padding-left: 1rem;  /* add a little extra space between menu command and keyboard shortcut */\n}\n\n.menu .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === notification === */\n\n.notification-area {\n    pointer-events: none;\n    position: absolute;\n    inset: 0;\n    overflow-y: auto;  /* enable scrollbars */\n    display: flex;\n    flex-direction:  column;\n    justify-content: flex-start;\n    align-items:     flex-end;\n}\n\n.notification-message {\n    max-width: fit-content;\n    padding: 0.5em;\n    margin:  0.5rem;\n    white-space: pre-wrap;\n    border: 1px solid black;\n    border-radius: 0.25rem;\n    color:            var(--theme-nt-fgc);\n    background-color: var(--theme-nt-bgc);\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-weight: bold;\n    font-size: larger;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/style.css"],"names":[],"mappings":"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","sourcesContent":["/* all other stylesheets have been incorporated into this one */\n\n/* See settings/theme-settings.js for definition of --theme-* properties */\n\n:root {\n    --cell-max-height-scrolling: 33vh;\n}\n\nbody {\n    overflow: hidden;  /* inhibit scrolling for body */\n    margin: 0;\n    color:            var(--theme-by-fgc);\n    background-color: var(--theme-by-bgc);\n}\n\nheader.with-menubar {\n    display: flex;\n    align-items: flex-end;\n    justify-content: flex-start;\n\n    height: var(--theme-hd-h);\n    background-color: var(--theme-hd-bgc);\n\n    border: 0px solid var(--theme-hd-bdc);\n    border-bottom-width: 1px;\n}\n\nmain {\n    /* enable scrolling for main element */\n    overflow: auto;\n    max-height: calc(100vh - var(--theme-hd-h));\n    max-width:  100vw;\n}\nmain > xb-cell {\n    margin: 0 0 var(--theme-cl-p-inter) 0;\n}\n\n.xb-cell-output {\n    display: block;\n    overflow: auto;  /* enable h/v scrolling */\n    height: fit-content;\n    padding: 0 var(--theme-ou-p) 0 var(--theme-ou-p);\n    color:            var(--theme-ou-fgc);\n    background-color: var(--theme-ou-bgc);\n}\n.xb-cell-output:empty,\n.xb-cell-output:not(:has(> *:not(:empty))) {\n    display: none;\n}\n.xb-cell-output .katex-display {\n    /* eliminate spacing for empty output case */\n    margin: 0;\n}\n.xb-cell-output .katex-display .katex-html:not(:empty) {\n    /* add spacing back to more interior element for \"display\" output */\n    margin: 1rem 0;\n}\n\n.plain-text {\n    white-space: pre-wrap;  /* display white-space properly */\n    line-height: 125%;\n}\n\nxb-cell {\n    --content-color: lightgrey;\n\n    overflow: hidden;\n\n    display: block;\n    margin:  0;\n\n    caret-color: var(--theme-cl-ctc);\n    /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */\n\n    white-space: pre-wrap;  /* properly display white-space */\n    font-family: monospace;\n\n    color: var(--theme-cl-fgc);\n/*    background-color: var(--content-color); */\n    background-image: linear-gradient(90deg, var(--content-color), transparent);\n\n    max-height: fit-content;\n    padding: 0;\n    border: 1px solid var(--content-color);\n    border-radius: var(--theme-cl-bdr);\n    border-style:  var(--theme-cl-bds);\n}\nxb-cell > * {\n    /* make sure --content-color is restricted to border and padding,\n     * and does not bleed through transparent children\n     */\n    background-color: var(--theme-cl-bgc);\n}\n\nxb-cell::before {\n    content: \"markdown\";  /* markdown is the default */\n    display: inline-block;\n    padding: 0 0 0 0.5em;\n    max-width: fit-content;\n}\nxb-cell[data-type]::before {\n    content: attr(data-type);\n}\nxb-cell[data-active][data-type]::before {\n    font-weight: bold;\n}\n\nxb-cell,  /* markdown is the default */\nxb-cell[data-type=\"markdown\"] {\n    --content-color: var(--theme-ty-bgc-markdown);\n}\nxb-cell[data-type=\"plain\"] {\n    --content-color: var(--theme-ty-bgc-plain);\n}\nxb-cell[data-type=\"tex\"] {\n    --content-color: var(--theme-ty-bgc-tex);\n}\nxb-cell[data-type=\"javascript\"] {\n    --content-color: var(--theme-ty-bgc-javascript);\n}\n\n/* html[data-cell-view]: none|hide|normal|full|kiosk\n * - none:   cells are not displayed\n * - hide:   cells auto-hide; focused cell scrolls, other cells minimized\n * - normal: all cells scroll (default)\n * - full:   all cells shown completely\n * - kiosk:  like none, but also the header element is hidden and no document close warning is issued\n *   -- in kiosk mode, cells with css class \"show-in-kiosk\" will be shown as in \"normal\" mode\n */\n\nhtml[data-cell-view=\"none\"] xb-cell {\n    display: none;\n}\nhtml[data-cell-view=\"hide\"] xb-cell:not([data-active]) {\n    display: block;\n    max-height: 0.2rem;\n    border-width: 1px;\n    border-color: black;\n    padding: 0;\n    margin: 0.2rem;\n}\nhtml[data-cell-view=\"kiosk\"] header {\n    display: none;\n}\nhtml[data-cell-view=\"kiosk\"] xb-cell {\n    display: none;\n}\nxb-cell,\nhtml[data-cell-view=\"kiosk\"] xb-cell.show-in-kiosk {\n    display: block;\n    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */\n    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);\n}\n\n\n/* === codemirror === */\n\n/* scroll long content unless html[data-cell-view=\"full\"] */\n/* see: https://discuss.codemirror.net/t/code-editor-with-automatic-height-that-has-a-minimum-and-maximum-height/4015 */\n.cm-editor {\n    max-height: var(--cell-max-height-scrolling);\n}\n.cm-scroller {\n    overflow-y: auto;\n}\n\n/* show full content if html[data-cell-view=\"full\"] */\nhtml[data-cell-view=\"full\"] xb-cell,\nhtml[data-cell-view=\"full\"] .cm-editor,\nhtml[data-cell-view=\"full\"] .cm-scroller {\n    overflow-y: hidden;\n    max-height: unset;\n    height: 100%;\n}\n\n/* line number switch */\n.codemirror-hide-line-numbers .cm-lineNumbers {\n    display: none !important;  /* must use !important to override codemirror's !important setting */\n}\n\n/* patch too-bright light-mode .activeLine color */\n:root:not([data-theme=\"dark\"]) .cm-activeLine {  /* :root:not(---) for specificity */\n    background-color: hsl(200deg 100% 93% / 27%) !important;  /* otherwise overly light */  /* must use !important to override codemirror's !important setting */\n}\n\n/* patches for CodeMirror colors in dark mode */\n:root[data-theme=\"dark\"] .cm-gutters {\n    background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n}\n:root[data-theme=\"dark\"] .cm-activeLine {\n    background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n}\n:root[data-theme=\"dark\"] .cm-editor .cm-cursor {\n    border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n}\n@media (prefers-color-scheme: dark) {\n    .cm-gutters {\n        background-color: revert !important;  /* otherwise glaringly light */  /* must use !important to override codemirror's !important setting */\n    }\n    .cm-activeLine {\n        background-color: hsl(200deg 100% 12% / 27%);  /* otherwise glaringly light */\n    }\n    .cm-editor .cm-cursor {\n        border-left-color: orange;  /* too dim */  /* see: https://discuss.codemirror.net/t/caret-color-css-seems-locked/7011/5 */\n    }\n}\n\n\n/* theme-aware graphics */\n\n[data-source-media-type=\"application/graphviz\"] svg polygon:not([fill=\"none\"]) {\n    fill: var(--theme-gr-bgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg polygon:not([stroke=\"none\"]) {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg path,\n[data-source-media-type=\"application/graphviz\"] svg ellipse {\n    stroke: var(--theme-gr-fgc);\n}\n[data-source-media-type=\"application/graphviz\"] svg text {\n    fill: var(--theme-gr-fgc);\n}\n\n\n/* === menu === */\n\n.menubar {\n    user-select: none;\n    margin: 0;\n    padding: 0.1rem 0 0.1rem 0;\n    background-color: var(--theme-mu-bgc);\n}\n\n.menubar div {\n    display: inline;\n}\n\n.menubar > li {\n    user-select: none;\n    display: inline;  /* horizontal orientation for top-level items of menubar */\n    padding: 0 0.5rem 0 0.5rem;\n}\n\n.menuitem {\n    user-select: none;\n    list-style-type: none;\n    min-width: max-content;\n}\n\n.menuitem * {\n    user-select: none;\n}\n\n.menuitem .menuitem-label {\n    font-family: sans-serif;\n    font-size: 90%;\n}\n\n.menuitem.checked::before {\n    content: \"\\2713\";  /* unicode check mark */\n    position: absolute;\n    left: 0.5em;\n}\n\n.menuitem {\n    color: var(--theme-mi-fgc);\n}\n.menuitem.disabled {\n    color: var(--theme-mi-fgc-disabled);\n}\n.menuitem.selected {\n    background-color: var(--theme-mi-bgc-selected);\n}\n\n.menu:not(.active) {\n    display: none;\n}\n\n.menu:not(.menubar) {\n    position: absolute;\n    z-index: 999;\n    background-color: var(--theme-mu-bgc);\n    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */\n    border-radius: 0.25rem;\n    border: 1px solid var(--theme-mu-bdc);\n    box-shadow: 3px 3px 16px var(--theme-mu-shc);\n\n    /* eliminate default styling for menu elements */\n    margin-block-start:   0;\n    margin-block-end:     0;\n    margin-inline-start:  0;\n    margin-inline-end:    0;\n    padding-inline-start: 0;\n}\n\n.menu:not(.menubar) li.menuitem {  /* .menu selector selects .menu items but not .menubar items */\n    display: flex;\n}\n\n.menu:not(.menubar) .menuitem:not(.menuitem-separator) {\n    padding: 0 0.5rem 0 1.5rem;\n}\n\n.menu:not(.menubar) .menuitem.menuitem-separator {\n    margin: 0.2rem 0 0.2rem 0;\n    height: 0px;\n    color: transparent;\n    border-bottom: 1px solid var(--theme-ms-bgc);\n}\n\n.menu:not(.menubar) .menuitem .menuitem-annotation {\n    margin-left: auto;   /* right justify */\n    padding-left: 1rem;  /* add a little extra space between menu command and keyboard shortcut */\n}\n\n.menu:not(.menubar) .menuitem kbd {\n    margin: 0 0 0 0.5rem;\n}\n\n\n/* === notification === */\n\n.notification-area {\n    pointer-events: none;\n    position: absolute;\n    inset: 0;\n    overflow-y: auto;  /* enable scrollbars */\n    display: flex;\n    flex-direction:  column;\n    justify-content: flex-start;\n    align-items:     flex-end;\n}\n\n.notification-message {\n    max-width: fit-content;\n    padding: 0.5em;\n    margin:  0.5rem;\n    white-space: pre-wrap;\n    border: 1px solid black;\n    border-radius: 0.25rem;\n    color:            var(--theme-nt-fgc);\n    background-color: var(--theme-nt-bgc);\n}\n\n\n/* === dialog === */\n\ndialog {\n    border-radius: 0.5em;\n    box-shadow: 3px 3px 16px grey;\n}\n\ndialog .dialog-controls-form-terminals {\n    display: flex;\n    justify-content: flex-end;\n    margin: 1.5em 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals button,\ndialog .dialog-controls-form-terminals input[type=\"button\"] {\n    margin: 0 0 0 0;\n}\n\ndialog .dialog-controls-form-terminals .dialog-accept,\ndialog .dialog-controls-form-terminals .dialog-decline {\n    display: inline;\n    margin: 0 0 0 0.5em;\n    padding: 0.25em 2em;\n}\n\ndialog .dialog-message-text {\n    font-weight: bold;\n    font-size: larger;\n}\n\ndialog .dialog-text {\n}\n\n\n/* === settings-dialog === */\n\n.settings-dialog {\n    background-color: var(--theme-st-bgc);\n}\n\n.settings-dialog .dialog-text {\n    font-style: italic;\n}\n\n.settings-dialog [data-section] {\n    position: relative;\n    display: grid;\n    grid-template-columns: min-content min-content;\n    min-width: max-content;\n    margin: 1.75em 0 0 0;\n    padding: 1em 0.5em 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-section);\n    color:            var(--theme-st-fgc-section);\n    background-color: var(--theme-st-bgc-section);\n}\n\n.settings-dialog [data-section]::before {  /* named section heading */\n    position: absolute;\n    content: attr(data-section);\n    left: 0.8em;\n    top: -0.7em;\n    padding: 0 1em;\n    border-radius: 4px;\n    border: 1px solid var(--theme-st-bdc-section-heading);\n    color:            var(--theme-st-fgc-section-heading);\n    background-color: var(--theme-st-bgc-section-heading);\n    font-style: italic;\n}\n\n.settings-dialog [data-section] label {\n    align-self: center;\n    justify-self: end;\n    white-space: nowrap;\n    user-select: none;\n}\n\n.settings-dialog [data-section] input,\n.settings-dialog [data-section] select {\n    align-self: center;\n    justify-self: start;\n    color:            var(--theme-st-fgc-section-setting);\n    background-color: var(--theme-st-bgc-section-setting);\n    margin: 0.25em;\n}\n\n.settings-dialog [data-section] input[type=\"text\"] {\n    width: 5em;\n}\n\n.settings-dialog .warning {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 8px;\n    border: 1px solid var(--theme-st-bdc-warning);\n    color:            var(--theme-st-fgc-warning);\n    background-color: var(--theme-st-bgc-warning);\n}\n.settings-dialog .warning p:first-child {\n    margin-block-start: 0;\n}\n.settings-dialog .warning p:last-child {\n    margin-block-end: 0;\n}\n.settings-dialog .show-emacs-warning .emacs-warning {\n    display: block;\n}\n\n.settings-dialog .error-message {\n    display: none;\n    width: 13em;\n    margin: 1.75em 0 0 1em;\n    padding: 0.5em;\n    border-radius: 5pt;\n    border: 1px solid var(--theme-st-bdc-error);\n    color:            var(--theme-st-fgc-error);\n    background-color: var(--theme-st-bgc-error);\n}\n.settings-dialog .error-message.active {\n    display: block;\n}\n\n\n/* === global error messages === */\n\nbody > .error-message {\n    display: block;\n    margin: 1.75em;\n    padding: 0.5em;\n    border-radius: 3pt;\n    border: 1px solid var(--theme-by-bdc-error);\n    color:            var(--theme-by-fgc-error);\n    background-color: var(--theme-by-bgc-error);\n}\n\n\n/* === print media queries === */\n\n@media not print {\n    /* nothing for now */\n}\n\n@media print {\n\n    header {\n        display: none;\n    }\n\n    main {\n        overflow: visible;\n    }\n\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -10105,7 +10105,7 @@ const current_script_url = (/* unused pure expression or super */ null && ("file
 async function load_stylesheet() {
     create_stylesheet_link(document.head, new URL('./style.css', assets_server_url(current_script_url)));
 }
-// css classification classes: menubar, contextmenu, menu, menuitem
+// css classification classes: toplevel, menubar, menu, menuitem
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 class Menu {
@@ -10164,7 +10164,7 @@ class Menu {
     #menu_command_to_elements = new Map();
     #menu_container; // set in constructor
     get element() { return this.#menu_container; }
-    constructor(dm, parent, toplevel_menu_spec, is_menubar, get_command_bindings) {
+    constructor(dm, parent, toplevel_menu_spec, as_menubar, get_command_bindings) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -10174,7 +10174,7 @@ class Menu {
         this.#dm = dm;
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
-        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, is_menubar);
+        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, as_menubar);
     }
     /** activate menu
      *  @param {Object} options: {
@@ -10184,10 +10184,10 @@ class Menu {
     async activate(options) {
         const { set_focus, } = (options ?? {});
         if (!this.#menu_container.querySelector('.selected')) {
-            // select the first menuitem of the menubar
-            const menubar_first_menuitem = this.#menu_container.querySelector('.menuitem');
-            if (menubar_first_menuitem) {
-                this.#select_menuitem(menubar_first_menuitem);
+            // select the first menuitem of the menu
+            const menu_first_menuitem = this.#menu_container.querySelector('.menuitem');
+            if (menu_first_menuitem) {
+                this.#select_menuitem(menu_first_menuitem);
             }
         }
         if (set_focus) {
@@ -10245,19 +10245,16 @@ class Menu {
         }
     }
     // === INTERNAL ===
-    /** deactivate the menubar or menu that contains the given menuitem
-     *  and reset all subordinate state.
-     *  @param {HTMLElement|undefined|null} menu_element an HTMLElement object with class either .menubar or .menu
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
+    /** deactivate the menu that contains the given menuitem and reset all
+     *  subordinate state.
+     *  @param {HTMLElement|undefined|null} menu_element an HTMLElement object with class "menu"
      */
     #deactivate_menu(menu_element) {
         if (menu_element) {
-            if (!(menu_element instanceof HTMLElement) ||
-                (!menu_element.classList.contains('menubar') && !menu_element.classList.contains('menu'))) {
-                throw new Error('menu_element must be an HTMLElement with class "menubar" or "menu"');
+            if (!(menu_element instanceof HTMLElement) || !menu_element.classList.contains('menu')) {
+                throw new Error('menu_element must be an HTMLElement with class "menu"');
             }
-            if (!menu_element.classList.contains('menubar')) {
+            if (!menu_element.classList.contains('menubar')) { // menubar always remains active
                 menu_element.classList.remove('active');
             }
             menu_element.classList.remove('selected');
@@ -10267,24 +10264,22 @@ class Menu {
                     this.#deactivate_menu(mi.querySelector('.menu'));
                 }
             }
-            if (menu_element.classList.contains('menubar')) {
+            if (menu_element.classList.contains('toplevel')) { // dispatch once, for toplevel menu element
                 this.selects.dispatch({ select: false, target: menu_element });
             }
         }
     }
     /** select the given menuitem and deselect all others
      *  @param {HTMLElement} menuitem_element
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
      */
     #select_menuitem(menuitem_element) {
         if (!menuitem_element.classList.contains('selected')) {
             // change selection only if not already selected
-            const container = menuitem_element.closest('.menubar, .menu');
+            const container = menuitem_element.closest('.menu');
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -10339,14 +10334,12 @@ class Menu {
     }
     /** deselect the given menuitem
      *  @param {HTMLElement} menuitem_element
-     *  This is compatible with menuitem elements that are contained
-     *  in either a .menubar or .menu element.
      */
     #deselect_menuitem(menuitem_element) {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -10372,8 +10365,7 @@ class Menu {
      *  @param {object|string} menu_spec specification for menu item or collection.
      *         If a string, then create a separator (regardless of the string contents).
      *  @param {Element} parent
-     *  @param {boolean} (optional) toplevel if the menu is the top-level "menubar" menu
-     *         default value: false
+     *  @param {boolean} (optional) toplevel if the menu is the top-level menu; default: false
      *  @return {HTMLElement} new menu HTMLElement
      *  Also updates this.#menu_command_to_elements
      */
@@ -10519,9 +10511,9 @@ class Menu {
             }
         }
         menuitem.addEventListener('click', (event) => {
-            const closest_menubar = menuitem.closest('.menubar');
-            if (closest_menubar instanceof HTMLElement) {
-                this.#deactivate_menu(closest_menubar);
+            const closest_toplevel = menuitem.closest('.toplevel');
+            if (closest_toplevel instanceof HTMLElement) {
+                this.#deactivate_menu(closest_toplevel);
             }
             const command_context = {
                 dm: this.dm,
@@ -10534,18 +10526,28 @@ class Menu {
             event.preventDefault();
         });
     }
-    #build_toplevel_menu(parent, toplevel_menu_spec, is_menubar) {
+    #build_toplevel_menu(parent, toplevel_menu_spec, as_menubar) {
+        const menu_container_css_class = ['toplevel', 'menu'];
+        if (as_menubar) {
+            menu_container_css_class.push('menubar');
+            menu_container_css_class.push('active'); // menubar is always active
+        }
         const menu_container = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .T1)({
-            parent,
             tag: this.CLASS.menu_element_tag_name,
+            parent,
+            before: parent.firstChild, // prepend
             attrs: {
                 role: 'navigation',
                 tabindex: 0,
-                class: ['active', 'menubar'],
+                class: menu_container_css_class,
             },
-            before: parent.firstChild, // prepend
         });
-        toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
+        if (as_menubar) {
+            toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
+        }
+        else {
+            this.#build_menu({ label: '*', collection: toplevel_menu_spec }, menu_container, false);
+        }
         // add event listener to close menu when focus is lost
         menu_container.addEventListener('blur', (event) => {
             this.#deactivate_menu(menu_container);
@@ -10558,16 +10560,16 @@ class Menu {
                     return; // do not handle or alter propagation
                 }
                 else {
-                    // select the first menuitem of the menubar
-                    const menubar_first_menuitem = menu_container.querySelector('.menuitem');
-                    if (menubar_first_menuitem instanceof HTMLElement) {
-                        this.#select_menuitem(menubar_first_menuitem);
+                    // select the first menuitem in the menu_container
+                    const menu_first_menuitem = menu_container.querySelector('.menuitem');
+                    if (menu_first_menuitem instanceof HTMLElement) {
+                        this.#select_menuitem(menu_first_menuitem);
                     }
                 }
             }
             else {
                 const menuitem = selected_elements[selected_elements.length - 1];
-                const is_in_menubar = (menuitem.parentElement === menu_container);
+                const is_in_menubar = as_menubar && (menuitem.parentElement === menu_container);
                 let key_menu_prev, key_menu_next, key_cross_prev, key_cross_next;
                 if (is_in_menubar) {
                     key_menu_prev = 'ArrowLeft';
