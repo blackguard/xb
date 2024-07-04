@@ -67,7 +67,7 @@
     display: none;
 }
 
-.menu li.menuitem {  /* .menu selects menu items but not menubar items */
+.menu li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
     display: flex;
 }
 

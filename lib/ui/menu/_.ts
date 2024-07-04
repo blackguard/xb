@@ -27,7 +27,7 @@ export async function load_stylesheet() {
 }
 
 
-// === MENUBAR CLASS ===
+// === MENU CLASS ===
 
 export type MenuCommandBindingsGetter = {
     (): {
@@ -35,7 +35,7 @@ export type MenuCommandBindingsGetter = {
     }
 };
 
-// css classification classes: menubar, menu, menuitem
+// css classification classes: menubar, contextmenu, menu, menuitem
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
@@ -66,25 +66,24 @@ export class Menu<DocumentManager> {
     /** call this static method, not the constructor directly
      *  Create a new Menu that represents a top-level menu bar
      *  @param {Element} parent
-     *  @param {Array<object>} menubar_spec: [{
+     *  @param {Array<object>} toplevel_menu_spec: [{
      *      ...
      *  }, ... ]
      *  @param {Function|null|undefined} get_command_bindings
      *  @return {Menu} menu bar instance initialized as a top-level menu bar
      */
-    static create_menu_bar<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
-                                                   parent:                Element,
-                                                   menubar_spec:          (string|object)[],
-                                                   get_command_bindings?: MenuCommandBindingsGetter
-                                                 ) {
-        const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
-        return menubar;
+    static create_menubar<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                                  parent:                Element,
+                                                  toplevel_menu_spec:    (string|object)[],
+                                                  get_command_bindings?: MenuCommandBindingsGetter
+                                                ) {
+        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, get_command_bindings);
     }
 
     /** call this static method, not the constructor directly
      *  Create a new Menu that represents a context menu
      *  @param {Element} parent
-     *  @param {Array<object>} menubar_spec: [{
+     *  @param {Array<object>} toplevel_menu_spec: [{
      *      ...
      *  }, ... ]
      *  @param {Function|null|undefined} get_command_bindings
@@ -92,14 +91,14 @@ export class Menu<DocumentManager> {
      */
     static create_context_menu<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
                                                        parent:                Element,
-                                                       menubar_spec:          (string|object)[],
+                                                       toplevel_menu_spec:    (string|object)[],
                                                        get_command_bindings?: MenuCommandBindingsGetter
                                                      ) {
-        const menubar = new this<StaticDocumentManager>(dm, parent, menubar_spec, get_command_bindings);
-        menubar.element.classList.remove('active');
-        menubar.element.classList.add('menu');
-        menubar.element.classList.remove('menubar');
-        return menubar;
+        const menu = new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, get_command_bindings);
+        menu.element.classList.remove('active');
+        menu.element.classList.add('menu');
+        menu.element.classList.remove('menubar');//!!!
+        return menu;
     }
 
     #dm: DocumentManager;
@@ -115,11 +114,11 @@ export class Menu<DocumentManager> {
     get get_command_bindings (){ return this.#get_command_bindings; }
 
     #menu_command_to_elements = new Map<string, Set<HTMLElement>>();
-    #menubar_container: HTMLElement;  // set in constructor
+    #menu_container: HTMLElement;  // set in constructor
 
-    get element (){ return this.#menubar_container; }
+    get element (){ return this.#menu_container; }
 
-    constructor(dm: DocumentManager, parent: Element, menubar_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
+    constructor(dm: DocumentManager, parent: Element, toplevel_menu_spec: (string|object)[], get_command_bindings?: MenuCommandBindingsGetter) {
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -132,7 +131,7 @@ export class Menu<DocumentManager> {
         get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
 
-        this.#menubar_container = this.#build_menubar(parent, menubar_spec);
+        this.#menu_container = this.#build_menubar(parent, toplevel_menu_spec);
     }
 
     /** activate menu
@@ -141,22 +140,22 @@ export class Menu<DocumentManager> {
      *  }
      */
     async activate(options?: object): Promise<void> {
-        if (!(this.#menubar_container instanceof HTMLElement) || !this.#menubar_container.classList.contains('menubar')) {
-            throw new Error('this.#menubar_container must be an HTMLElement with class "menubar"');
+        if (!(this.#menu_container instanceof HTMLElement) || !this.#menu_container.classList.contains('menubar')) {
+            throw new Error('this.#menu_container must be an HTMLElement with class "menubar"');
         }
         const {
             set_focus,
         } = (options ?? {}) as any;
-        if (!this.#menubar_container.querySelector('.selected')) {
+        if (!this.#menu_container.querySelector('.selected')) {
             // select the first menuitem of the menubar
-            const menubar_first_menuitem = this.#menubar_container.querySelector('.menuitem') as HTMLElement;
+            const menubar_first_menuitem = this.#menu_container.querySelector('.menuitem') as HTMLElement;
             if (menubar_first_menuitem) {
                 this.#select_menuitem(menubar_first_menuitem);
             }
         }
         if (set_focus) {
             return new Promise<void>(resolve => setTimeout(() => {
-                this.#menubar_container.focus();
+                this.#menu_container.focus();
                 resolve();
             }));
         } else {
@@ -167,7 +166,7 @@ export class Menu<DocumentManager> {
     /** deactivate menu
      */
     deactivate(): void {
-        this.#deactivate_menu(this.#menubar_container);
+        this.#deactivate_menu(this.#menu_container);
     }
 
     set_menu_state(command: string, state_spec: { enabled?: boolean, checked?: boolean }) {
@@ -250,7 +249,7 @@ export class Menu<DocumentManager> {
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('menubar') && !this.#menubar_container.querySelector('.selected')) {
+            if (container.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -317,7 +316,7 @@ export class Menu<DocumentManager> {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('menubar') && !this.#menubar_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('menubar') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -465,7 +464,7 @@ export class Menu<DocumentManager> {
         menuitem.addEventListener('mousemove', (event) => {
             // don't pop open top-level menus unless one is already selected
             // this means that the user must click the top-level menu to get things started
-            if (!toplevel || this.#menubar_container.querySelector('.selected')) {
+            if (!toplevel || this.#menu_container.querySelector('.selected')) {
                 if (!menuitem.classList.contains('disabled')) {
                     this.#select_menuitem(menuitem);
                 }
@@ -522,8 +521,8 @@ export class Menu<DocumentManager> {
         });
     }
 
-    #build_menubar(parent: Element, menubar_spec: (string|object)[]): HTMLElement {
-        const menubar_container = create_element({
+    #build_menubar(parent: Element, toplevel_menu_spec: (string|object)[]): HTMLElement {
+        const menu_container = create_element({
             parent,
             tag: this.CLASS.menu_element_tag_name,
             attrs: {
@@ -533,22 +532,22 @@ export class Menu<DocumentManager> {
             },
             before: parent.firstChild,  // prepend
         }) as HTMLElement;
-        menubar_spec.forEach(spec => this.#build_menu(spec, menubar_container, true));
+        toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
 
         // add event listener to close menu when focus is lost
-        menubar_container.addEventListener('blur', (event) => {
-            this.#deactivate_menu(menubar_container);
+        menu_container.addEventListener('blur', (event) => {
+            this.#deactivate_menu(menu_container);
         });
 
         // add keyboard navigation event listener
-        menubar_container.addEventListener('keydown', (event) => {
-            const selected_elements = [ ...menubar_container.querySelectorAll('.selected') ].filter(e => e instanceof HTMLElement) as HTMLElement[];
+        menu_container.addEventListener('keydown', (event) => {
+            const selected_elements = [ ...menu_container.querySelectorAll('.selected') ].filter(e => e instanceof HTMLElement) as HTMLElement[];
             if (selected_elements.length <= 0) {
                 if (! ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', ' '].includes(event.key)) {
                     return;  // do not handle or alter propagation
                 } else {
                     // select the first menuitem of the menubar
-                    const menubar_first_menuitem = menubar_container.querySelector('.menuitem');
+                    const menubar_first_menuitem = menu_container.querySelector('.menuitem');
                     if (menubar_first_menuitem instanceof HTMLElement) {
                         this.#select_menuitem(menubar_first_menuitem);
                     }
@@ -556,7 +555,7 @@ export class Menu<DocumentManager> {
             } else {
                 const menuitem = selected_elements[selected_elements.length-1];
 
-                const is_in_menubar = (menuitem.parentElement === menubar_container);
+                const is_in_menubar = (menuitem.parentElement === menu_container);
 
                 let key_menu_prev, key_menu_next, key_cross_prev, key_cross_next;
                 if (is_in_menubar) {
@@ -578,7 +577,7 @@ export class Menu<DocumentManager> {
                         break;
                     }
                     case 'Escape': {
-                        this.#deactivate_menu(menubar_container);
+                        this.#deactivate_menu(menu_container);
                         break;
                     }
                     case key_menu_prev: {
@@ -599,7 +598,7 @@ export class Menu<DocumentManager> {
                     }
                     case key_cross_prev: {
                         if (!is_in_menubar) {
-                            const menubar_menuitem = menubar_container.querySelector('.menuitem.selected');
+                            const menubar_menuitem = menu_container.querySelector('.menuitem.selected');
                             const mbi = this.CLASS.find_previous_menuitem(menubar_menuitem as HTMLElement);
                             if (mbi instanceof HTMLElement) {
                                 this.#select_menuitem(mbi);
@@ -618,7 +617,7 @@ export class Menu<DocumentManager> {
                             }
                         }
                         if (!navigated_into_collection && !is_in_menubar) {
-                            const menubar_menuitem = menubar_container.querySelector('.menuitem.selected') as HTMLElement;
+                            const menubar_menuitem = menu_container.querySelector('.menuitem.selected') as HTMLElement;
                             const mbi = this.CLASS.find_next_menuitem(menubar_menuitem);
                             if (mbi instanceof HTMLElement) {
                                 this.#select_menuitem(mbi);
@@ -640,6 +639,6 @@ export class Menu<DocumentManager> {
             capture: true,
         });
 
-        return menubar_container;
+        return menu_container;
     }
 }
