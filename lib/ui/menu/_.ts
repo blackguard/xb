@@ -35,7 +35,13 @@ export type MenuCommandBindingsGetter = {
     }
 };
 
-// css classification classes: toplevel, menubar, menu, menuitem
+export type MenuOptions = {
+    as_menubar?:           boolean,
+    persistent?:           boolean,  // remains active and visible?
+    get_command_bindings?: MenuCommandBindingsGetter,
+};
+
+// css classification classes: toplevel_menu, persistent_menu, menubar, menu, menuitem
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
@@ -63,38 +69,22 @@ export class Menu<DocumentManager> {
         return mi;
     }
 
-    /** call this static method, not the constructor directly
-     *  Create a new Menu that represents a top-level menu bar
+    /** Create a new Menu
+     *  (call this static method, not the constructor directly)
+     *  @param {StaticDocumentManager} dm the document manager for this menu (used when sending commands)
      *  @param {Element} parent
-     *  @param {Array<object>} toplevel_menu_spec: [{
+     *  @param {Array<object>} toplevel_menu_spec: string|[{
      *      ...
      *  }, ... ]
-     *  @param {Function|null|undefined} get_command_bindings
+     *  @param {undefined|MenuOptions} options
      *  @return {Menu} menu bar instance initialized as a top-level menu bar
      */
-    static create_menubar<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
-                                                  parent:                Element,
-                                                  toplevel_menu_spec:    (string|object)[],
-                                                  get_command_bindings?: MenuCommandBindingsGetter
-                                                ) {
-        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, true, get_command_bindings);
-    }
-
-    /** call this static method, not the constructor directly
-     *  Create a new Menu that represents a context menu
-     *  @param {Element} parent
-     *  @param {Array<object>} toplevel_menu_spec: [{
-     *      ...
-     *  }, ... ]
-     *  @param {Function|null|undefined} get_command_bindings
-     *  @return {Menu} menu bar instance initialized as a context menu
-     */
-    static create_context_menu<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
-                                                       parent:                Element,
-                                                       toplevel_menu_spec:    (string|object)[],
-                                                       get_command_bindings?: MenuCommandBindingsGetter
-                                                     ) {
-        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, false, get_command_bindings);
+    static create<StaticDocumentManager>( dm:                    StaticDocumentManager,  // static members cannot reference class type parameters
+                                          parent:                Element,
+                                          toplevel_menu_spec:    (string|object)[],
+                                          options?:              MenuOptions
+                                        ) {
+        return new this<StaticDocumentManager>(dm, parent, toplevel_menu_spec, options);
     }
 
     #dm: DocumentManager;
@@ -114,11 +104,22 @@ export class Menu<DocumentManager> {
 
     get element (){ return this.#menu_container; }
 
-    constructor( dm:                    DocumentManager,
-                 parent:                Element,
-                 toplevel_menu_spec:    (string|object)[],
-                 as_menubar:            boolean,
-                 get_command_bindings?: MenuCommandBindingsGetter ) {
+    /** constructor for Menu class, used internally; call the static create_ methods instead.
+     *  @param {StaticDocumentManager} dm the document manager for this menu (used when sending commands)
+     *  @param {Element} parent
+     *  @param {Array<object>} toplevel_menu_spec: string|[{
+     *      ...
+     *  }, ... ]
+     *  @param {undefined|MenuOptions} options
+     */
+    private constructor( dm:                    DocumentManager,
+                         parent:                Element,
+                         toplevel_menu_spec:    (string|object)[],
+                         options?:              MenuOptions ) {
+        const {
+            get_command_bindings = () => ({}),
+        } = (options ?? {});
+
         if (!(parent instanceof Element)) {
             throw new Error('parent must be an instance of Element');
         }
@@ -127,11 +128,8 @@ export class Menu<DocumentManager> {
         }
 
         this.#dm = dm;
-
-        get_command_bindings ??= () => ({});
         this.#get_command_bindings = get_command_bindings;
-
-        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, as_menubar);
+        this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, options);
     }
 
     /** activate menu
@@ -215,7 +213,7 @@ export class Menu<DocumentManager> {
             if (!(menu_element instanceof HTMLElement) || !menu_element.classList.contains('menu')) {
                 throw new Error('menu_element must be an HTMLElement with class "menu"');
             }
-            if (!menu_element.classList.contains('menubar')) {  // menubar always remains active
+            if (!menu_element.classList.contains('persistent_menu')) {  // menubar always remains active
                 menu_element.classList.remove('active');
             }
             menu_element.classList.remove('selected');
@@ -225,7 +223,7 @@ export class Menu<DocumentManager> {
                     this.#deactivate_menu(mi.querySelector('.menu') as HTMLElement);
                 }
             }
-            if (menu_element.classList.contains('toplevel')) {  // dispatch once, for toplevel menu element
+            if (menu_element.classList.contains('toplevel_menu')) {  // dispatch once, for top-level menu element
                 this.selects.dispatch({ select: false, target: menu_element });
             }
         }
@@ -241,7 +239,7 @@ export class Menu<DocumentManager> {
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel_menu') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -306,7 +304,7 @@ export class Menu<DocumentManager> {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('toplevel') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel_menu') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -494,7 +492,7 @@ export class Menu<DocumentManager> {
         }
 
         menuitem.addEventListener('click', (event) => {
-            const closest_toplevel = menuitem.closest('.toplevel');
+            const closest_toplevel = menuitem.closest('.toplevel_menu');
             if (closest_toplevel instanceof HTMLElement) {
                 this.#deactivate_menu(closest_toplevel);
             }
@@ -510,11 +508,22 @@ export class Menu<DocumentManager> {
         });
     }
 
-    #build_toplevel_menu(parent: Element, toplevel_menu_spec: (string|object)[], as_menubar: boolean): HTMLElement {
-        const menu_container_css_class = [ 'toplevel', 'menu' ];
+    static toplevel_contextmenu_label = '\u22ee';  // vertical ellipsis
+
+    #build_toplevel_menu(parent: Element, toplevel_menu_spec: (string|object)[], options?: MenuOptions): HTMLElement {
+        const {
+            as_menubar,
+            persistent,
+        } = (options ?? {});
+
+        const menu_container_css_class = [ 'toplevel_menu', 'menu' ];
         if (as_menubar) {
             menu_container_css_class.push('menubar');
             menu_container_css_class.push('active');  // menubar is always active
+        }
+        if (persistent || as_menubar) {
+            menu_container_css_class.push('persistent_menu');
+            menu_container_css_class.push('active');  // persistent_menu is always active
         }
         const menu_container = create_element({
             tag: this.CLASS.menu_element_tag_name,
@@ -529,7 +538,7 @@ export class Menu<DocumentManager> {
         if (as_menubar) {
             toplevel_menu_spec.forEach(spec => this.#build_menu(spec, menu_container, true));
         } else {
-            this.#build_menu({ label: '*', collection: toplevel_menu_spec }, menu_container, false);
+            this.#build_menu({ label: this.CLASS.toplevel_contextmenu_label, collection: toplevel_menu_spec }, menu_container, true);
         }
 
         // add event listener to close menu when focus is lost

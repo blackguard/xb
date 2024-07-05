@@ -349,7 +349,12 @@ export class XbManager {
         }
         const get_recents = null;//!!! implement this
         this.header_element.classList.add('with-menubar');
-        this.#menu = Menu.create_menubar<XbManager>(this, this.header_element, get_menubar_spec(), get_global_initial_key_map_bindings /*, get_recents */);
+        this.#menu = Menu.create<XbManager>(this, this.header_element, get_menubar_spec(), {
+            as_menubar: false,
+            persistent: true,
+            get_command_bindings: get_global_initial_key_map_bindings,
+            /* get_recents */
+        });
         //!!! this.#menu_commands_subscription is never unsubscribed
         this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#command_observer.bind(this));
         //!!! this.#menu_selects_subscription is never unsubscribed

@@ -71,11 +71,11 @@
     display: flex;
 }
 
-.menu:not(.menubar) .menuitem:not(.menuitem-separator) {
+.menu:not(.menubar):not(.toplevel_menu) .menuitem:not(.menuitem-separator) {
     padding: 0 0.5rem 0 1.5rem;
 }
 
-.menu:not(.menubar) .menuitem.menuitem-separator {
+.menu:not(.menubar):not(.toplevel_menu) .menuitem.menuitem-separator {
     margin: 0.2rem 0 0.2rem 0;
     height: 0px;
     color: transparent;
