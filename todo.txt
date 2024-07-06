@@ -1,8 +1,8 @@
-copy/paste: readText() not available in Firefox in an unsecure context
+scroll/focus active cell for commands where it is appropriate
+manage scroll position better
 make help document
 update README.md
 fix syntax coloring in CodeMirror
-manage scroll position better
 beforeunload: make less strict
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
@@ -21,6 +21,7 @@ KeySpec.#is_on_macos needs to be fixed
 settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
 should the loading origin be relative to the bootscrap script instead of the main document?  (see also: dom-tools: load_script() and load_script_and_wait_for_condition())
 determine if the component attribute observers would be useful in CellElement
+copy/paste: readText() not available in Firefox in an unsecure context
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 implement recents?  or not?
 tsconfig: module, moduleResolution
