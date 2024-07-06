@@ -69,6 +69,8 @@
 .menu:not(.menubar).toplevel-menu {
     inset: unset;
     right: 1rem;
+    padding-left:  0.5em;
+    padding-right: 0.5em;
 }
 
 .menu:not(.menubar) li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
