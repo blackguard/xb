@@ -66,16 +66,20 @@
     margin-inline-end:    0;
     padding-inline-start: 0;
 }
+.menu:not(.menubar).toplevel-menu {
+    inset: unset;
+    right: 1rem;
+}
 
 .menu:not(.menubar) li.menuitem {  /* .menu selector selects .menu items but not .menubar items */
     display: flex;
 }
 
-.menu:not(.menubar):not(.toplevel_menu) .menuitem:not(.menuitem-separator) {
+.menu:not(.menubar):not(.toplevel-menu) .menuitem:not(.menuitem-separator) {
     padding: 0 0.5rem 0 1.5rem;
 }
 
-.menu:not(.menubar):not(.toplevel_menu) .menuitem.menuitem-separator {
+.menu:not(.menubar):not(.toplevel-menu) .menuitem.menuitem-separator {
     margin: 0.2rem 0 0.2rem 0;
     height: 0px;
     color: transparent;

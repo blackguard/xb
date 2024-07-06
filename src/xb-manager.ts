@@ -116,6 +116,8 @@ export class XbManager {
     }
 
     constructor() {
+        const with_menubar = false;
+
         this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! never unsubscribed
 
         this.#command_bindings = get_global_command_bindings();
@@ -142,7 +144,7 @@ export class XbManager {
             this.set_editable(true);
 
             this.#setup_csp();
-            this.#setup_header();
+            this.#setup_header(with_menubar);
             this.#set_initial_active_cell();
 
             // add "changes may not be saved" prompt for when document is being closed while modified
@@ -343,14 +345,19 @@ export class XbManager {
         }
     }
 
-    #setup_header(): void {
+    #setup_header(with_menubar: boolean): void {
         if (!this.header_element) {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null;//!!! implement this
-        this.header_element.classList.add('with-menubar');
+        if (with_menubar) {
+            // the class "with-menubar" facilitates layout without needing the
+            // css :has() pseudo-class, which is great, but is not supported
+            // at the time of writing by Firefox ESR (version 115).
+            document.body.classList.add('with-menubar');
+        }
         this.#menu = Menu.create<XbManager>(this, this.header_element, get_menubar_spec(), {
-            as_menubar: false,
+            as_menubar: with_menubar,
             persistent: true,
             get_command_bindings: get_global_initial_key_map_bindings,
             /* get_recents */

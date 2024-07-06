@@ -41,7 +41,7 @@ export type MenuOptions = {
     get_command_bindings?: MenuCommandBindingsGetter,
 };
 
-// css classification classes: toplevel_menu, persistent_menu, menubar, menu, menuitem
+// css classification classes: toplevel-menu, persistent-menu, menubar, menu, menuitem
 // other css classes: disabled, selected, active
 // also: menuitem-label, menuitem-separator, menuitem-annotation, collection, collection-arrow
 
@@ -104,7 +104,7 @@ export class Menu<DocumentManager> {
 
     get element (){ return this.#menu_container; }
 
-    /** constructor for Menu class, used internally; call the static create_ methods instead.
+    /** constructor for Menu class, used internally; call the static Menu.create() instead.
      *  @param {StaticDocumentManager} dm the document manager for this menu (used when sending commands)
      *  @param {Element} parent
      *  @param {Array<object>} toplevel_menu_spec: string|[{
@@ -112,10 +112,11 @@ export class Menu<DocumentManager> {
      *  }, ... ]
      *  @param {undefined|MenuOptions} options
      */
-    private constructor( dm:                    DocumentManager,
-                         parent:                Element,
-                         toplevel_menu_spec:    (string|object)[],
-                         options?:              MenuOptions ) {
+    private constructor( dm:                 DocumentManager,
+                         parent:             Element,
+                         toplevel_menu_spec: (string|object)[],
+                         options?:           MenuOptions,
+                       ) {
         const {
             get_command_bindings = () => ({}),
         } = (options ?? {});
@@ -213,7 +214,7 @@ export class Menu<DocumentManager> {
             if (!(menu_element instanceof HTMLElement) || !menu_element.classList.contains('menu')) {
                 throw new Error('menu_element must be an HTMLElement with class "menu"');
             }
-            if (!menu_element.classList.contains('persistent_menu')) {  // menubar always remains active
+            if (!menu_element.classList.contains('persistent-menu')) {  // menubar always remains active
                 menu_element.classList.remove('active');
             }
             menu_element.classList.remove('selected');
@@ -223,7 +224,7 @@ export class Menu<DocumentManager> {
                     this.#deactivate_menu(mi.querySelector('.menu') as HTMLElement);
                 }
             }
-            if (menu_element.classList.contains('toplevel_menu')) {  // dispatch once, for top-level menu element
+            if (menu_element.classList.contains('toplevel-menu')) {  // dispatch once, for top-level menu element
                 this.selects.dispatch({ select: false, target: menu_element });
             }
         }
@@ -239,7 +240,7 @@ export class Menu<DocumentManager> {
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('toplevel_menu') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -304,7 +305,7 @@ export class Menu<DocumentManager> {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('toplevel_menu') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -492,7 +493,7 @@ export class Menu<DocumentManager> {
         }
 
         menuitem.addEventListener('click', (event) => {
-            const closest_toplevel = menuitem.closest('.toplevel_menu');
+            const closest_toplevel = menuitem.closest('.toplevel-menu');
             if (closest_toplevel instanceof HTMLElement) {
                 this.#deactivate_menu(closest_toplevel);
             }
@@ -516,14 +517,14 @@ export class Menu<DocumentManager> {
             persistent,
         } = (options ?? {});
 
-        const menu_container_css_class = [ 'toplevel_menu', 'menu' ];
+        const menu_container_css_class = [ 'toplevel-menu', 'menu' ];
         if (as_menubar) {
             menu_container_css_class.push('menubar');
             menu_container_css_class.push('active');  // menubar is always active
         }
         if (persistent || as_menubar) {
-            menu_container_css_class.push('persistent_menu');
-            menu_container_css_class.push('active');  // persistent_menu is always active
+            menu_container_css_class.push('persistent-menu');
+            menu_container_css_class.push('active');  // persistent implies always active
         }
         const menu_container = create_element({
             tag: this.CLASS.menu_element_tag_name,
