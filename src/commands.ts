@@ -79,12 +79,15 @@ export async function command_handler__eval(command_context: CommandContext<XbMa
 }
 
 export async function command_handler__cut(command_context: CommandContext<XbManager>): Promise<boolean> {
+    command_context.dm.active_cell?.scroll_into_view(true);
     return document.execCommand('cut');
 }
 export async function command_handler__copy(command_context: CommandContext<XbManager>): Promise<boolean> {
+    command_context.dm.active_cell?.scroll_into_view(true);
     return document.execCommand('copy');
 }
 export async function command_handler__paste(command_context: CommandContext<XbManager>): Promise<boolean> {
+    command_context.dm.active_cell?.scroll_into_view(true);
     if (!navigator.clipboard.readText) {
         return false;
     } else {

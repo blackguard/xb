@@ -377,7 +377,6 @@ export class XbManager {
         if (active_cell.xb !== this) {
             console.error('unexpected: active_cell has a different xb');
         }
-        active_cell.focus();
         // this.set_active_cell() will establish the active cell correctly,
         // and reset "active" on all other cells.
         this.set_active_cell(active_cell);

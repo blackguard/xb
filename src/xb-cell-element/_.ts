@@ -205,7 +205,7 @@ export class XbCellElement extends HTMLElement {
         return this.xb?.can_stop_cell(this) ?? false;
     }
 
-    scroll_into_view(): void {
+    scroll_into_view(focus_too: boolean = false): void {
         //!!! this needs improvement
         //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
         if (this.#has_text_container()) {
@@ -213,6 +213,9 @@ export class XbCellElement extends HTMLElement {
         } else {
             //!!! this is too eager...
             this.scrollIntoView();
+        }
+        if (focus_too) {
+            this.focus();
         }
     }
 

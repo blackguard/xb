@@ -101,6 +101,9 @@ async function initialize_document(): Promise<void> {
         // initialize renderer factories after all the TextBasedRenderer factories have been registered...
         reset_to_initial_text_renderer_factories();
 
+        // asynchronously scroll and set focus
+        setTimeout(() => XbManager.singleton.active_cell?.scroll_into_view(true));
+
     } catch (error: unknown) {
         show_initialization_failed(error);
     } finally {

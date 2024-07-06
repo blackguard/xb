@@ -10850,12 +10850,15 @@ async function command_handler__eval(command_context) {
     }
 }
 async function command_handler__cut(command_context) {
+    command_context.dm.active_cell?.scroll_into_view(true);
     return document.execCommand('cut');
 }
 async function command_handler__copy(command_context) {
+    command_context.dm.active_cell?.scroll_into_view(true);
     return document.execCommand('copy');
 }
 async function command_handler__paste(command_context) {
+    command_context.dm.active_cell?.scroll_into_view(true);
     if (!navigator.clipboard.readText) {
         return false;
     }
@@ -11410,6 +11413,8 @@ async function initialize_document() {
         src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g._initialize_singleton();
         // initialize renderer factories after all the TextBasedRenderer factories have been registered...
         (0,src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__/* .reset_to_initial_text_renderer_factories */ .$F)();
+        // asynchronously scroll and set focus
+        setTimeout(() => src_xb_manager__WEBPACK_IMPORTED_MODULE_1__/* .XbManager */ .g.singleton.active_cell?.scroll_into_view(true));
     }
     catch (error) {
         show_initialization_failed(error);
@@ -33387,7 +33392,7 @@ class XbCellElement extends HTMLElement {
     get can_stop() {
         return this.xb?.can_stop_cell(this) ?? false;
     }
-    scroll_into_view() {
+    scroll_into_view(focus_too = false) {
         //!!! this needs improvement
         //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
         if (this.#has_text_container()) {
@@ -33396,6 +33401,9 @@ class XbCellElement extends HTMLElement {
         else {
             //!!! this is too eager...
             this.scrollIntoView();
+        }
+        if (focus_too) {
+            this.focus();
         }
     }
     /* Override this.outerHTML to provide clean output for save_serializer() in 'src/init.ts'.
@@ -33945,7 +33953,6 @@ class XbManager {
         if (active_cell.xb !== this) {
             console.error('unexpected: active_cell has a different xb');
         }
-        active_cell.focus();
         // this.set_active_cell() will establish the active cell correctly,
         // and reset "active" on all other cells.
         this.set_active_cell(active_cell);
