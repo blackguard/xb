@@ -29,7 +29,20 @@ import {
 } from 'src/help-window/_';
 
 
-// These command_handler__* functions each return a boolean, true iff the command was successfully handled
+// scroll_into_view() is used by some commands to scroll the active cell
+// into view before performing the command.
+function scroll_into_view(command_context: CommandContext<XbManager>) {
+    if (!(command_context.target instanceof XbCellElement)) {
+        console.warn('internal function scroll_into_view(): command_context.target is not a cell', command_context);
+    } else {
+        command_context.dm.active_cell?.scroll_into_view(true);
+    }
+}
+
+
+// These command_handler__* functions each return a boolean.  The return value
+// is true iff the command was successfully handled.  It is assumed that
+// command_context.target === command_context.dm.active_cell on entry.
 
 
 export function command_handler__reset(command_context: CommandContext<XbManager>): boolean {
@@ -79,15 +92,15 @@ export async function command_handler__eval(command_context: CommandContext<XbMa
 }
 
 export async function command_handler__cut(command_context: CommandContext<XbManager>): Promise<boolean> {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     return document.execCommand('cut');
 }
 export async function command_handler__copy(command_context: CommandContext<XbManager>): Promise<boolean> {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     return document.execCommand('copy');
 }
 export async function command_handler__paste(command_context: CommandContext<XbManager>): Promise<boolean> {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     if (!navigator.clipboard.readText) {
         return false;
     } else {
@@ -100,18 +113,19 @@ export async function command_handler__paste(command_context: CommandContext<XbM
  *  @return {Boolean} true iff command successfully handled
  */
 export async function command_handler__eval_and_refocus(command_context: CommandContext<XbManager>): Promise<boolean> {
+    scroll_into_view(command_context);
     const eval_result = await command_handler__eval(command_context);
     if (!eval_result) {
         return false;
     } else {
         const next_cell = command_context.dm.adjacent_cell(command_context.target as XbCellElement, true) ?? command_context.dm.create_cell();
-        next_cell.focus();
-        next_cell.scroll_into_view();
+        next_cell.scroll_into_view(true);
         return true;
     }
 }
 
 async function multi_eval_helper(command_context: CommandContext<XbManager>, eval_all: boolean = false): Promise<boolean> {
+    scroll_into_view(command_context);
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
@@ -159,6 +173,7 @@ export async function command_handler__eval_all(command_context: CommandContext<
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__stop(command_context: CommandContext<XbManager>): boolean {
+    scroll_into_view(command_context);
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
@@ -183,8 +198,7 @@ export function command_handler__focus_up(command_context: CommandContext<XbMana
         if (!focus_cell) {
             return false;
         } else {
-            focus_cell.focus();
-            focus_cell.scroll_into_view();
+            focus_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -198,8 +212,7 @@ export function command_handler__focus_down(command_context: CommandContext<XbMa
         if (!focus_cell) {
             return false;
         } else {
-            focus_cell.focus();
-            focus_cell.scroll_into_view();
+            focus_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -219,8 +232,7 @@ function move_helper(command_context: CommandContext<XbManager>, move_down: bool
             }
             const parent = before ? before.parentElement : command_context.dm.cell_parent;
             move_node(cell, { parent, before });
-            cell.focus();
-            cell.scroll_into_view();
+            cell.scroll_into_view(true);
             return true;
         }
     }
@@ -247,7 +259,7 @@ function add_cell_helper(command_context: CommandContext<XbManager>, add_before:
         if (!new_cell) {
             return false;
         } else {
-            new_cell.focus();
+            new_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -277,13 +289,13 @@ export async function command_handler__delete(command_context: CommandContext<Xb
         if (!next_cell) {
             next_cell = command_context.dm.create_cell();
         }
-        next_cell.focus();
-        next_cell.scroll_into_view();
+        next_cell.scroll_into_view(true);
         return true;
     }
 }
 
 function set_mode_helper(command_context: CommandContext<XbManager>, type: string) {
+    scroll_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof XbCellElement)) {
         return false;
@@ -322,6 +334,7 @@ export function command_handler__set_mode_plain(command_context: CommandContext<
 }
 
 function set_view_helper(command_context: CommandContext<XbManager>, view: string): boolean {
+    scroll_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;
 }

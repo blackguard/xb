@@ -1,5 +1,3 @@
-save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
-scroll/focus active cell for commands where it is appropriate
 manage scroll position better
 make help document
 update README.md
@@ -8,7 +6,7 @@ beforeunload: make less strict
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
 mobile: menus are not updated after reloaded
-mobile: need long-press (right-click) menu
+save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
 what about x- media-types?
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
@@ -30,6 +28,8 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* scroll/focus active cell for commands where it is appropriate
+* mobile: need long-press (right-click) menu
 * beforeunload warning not working (but works after interacting with menu...)
 * TeX formatting settings no longer work
 * discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)

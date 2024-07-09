@@ -10805,7 +10805,19 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 
 
 
-// These command_handler__* functions each return a boolean, true iff the command was successfully handled
+// scroll_into_view() is used by some commands to scroll the active cell
+// into view before performing the command.
+function scroll_into_view(command_context) {
+    if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
+        console.warn('internal function scroll_into_view(): command_context.target is not a cell', command_context);
+    }
+    else {
+        command_context.dm.active_cell?.scroll_into_view(true);
+    }
+}
+// These command_handler__* functions each return a boolean.  The return value
+// is true iff the command was successfully handled.  It is assumed that
+// command_context.target === command_context.dm.active_cell on entry.
 function command_handler__reset(command_context) {
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
@@ -10850,15 +10862,15 @@ async function command_handler__eval(command_context) {
     }
 }
 async function command_handler__cut(command_context) {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     return document.execCommand('cut');
 }
 async function command_handler__copy(command_context) {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     return document.execCommand('copy');
 }
 async function command_handler__paste(command_context) {
-    command_context.dm.active_cell?.scroll_into_view(true);
+    scroll_into_view(command_context);
     if (!navigator.clipboard.readText) {
         return false;
     }
@@ -10871,18 +10883,19 @@ async function command_handler__paste(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 async function command_handler__eval_and_refocus(command_context) {
+    scroll_into_view(command_context);
     const eval_result = await command_handler__eval(command_context);
     if (!eval_result) {
         return false;
     }
     else {
         const next_cell = command_context.dm.adjacent_cell(command_context.target, true) ?? command_context.dm.create_cell();
-        next_cell.focus();
-        next_cell.scroll_into_view();
+        next_cell.scroll_into_view(true);
         return true;
     }
 }
 async function multi_eval_helper(command_context, eval_all = false) {
+    scroll_into_view(command_context);
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
@@ -10930,6 +10943,7 @@ async function command_handler__eval_all(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop(command_context) {
+    scroll_into_view(command_context);
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
@@ -10955,8 +10969,7 @@ function command_handler__focus_up(command_context) {
             return false;
         }
         else {
-            focus_cell.focus();
-            focus_cell.scroll_into_view();
+            focus_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -10971,8 +10984,7 @@ function command_handler__focus_down(command_context) {
             return false;
         }
         else {
-            focus_cell.focus();
-            focus_cell.scroll_into_view();
+            focus_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -10993,8 +11005,7 @@ function move_helper(command_context, move_down) {
             }
             const parent = before ? before.parentElement : command_context.dm.cell_parent;
             (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .V1)(cell, { parent, before });
-            cell.focus();
-            cell.scroll_into_view();
+            cell.scroll_into_view(true);
             return true;
         }
     }
@@ -11020,7 +11031,7 @@ function add_cell_helper(command_context, add_before) {
             return false;
         }
         else {
-            new_cell.focus();
+            new_cell.scroll_into_view(true);
             return true;
         }
     }
@@ -11048,12 +11059,12 @@ async function command_handler__delete(command_context) {
         if (!next_cell) {
             next_cell = command_context.dm.create_cell();
         }
-        next_cell.focus();
-        next_cell.scroll_into_view();
+        next_cell.scroll_into_view(true);
         return true;
     }
 }
 function set_mode_helper(command_context, type) {
+    scroll_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
@@ -11088,6 +11099,7 @@ function command_handler__set_mode_plain(command_context) {
     return set_mode_helper(command_context, 'plain');
 }
 function set_view_helper(command_context, view) {
+    scroll_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;
 }
@@ -11483,15 +11495,16 @@ ${contents}
 </html>
 `;
 }
-function _get_bootstrap_script_markup() {
+function _get_bootstrap_script_markup(convert_src_to_absolute = false) {
     const markup_segments = [];
     const bootstrap_script_element = document.querySelector('head script');
     if (bootstrap_script_element) {
         markup_segments.push('<script');
         for (const name of bootstrap_script_element.getAttributeNames()) {
-            const value = (name === 'src')
-                ? bootstrap_script_element.src // this will resolve to a full absolute URL
-                : bootstrap_script_element.getAttribute(name);
+            let value = bootstrap_script_element.getAttribute(name);
+            if (name === 'src' && convert_src_to_absolute) {
+                value = bootstrap_script_element.src; // this will resolve to a full absolute URL
+            }
             markup_segments.push(` ${name}=${(0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_3__/* .make_string_literal */ .E9)((value ?? ''), true)}`);
         }
         markup_segments.push('></script>');
@@ -33727,7 +33740,7 @@ class XbManager {
         const with_menubar = false;
         this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! never unsubscribed
         this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
-        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#command_observer.bind(this));
+        this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#perform_command.bind(this));
         try {
             // must set xb on all incoming cells
             for (const cell of this.get_cells()) {
@@ -33941,7 +33954,7 @@ class XbManager {
             /* get_recents */
         });
         //!!! this.#menu_commands_subscription is never unsubscribed
-        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#command_observer.bind(this));
+        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
         //!!! this.#menu_selects_subscription is never unsubscribed
         this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
     }
@@ -34121,46 +34134,44 @@ class XbManager {
     inject_command(command) {
         return this.#perform_command({ dm: this, command, target: this.active_cell });
     }
+    // note: an updated command_context with target set to this.active_cell
+    // is sent to the command handler.
     #perform_command(command_context) {
         let success = false; // for now...
-        if (command_context) {
-            const target = command_context.target;
-            if (target) {
-                const updated_command_context = {
-                    ...command_context,
-                    target: this.active_cell,
-                };
-                const bindings_fn = this.#command_bindings[updated_command_context.command];
-                if (bindings_fn) {
-                    if (bindings_fn instanceof AsyncFunction) {
-                        bindings_fn(updated_command_context)
-                            .then((success) => {
-                            if (!success) {
-                                (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
-                            }
-                        })
-                            .catch((error) => {
-                            console.error('error performing command', error, command_context);
-                        });
-                        success = true; // so far..., a failure may yet happen asynchronously
-                    }
-                    else {
-                        success = bindings_fn(updated_command_context);
+        try {
+            if (command_context) {
+                const target = command_context.target;
+                if (target) {
+                    const updated_command_context = {
+                        ...command_context,
+                        target: this.active_cell,
+                    };
+                    const bindings_fn = this.#command_bindings[updated_command_context.command];
+                    if (bindings_fn) {
+                        if (bindings_fn instanceof AsyncFunction) {
+                            bindings_fn(updated_command_context)
+                                .then((success) => {
+                                if (!success) {
+                                    (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
+                                }
+                            })
+                                .catch((error) => {
+                                console.error('error performing command', error, command_context);
+                            });
+                            success = true; // so far..., a failure may yet happen asynchronously
+                        }
+                        else {
+                            success = bindings_fn(updated_command_context);
+                        }
                     }
                 }
             }
         }
-        if (!success) {
-            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
-        }
-    }
-    #command_observer(command_context) {
-        let success = false;
-        try {
-            this.#perform_command(command_context);
-        }
         catch (error) {
             console.error('error processing command', command_context, error);
+        }
+        if (!success) {
+            (0,lib_ui_beep__WEBPACK_IMPORTED_MODULE_17__/* .beep */ .V)();
         }
     }
     #update_menu_state() {

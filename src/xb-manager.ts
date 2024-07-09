@@ -122,7 +122,7 @@ export class XbManager {
 
         this.#command_bindings = get_global_command_bindings();
 
-        this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#command_observer.bind(this));
+        this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#perform_command.bind(this));
 
         try {
 
@@ -363,7 +363,7 @@ export class XbManager {
             /* get_recents */
         });
         //!!! this.#menu_commands_subscription is never unsubscribed
-        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#command_observer.bind(this));
+        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
         //!!! this.#menu_selects_subscription is never unsubscribed
         this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
     }
@@ -577,45 +577,42 @@ export class XbManager {
         return this.#perform_command({ dm: this, command, target: this.active_cell });
     }
 
+    // note: an updated command_context with target set to this.active_cell
+    // is sent to the command handler.
     #perform_command(command_context: CommandContext<XbManager>): void {
         let success: boolean = false;  // for now...
-        if (command_context) {
-            const target = command_context.target;
-            if (target) {
-                const updated_command_context = {
-                    ...command_context,
-                    target: this.active_cell,
-                };
-                const bindings_fn = this.#command_bindings[updated_command_context.command];
-                if (bindings_fn) {
-                    if (bindings_fn instanceof AsyncFunction) {
-                        bindings_fn(updated_command_context)
-                            .then((success: boolean) => {
-                                if (!success) {
-                                    beep();
-                                }
-                            })
-                            .catch((error: unknown) => {
-                                console.error('error performing command', error, command_context);
-                            });
-                        success = true;  // so far..., a failure may yet happen asynchronously
-                    } else {
-                        success = bindings_fn(updated_command_context);
+        try {
+            if (command_context) {
+                const target = command_context.target;
+                if (target) {
+                    const updated_command_context = {
+                        ...command_context,
+                        target: this.active_cell,
+                    };
+                    const bindings_fn = this.#command_bindings[updated_command_context.command];
+                    if (bindings_fn) {
+                        if (bindings_fn instanceof AsyncFunction) {
+                            bindings_fn(updated_command_context)
+                                .then((success: boolean) => {
+                                    if (!success) {
+                                        beep();
+                                    }
+                                })
+                                .catch((error: unknown) => {
+                                    console.error('error performing command', error, command_context);
+                                });
+                            success = true;  // so far..., a failure may yet happen asynchronously
+                        } else {
+                            success = bindings_fn(updated_command_context);
+                        }
                     }
                 }
             }
+        } catch (error: unknown) {
+            console.error('error processing command', command_context, error);
         }
         if (!success) {
             beep();
-        }
-    }
-
-    #command_observer(command_context: CommandContext<XbManager>): void {
-        let success = false;
-        try {
-            this.#perform_command(command_context);
-        } catch (error) {
-            console.error('error processing command', command_context, error);
         }
     }
 

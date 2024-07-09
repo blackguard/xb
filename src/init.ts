@@ -172,15 +172,16 @@ ${contents}
 `;
 }
 
-function _get_bootstrap_script_markup() {
+function _get_bootstrap_script_markup(convert_src_to_absolute: boolean = false) {
     const markup_segments: string[] = [];
     const bootstrap_script_element = document.querySelector('head script') as null|HTMLScriptElement;
     if (bootstrap_script_element) {
         markup_segments.push('<script');
         for (const name of bootstrap_script_element.getAttributeNames()) {
-            const value = (name === 'src')
-                ? bootstrap_script_element.src  // this will resolve to a full absolute URL
-                : bootstrap_script_element.getAttribute(name);
+            let value = bootstrap_script_element.getAttribute(name);
+            if (name === 'src' && convert_src_to_absolute) {
+                value = bootstrap_script_element.src  // this will resolve to a full absolute URL
+            }
             markup_segments.push(` ${name}=${make_string_literal((value ?? ''), true)}`);
         }
         markup_segments.push('></script>');
