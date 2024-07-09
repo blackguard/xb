@@ -3,7 +3,7 @@
 /* See settings/theme-settings.js for definition of --theme-* properties */
 
 :root {
-    --cell-max-height-scrolling: 33vh;
+    --cell-max-height-scrolling: 33dvh;
 }
 
 body {
@@ -30,11 +30,11 @@ header {
 main {
     /* enable scrolling for main element */
     overflow: auto;
-    max-height: 100vh;
-    max-width:  100vw;
+    max-height: 100dvh;
+    max-width:  100dvw;
 }
 .with-menubar main {
-    max-height: calc(100vh - var(--theme-hd-h));
+    max-height: calc(100dvh - var(--theme-hd-h));
 }
 
 main > xb-cell {
