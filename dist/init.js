@@ -33611,7 +33611,7 @@ class CodemirrorInterface {
         this.view.focus();
     }
     scroll_into_view() {
-        this.view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(0) });
+        this.view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(this.view.state.selection.main) });
     }
     set_language_from_type(type) {
         switch (type) {

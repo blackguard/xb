@@ -132,7 +132,7 @@ export class CodemirrorInterface {
     }
 
     scroll_into_view(): void {
-        this.view.dispatch({ effects: EditorView.scrollIntoView(0) });
+        this.view.dispatch({ effects: EditorView.scrollIntoView(this.view.state.selection.main) });
     }
 
     set_language_from_type(type: string): void {
