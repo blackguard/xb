@@ -10845,22 +10845,6 @@ async function command_handler__save(command_context) {
 async function command_handler__save_as(command_context) {
     return command_context.dm.perform_save(true);
 }
-async function command_handler__eval(command_context) {
-    const cell = command_context.target;
-    if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
-        return false;
-    }
-    else {
-        try {
-            await command_context.dm.invoke_renderer_for_type(cell.type, undefined, cell);
-        }
-        catch (error) {
-            console.error('error rendering cell', error, cell);
-            return false;
-        }
-        return true;
-    }
-}
 async function command_handler__cut(command_context) {
     scroll_into_view(command_context);
     return document.execCommand('cut');
@@ -10877,6 +10861,26 @@ async function command_handler__paste(command_context) {
     else {
         const text = await navigator.clipboard.readText();
         return document.execCommand('insertText', true, text);
+    }
+}
+/** eval target cell
+ *  @return {Boolean} true iff command successfully handled
+ */
+async function command_handler__eval(command_context) {
+    scroll_into_view(command_context);
+    const cell = command_context.target;
+    if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
+        return false;
+    }
+    else {
+        try {
+            await command_context.dm.invoke_renderer_for_type(cell.type, undefined, cell);
+        }
+        catch (error) {
+            console.error('error rendering cell', error, cell);
+            return false;
+        }
+        return true;
     }
 }
 /** eval target cell and refocus to next cell (or a new one if at the end of the document)

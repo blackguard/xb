@@ -1,3 +1,4 @@
+mobile: menu element can scroll out of view
 manage scroll position better
 make help document
 update README.md
