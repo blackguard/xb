@@ -10846,21 +10846,22 @@ async function command_handler__save_as(command_context) {
     return command_context.dm.perform_save(true);
 }
 async function command_handler__cut(command_context) {
-    scroll_into_view(command_context);
     return document.execCommand('cut');
 }
 async function command_handler__copy(command_context) {
-    scroll_into_view(command_context);
     return document.execCommand('copy');
 }
 async function command_handler__paste(command_context) {
-    scroll_into_view(command_context);
     if (!navigator.clipboard.readText) {
         return false;
     }
     else {
         const text = await navigator.clipboard.readText();
-        return document.execCommand('insertText', true, text);
+        const result = document.execCommand('insertText', true, text);
+        // scroll into view, but don't use scroll_into_view() above because that
+        // always focuses the active cell, but we may want to paste elsewhere
+        document.activeElement?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        return result;
     }
 }
 /** eval target cell
@@ -33417,7 +33418,7 @@ class XbCellElement extends HTMLElement {
         }
         else {
             //!!! this is too eager...
-            this.scrollIntoView();
+            this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
         if (focus_too) {
             this.focus();
@@ -33595,23 +33596,23 @@ class CodemirrorInterface {
     #line_wrapping_compartment;
     #language_compartment;
     get_text() {
-        return this.view.state.doc.toString();
+        return this.#view.state.doc.toString();
     }
     set_text(text) {
-        // no longer works (typescript?): this.view.dispatch({ from: 0, to: this.view.state.doc.length, insert: text });
-        this.view.state.update({ changes: { from: 0, to: this.view.state.doc.length, insert: text } });
+        // no longer works (typescript?): this.#view.dispatch({ from: 0, to: this.#view.state.doc.length, insert: text });
+        this.#view.state.update({ changes: { from: 0, to: this.#view.state.doc.length, insert: text } });
     }
     get_undo_info() {
         return {
-            undo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .undoDepth */ .of)(this.view.state),
-            redo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .redoDepth */ .AH)(this.view.state),
+            undo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .undoDepth */ .of)(this.#view.state),
+            redo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .redoDepth */ .AH)(this.#view.state),
         };
     }
     focus() {
-        this.view.focus();
+        this.#view.focus();
     }
     scroll_into_view() {
-        this.view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(this.view.state.selection.main) });
+        this.#view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(this.#view.state.selection.main) });
     }
     set_language_from_type(type) {
         switch (type) {
@@ -33641,7 +33642,7 @@ class CodemirrorInterface {
                 break;
         }
         const indent_unit_string = ' '.repeat(indent);
-        this.view.dispatch({ effects: [
+        this.#view.dispatch({ effects: [
                 this.#keymap_compartment.reconfigure(keymap_config),
                 this.#tab_size_compartment.reconfigure(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(tab_size)),
                 this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(indent_unit_string)),
@@ -33652,10 +33653,10 @@ class CodemirrorInterface {
         // Note: the line_numbers setting above does not work, so we resort to this:
         const css_class_hide_line_numbers = 'codemirror-hide-line-numbers';
         if (line_numbers) {
-            this.view.dom.classList.remove(css_class_hide_line_numbers);
+            this.#view.dom.classList.remove(css_class_hide_line_numbers);
         }
         else {
-            this.view.dom.classList.add(css_class_hide_line_numbers);
+            this.#view.dom.classList.add(css_class_hide_line_numbers);
         }
     }
 }

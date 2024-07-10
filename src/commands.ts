@@ -77,20 +77,21 @@ export async function command_handler__save_as(command_context: CommandContext<X
 }
 
 export async function command_handler__cut(command_context: CommandContext<XbManager>): Promise<boolean> {
-    scroll_into_view(command_context);
     return document.execCommand('cut');
 }
 export async function command_handler__copy(command_context: CommandContext<XbManager>): Promise<boolean> {
-    scroll_into_view(command_context);
     return document.execCommand('copy');
 }
 export async function command_handler__paste(command_context: CommandContext<XbManager>): Promise<boolean> {
-    scroll_into_view(command_context);
     if (!navigator.clipboard.readText) {
         return false;
     } else {
         const text = await navigator.clipboard.readText();
-        return document.execCommand('insertText', true, text);
+        const result = document.execCommand('insertText', true, text);
+        // scroll into view, but don't use scroll_into_view() above because that
+        // always focuses the active cell, but we may want to paste elsewhere
+        document.activeElement?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        return result;
     }
 }
 

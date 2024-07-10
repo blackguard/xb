@@ -212,7 +212,7 @@ export class XbCellElement extends HTMLElement {
             this.#codemirror?.scroll_into_view();
         } else {
             //!!! this is too eager...
-            this.scrollIntoView();
+            this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
         if (focus_too) {
             this.focus();
