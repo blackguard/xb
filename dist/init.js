@@ -8855,9 +8855,9 @@ function create_select_element(parent, id, opts) {
 /* harmony export */   gX: () => (/* binding */ clear_element),
 /* harmony export */   h0: () => (/* binding */ load_script),
 /* harmony export */   li: () => (/* binding */ delay_ms),
+/* harmony export */   nk: () => (/* binding */ scroll_into_view),
 /* harmony export */   pX: () => (/* binding */ next_micro_tick),
-/* harmony export */   rf: () => (/* binding */ next_tick),
-/* harmony export */   v0: () => (/* binding */ scroll_element_into_view)
+/* harmony export */   rf: () => (/* binding */ next_tick)
 /* harmony export */ });
 /* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_in_viewport, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
@@ -8978,7 +8978,7 @@ function clear_element(element) {
     }
 }
 /** Test if element is in DOM and if any portion of element is visible in viewport.
- * @param {Element} elemnt
+ * @param {Element} element
  * @return {Boolean} visible in viewport
  */
 function is_in_viewport(element) {
@@ -8995,10 +8995,10 @@ function is_in_viewport(element) {
     return false; // no rect was visible
 }
 /** Scroll element into view.
- *  @param  {Element} element
+ *  @param {Element} element
  *  //!!! this needs improvement
  */
-function scroll_element_into_view(element) {
+function scroll_into_view(element) {
     const rect = element.getBoundingClientRect();
     if (rect.bottom > window.innerHeight) {
         window.scrollBy(0, (rect.bottom - window.innerHeight));
@@ -11578,11 +11578,11 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
         this.abort_if_stopped();
         this.CLASS.clear_element(this.element);
     }
-    /** scroll this.element into view via this.CLASS.scroll_element_into_view()
+    /** scroll this.element into view via this.CLASS.scroll_into_view()
      */
     scroll_into_view() {
         this.abort_if_stopped();
-        this.CLASS.scroll_element_into_view(this.element);
+        this.CLASS.scroll_into_view(this.element);
     }
     /** set attributes on an element which are taken from an object, via this.CLASS.set_element_attrs()
      */
@@ -11845,8 +11845,8 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
      *  @param {Element} element
      *  @return {Element} element
      */
-    static scroll_element_into_view(element) {
-        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .scroll_element_into_view */ .v0)(element);
+    static scroll_into_view(element) {
+        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .scroll_into_view */ .nk)(element);
     }
     /** set attributes on an element which are taken from an object.
      *  @param {Element} element

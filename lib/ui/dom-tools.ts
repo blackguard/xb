@@ -139,7 +139,7 @@ export function clear_element(element: Node): void {
 }
 
 /** Test if element is in DOM and if any portion of element is visible in viewport.
- * @param {Element} elemnt
+ * @param {Element} element
  * @return {Boolean} visible in viewport
  */
 export function is_in_viewport(element: Element): boolean {
@@ -149,7 +149,7 @@ export function is_in_viewport(element: Element): boolean {
     const w = window.innerWidth  ?? document.documentElement.clientWidth;
     const h = window.innerHeight ?? document.documentElement.clientHeight;
     for (const r of element.getClientRects()) {
-        if ( (r.top < h && r.bottom > 0) && (r.left < w && r.right  > 0)) {
+        if ( (r.top < h && r.bottom > 0) && (r.left < w && r.right > 0)) {
             return true;
         }
     }
@@ -157,10 +157,10 @@ export function is_in_viewport(element: Element): boolean {
 }
 
 /** Scroll element into view.
- *  @param  {Element} element
+ *  @param {Element} element
  *  //!!! this needs improvement
  */
-export function scroll_element_into_view(element: Element): void {
+export function scroll_into_view(element: Element): void {
     const rect = element.getBoundingClientRect();
     if (rect.bottom > window.innerHeight) {
         window.scrollBy(0, (rect.bottom - window.innerHeight));

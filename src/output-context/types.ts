@@ -10,7 +10,7 @@ import {
 
 import {
     clear_element,
-    scroll_element_into_view,
+    scroll_into_view,
     set_element_attrs,
     update_element_style,
     create_element_or_mapping,
@@ -134,8 +134,8 @@ export abstract class OutputContextLike extends ActivityManager {
      *  @param {Element} element
      *  @return {Element} element
      */
-    static scroll_element_into_view(element: Element): void {
-        scroll_element_into_view(element);
+    static scroll_into_view(element: Element): void {
+        scroll_into_view(element);
     }
 
     /** set attributes on an element which are taken from an object.
