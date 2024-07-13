@@ -8977,6 +8977,16 @@ function clear_element(element) {
         throw new Error('element must be an instance of Node');
     }
 }
+// this function encapsulates the technique for getting the viewport size
+// alternatives:
+//     [ window.innerWidth, window.innerHeight ]
+//     [ document.documentElement.clientWidth, document.documentElement.clientHeight ]
+function _get_viewport_size() {
+    return [
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight,
+    ];
+}
 /** Test if element is in DOM and if any portion of element is visible in viewport.
  * @param {Element} element
  * @return {Boolean} visible in viewport
@@ -8985,8 +8995,7 @@ function is_in_viewport(element) {
     if (!document.documentElement.contains(element)) {
         return false;
     }
-    const w = window.innerWidth ?? document.documentElement.clientWidth;
-    const h = window.innerHeight ?? document.documentElement.clientHeight;
+    const [w, h] = _get_viewport_size();
     for (const r of element.getClientRects()) {
         if ((r.top < h && r.bottom > 0) && (r.left < w && r.right > 0)) {
             return true;

@@ -1,7 +1,3 @@
-.PHONY: all
-all: dist
-
-
 ######################################################################
 
 SHELL = /bin/bash
@@ -15,6 +11,9 @@ SERVER_PORT    = 4320
 
 ######################################################################
 
+.PHONY: all
+all: $(DIST_DIR)
+
 .DEFAULT: all
 
 .PHONY: clean
@@ -25,10 +24,6 @@ clean: kill-server
 full-clean: clean
 	@-rm -fr ./node_modules >/dev/null 2>&1 || true
 
-./package-lock.json ./node_modules: ./package.json
-	npm install
-	touch ./package-lock.json ./node_modules
-
 .PHONY: install
 install: ./node_modules $(DIST_DIR)
 
@@ -36,8 +31,12 @@ install: ./node_modules $(DIST_DIR)
 lint: ./node_modules
 #!!!	./node_modules/.bin/eslint --config .eslintrc.cjs src lib
 
-$(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./lib/*/*/* ./node_modules README.md
+$(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./node_modules README.md
 	make lint && ./build-tools/build-dist.sh
+
+./package-lock.json ./node_modules: ./package.json
+	npm install
+	touch ./package-lock.json ./node_modules
 
 copy-files:
 	./build-tools/build-dist.sh copy-only
@@ -45,9 +44,6 @@ copy-files:
 .PHONY: test
 test:
 	npm test
-
-.PHONY: dist
-dist: $(DIST_DIR)
 
 # kill the server by performing a GET on /QUIT
 # uses Linux commands: lsof, grep, cut

@@ -138,6 +138,17 @@ export function clear_element(element: Node): void {
     }
 }
 
+// this function encapsulates the technique for getting the viewport size
+// alternatives:
+//     [ window.innerWidth, window.innerHeight ]
+//     [ document.documentElement.clientWidth, document.documentElement.clientHeight ]
+function _get_viewport_size(): [ w: number, h: number ] {
+    return [
+        document.documentElement.clientWidth,
+        document.documentElement.clientHeight,
+    ];
+}
+
 /** Test if element is in DOM and if any portion of element is visible in viewport.
  * @param {Element} element
  * @return {Boolean} visible in viewport
@@ -146,8 +157,7 @@ export function is_in_viewport(element: Element): boolean {
     if (!document.documentElement.contains(element)) {
         return false;
     }
-    const w = window.innerWidth  ?? document.documentElement.clientWidth;
-    const h = window.innerHeight ?? document.documentElement.clientHeight;
+    const [ w, h ] = _get_viewport_size();
     for (const r of element.getClientRects()) {
         if ( (r.top < h && r.bottom > 0) && (r.left < w && r.right > 0)) {
             return true;
