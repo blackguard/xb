@@ -8859,7 +8859,7 @@ function create_select_element(parent, id, opts) {
 /* harmony export */   pX: () => (/* binding */ next_micro_tick),
 /* harmony export */   rf: () => (/* binding */ next_tick)
 /* harmony export */ });
-/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_in_viewport, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
+/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_scrollable, scroll_parent, is_visible, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
 /* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1517);
 const current_script_url = "file:///home/ed/code/xb/lib/ui/dom-tools.ts"; // save for later
@@ -8977,32 +8977,75 @@ function clear_element(element) {
         throw new Error('element must be an instance of Node');
     }
 }
-// this function encapsulates the technique for getting the viewport size
-// alternatives:
-//     [ window.innerWidth, window.innerHeight ]
-//     [ document.documentElement.clientWidth, document.documentElement.clientHeight ]
-function _get_viewport_size() {
-    return [
-        document.documentElement.clientWidth,
-        document.documentElement.clientHeight,
-    ];
-}
-/** Test if element is in DOM and if any portion of element is visible in viewport.
+/** return a boolean indicating whether the given element is scrollable or not
  * @param {Element} element
- * @return {Boolean} visible in viewport
+ * @return {Boolean} element is scrollable
+ * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
  */
-function is_in_viewport(element) {
+function is_scrollable(element) {
+    const style = getComputedStyle(element);
+    return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === 'auto' || value === 'scroll';
+    });
+}
+/** return the first scollable parent of element
+ * @param {Element} element
+ * @return {null|Element} first parent element that is scrollable, or null if none
+ * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
+ */
+function scroll_parent(element) {
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        if (is_scrollable(parent)) {
+            return parent;
+        }
+    }
+    return null;
+}
+/** Test if element is in DOM and visible.
+ * @param {Element} element
+ * @param {undefined|null|number} vpos
+ * @param {undefined|null|number} hpos
+ * @return {Boolean} visible with respect to vpos and hpos
+ * vpos and hpos specify which point in the element should be tested
+ * where null specifies not checking that direction (v or h) at all,
+ * undefined (or parameter omitted) specifies checking that the element
+ * is fully visible, and a number specifies a fraction to check that a
+ * single point is visible where the point the fraction of the length in
+ * that dimension.  For example, hpos === 0 means check at the beginning,
+ * hpos === 1 means check at the end, and hpos === 0.5 means check the middle.
+ */
+function is_visible(element, vpos, hpos) {
+    if (!(element instanceof Element)) {
+        throw new Error('element must be an instance of Element');
+    }
+    if (typeof vpos !== 'undefined' && vpos !== null && typeof vpos !== 'number') {
+        throw new Error('vpos must be undefined, null or a number');
+    }
+    if (typeof hpos !== 'undefined' && hpos !== null && typeof hpos !== 'number') {
+        throw new Error('hpos must be undefined, null or a number');
+    }
     if (!document.documentElement.contains(element)) {
         return false;
     }
-    const [w, h] = _get_viewport_size();
-    for (const r of element.getClientRects()) {
-        if ((r.top < h && r.bottom > 0) && (r.left < w && r.right > 0)) {
-            return true;
+    const element_rect = element.getBoundingClientRect();
+    const in_rect_v = (vpos === null) ? ((r) => true)
+        : (typeof vpos === 'undefined') ? ((r) => element_rect.top >= r.top && element_rect.bottom <= r.bottom)
+            : ((v) => (r) => v >= r.top && v <= r.bottom)((element_rect.top + vpos * element_rect.height));
+    const in_rect_h = (hpos === null) ? ((r) => true)
+        : (typeof hpos === 'undefined') ? ((r) => element_rect.left >= r.left && element_rect.right <= r.right)
+            : ((h) => (r) => h >= r.left && h <= r.right)(element_rect.left + hpos * element_rect.width);
+    const in_rect = (r) => in_rect_v(r) && in_rect_h(r);
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        const parent_rect = parent.getBoundingClientRect();
+        console.log(parent, parent_rect, element_rect, in_rect_v(parent_rect), in_rect_h(parent_rect)); //!!!
+        if (!in_rect(parent_rect)) {
+            return false;
         }
     }
-    return false; // no rect was visible
+    return true; // visible all the way up the parent chain according to criteria
 }
+globalThis.is_visible = is_visible; //!!!
 /** Scroll element into view.
  *  @param {Element} element
  *  //!!! this needs improvement
