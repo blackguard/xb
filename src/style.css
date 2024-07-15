@@ -32,6 +32,7 @@ main {
     overflow: auto;
     max-height: 100dvh;
     max-width:  100dvw;
+    scroll-padding: 2rem;  /* mostly useful to make sure a little output is shown when scrolling to a cell */
 }
 .with-menubar main {
     max-height: calc(100dvh - var(--theme-hd-h));

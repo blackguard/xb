@@ -10,7 +10,6 @@ import {
 
 import {
     clear_element,
-    scroll_into_view,
     set_element_attrs,
     update_element_style,
     create_element_or_mapping,
@@ -128,14 +127,6 @@ export abstract class OutputContextLike extends ActivityManager {
      */
     static clear_element(element: Node): void {
         clear_element(element);
-    }
-
-    /** scroll element into view
-     *  @param {Element} element
-     *  @return {Element} element
-     */
-    static scroll_into_view(element: Element): void {
-        scroll_into_view(element);
     }
 
     /** set attributes on an element which are taken from an object.
@@ -333,7 +324,6 @@ export abstract class OutputContextLike extends ActivityManager {
     // === BASIC OPERATIONS ===
 
     abstract clear(): void;
-    abstract scroll_into_view(): void;
     abstract set_attrs(attrs: { [attr: string]: undefined|null|string }): void;
     abstract update_style(spec: { [prop: string]: undefined|null|string }): void;
     abstract create_child_or_mapping(options?: object, return_mapping?: boolean): Element|object;

@@ -173,8 +173,8 @@ export function scroll_parent(element: Element): null|Element {
  * vpos and hpos specify which point in the element should be tested
  * where null specifies not checking that direction (v or h) at all,
  * undefined (or parameter omitted) specifies checking that the element
- * is fully visible, and a number specifies a fraction to check that a
- * single point is visible where the point the fraction of the length in
+ * is fully visible, and a number specifies a fraction used to check that
+ * a single point is visible where the point the fraction of the length in
  * that dimension.  For example, hpos === 0 means check at the beginning,
  * hpos === 1 means check at the end, and hpos === 0.5 means check the middle.
  */
@@ -207,25 +207,12 @@ export function is_visible(element: Element, vpos: undefined|null|number, hpos: 
 
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
         const parent_rect = parent.getBoundingClientRect();
-console.log(parent, parent_rect, element_rect, in_rect_v(parent_rect), in_rect_h(parent_rect));//!!!
         if (!in_rect(parent_rect)) {
             return false;
         }
     }
 
     return true;  // visible all the way up the parent chain according to criteria
-}
-(globalThis as any).is_visible = is_visible;//!!!
-
-/** Scroll element into view.
- *  @param {Element} element
- *  //!!! this needs improvement
- */
-export function scroll_into_view(element: Element): void {
-    const rect = element.getBoundingClientRect();
-    if (rect.bottom > window.innerHeight) {
-        window.scrollBy(0, (rect.bottom - window.innerHeight));
-    }
 }
 
 /** set attributes on an element which are taken from an object.

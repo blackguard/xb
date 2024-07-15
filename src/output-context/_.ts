@@ -92,13 +92,6 @@ export class OutputContext extends OutputContextLike {
         this.CLASS.clear_element(this.element);
     }
 
-    /** scroll this.element into view via this.CLASS.scroll_into_view()
-     */
-    scroll_into_view(): void {
-        this.abort_if_stopped();
-        this.CLASS.scroll_into_view(this.element);
-    }
-
     /** set attributes on an element which are taken from an object, via this.CLASS.set_element_attrs()
      */
     set_attrs(attrs: { [attr: string]: undefined|null|string }): void {
