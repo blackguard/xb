@@ -206,13 +206,10 @@ export class XbCellElement extends HTMLElement {
     }
 
     scroll_into_view(focus_too: boolean = false): void {
-        //!!! this needs improvement
-        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
+        this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         if (this.#has_text_container()) {
+            // this adjusts the codemirror view
             this.#codemirror?.scroll_into_view();
-        } else {
-            //!!! this is too eager...
-            this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
         if (focus_too) {
             this.focus();

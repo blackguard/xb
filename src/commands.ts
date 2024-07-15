@@ -29,11 +29,11 @@ import {
 } from 'src/help-window/_';
 
 
-// scroll_into_view() is used by some commands to scroll the active cell
+// _scroll_target_into_view() is used by some commands to scroll the active cell
 // into view before performing the command.
-function scroll_into_view(command_context: CommandContext<XbManager>) {
+function _scroll_target_into_view(command_context: CommandContext<XbManager>) {
     if (!(command_context.target instanceof XbCellElement)) {
-        console.warn('internal function scroll_into_view(): command_context.target is not a cell', command_context);
+        console.warn('internal function _scroll_target_into_view(): command_context.target is not a cell', command_context);
     } else {
         command_context.dm.active_cell?.scroll_into_view(true);
     }
@@ -88,7 +88,7 @@ export async function command_handler__paste(command_context: CommandContext<XbM
     } else {
         const text = await navigator.clipboard.readText();
         const result = document.execCommand('insertText', true, text);
-        // scroll into view, but don't use scroll_into_view() above because that
+        // scroll into view, but don't use _scroll_target_into_view() above because that
         // always focuses the active cell, but we may want to paste elsewhere
         document.activeElement?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         return result;
@@ -99,7 +99,7 @@ export async function command_handler__paste(command_context: CommandContext<XbM
  *  @return {Boolean} true iff command successfully handled
  */
 export async function command_handler__eval(command_context: CommandContext<XbManager>): Promise<boolean> {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof XbCellElement)) {
         return false;
@@ -118,7 +118,7 @@ export async function command_handler__eval(command_context: CommandContext<XbMa
  *  @return {Boolean} true iff command successfully handled
  */
 export async function command_handler__eval_and_refocus(command_context: CommandContext<XbManager>): Promise<boolean> {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const eval_result = await command_handler__eval(command_context);
     if (!eval_result) {
         return false;
@@ -130,7 +130,7 @@ export async function command_handler__eval_and_refocus(command_context: Command
 }
 
 async function multi_eval_helper(command_context: CommandContext<XbManager>, eval_all: boolean = false): Promise<boolean> {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
@@ -142,7 +142,7 @@ async function multi_eval_helper(command_context: CommandContext<XbManager>, eva
             command_context.dm.stop();  // stop any previously-running renderers
             command_context.dm.reset_global_state();
             for (const iter_cell of cells) {
-                iter_cell.focus();
+                iter_cell.scroll_into_view(true);
                 if (!eval_all && iter_cell === target_cell) {
                     break;  // only eval cells before target_cell if !eval_all
                 }
@@ -178,7 +178,7 @@ export async function command_handler__eval_all(command_context: CommandContext<
  *  @return {Boolean} true iff command successfully handled
  */
 export function command_handler__stop(command_context: CommandContext<XbManager>): boolean {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
@@ -300,7 +300,7 @@ export async function command_handler__delete(command_context: CommandContext<Xb
 }
 
 function set_mode_helper(command_context: CommandContext<XbManager>, type: string) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof XbCellElement)) {
         return false;
@@ -339,7 +339,7 @@ export function command_handler__set_mode_plain(command_context: CommandContext<
 }
 
 function set_view_helper(command_context: CommandContext<XbManager>, view: string): boolean {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;
 }

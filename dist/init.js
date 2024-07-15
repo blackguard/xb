@@ -8859,7 +8859,7 @@ function create_select_element(parent, id, opts) {
 /* harmony export */   pX: () => (/* binding */ next_micro_tick),
 /* harmony export */   rf: () => (/* binding */ next_tick)
 /* harmony export */ });
-/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_scrollable, scroll_parent, is_visible, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
+/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_scrollable, scrollable_parent, is_visible, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
 /* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1517);
 const current_script_url = "file:///home/ed/code/xb/lib/ui/dom-tools.ts"; // save for later
@@ -8994,7 +8994,7 @@ function is_scrollable(element) {
  * @return {null|Element} first parent element that is scrollable, or null if none
  * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
  */
-function scroll_parent(element) {
+function scrollable_parent(element) {
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
         if (is_scrollable(parent)) {
             return parent;
@@ -10845,11 +10845,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 
 
 
-// scroll_into_view() is used by some commands to scroll the active cell
+// _scroll_target_into_view() is used by some commands to scroll the active cell
 // into view before performing the command.
-function scroll_into_view(command_context) {
+function _scroll_target_into_view(command_context) {
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
-        console.warn('internal function scroll_into_view(): command_context.target is not a cell', command_context);
+        console.warn('internal function _scroll_target_into_view(): command_context.target is not a cell', command_context);
     }
     else {
         command_context.dm.active_cell?.scroll_into_view(true);
@@ -10898,7 +10898,7 @@ async function command_handler__paste(command_context) {
     else {
         const text = await navigator.clipboard.readText();
         const result = document.execCommand('insertText', true, text);
-        // scroll into view, but don't use scroll_into_view() above because that
+        // scroll into view, but don't use _scroll_target_into_view() above because that
         // always focuses the active cell, but we may want to paste elsewhere
         document.activeElement?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         return result;
@@ -10908,7 +10908,7 @@ async function command_handler__paste(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 async function command_handler__eval(command_context) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
@@ -10928,7 +10928,7 @@ async function command_handler__eval(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 async function command_handler__eval_and_refocus(command_context) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const eval_result = await command_handler__eval(command_context);
     if (!eval_result) {
         return false;
@@ -10940,7 +10940,7 @@ async function command_handler__eval_and_refocus(command_context) {
     }
 }
 async function multi_eval_helper(command_context, eval_all = false) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
@@ -10954,7 +10954,7 @@ async function multi_eval_helper(command_context, eval_all = false) {
             command_context.dm.stop(); // stop any previously-running renderers
             command_context.dm.reset_global_state();
             for (const iter_cell of cells) {
-                iter_cell.focus();
+                iter_cell.scroll_into_view(true);
                 if (!eval_all && iter_cell === target_cell) {
                     break; // only eval cells before target_cell if !eval_all
                 }
@@ -10988,7 +10988,7 @@ async function command_handler__eval_all(command_context) {
  *  @return {Boolean} true iff command successfully handled
  */
 function command_handler__stop(command_context) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
     }
@@ -11109,7 +11109,7 @@ async function command_handler__delete(command_context) {
     }
 }
 function set_mode_helper(command_context, type) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
         return false;
@@ -11144,7 +11144,7 @@ function command_handler__set_mode_plain(command_context) {
     return set_mode_helper(command_context, 'plain');
 }
 function set_view_helper(command_context, view) {
-    scroll_into_view(command_context);
+    _scroll_target_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;
 }
@@ -33438,14 +33438,10 @@ class XbCellElement extends HTMLElement {
         return this.xb?.can_stop_cell(this) ?? false;
     }
     scroll_into_view(focus_too = false) {
-        //!!! this needs improvement
-        //!!! when repositioning the viewport, try to ensure that the cell and its outputs are visible, and not just the editor portion
+        this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         if (this.#has_text_container()) {
+            // this adjusts the codemirror view
             this.#codemirror?.scroll_into_view();
-        }
-        else {
-            //!!! this is too eager...
-            this.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
         if (focus_too) {
             this.focus();
