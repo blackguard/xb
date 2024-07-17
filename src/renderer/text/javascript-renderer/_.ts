@@ -272,9 +272,9 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             rxjs,
 
             // utility functions defined above
-            is_stopped,  // no abort_if_stopped()....
+            is_stopped,      // no abort_if_stopped()....
             keepalive:       ocx.AIS(keepalive),
-            bg:              bg,  // don't wrap with AIS because that will cause an unhandled rejection if stopped
+            bg,              // don't wrap with AIS because that will cause an unhandled rejection if stopped
             create_worker:   ocx.AIS(create_worker),
             import_lib:      ocx.AIS(import_lib),
             import_src:      ocx.AIS(import_src),
@@ -284,7 +284,7 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             // external
             sprintf:         ocx.sprintf.bind(ocx),
 
-            // sprintf, sleep, etc
+            // sleep, etc
             sleep:           ocx.sleep.bind(ocx),
             delay_ms:        ocx.delay_ms.bind(ocx),
             next_tick:       ocx.next_tick.bind(ocx),

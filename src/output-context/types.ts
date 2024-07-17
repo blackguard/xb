@@ -95,7 +95,7 @@ export abstract class OutputContextLike extends ActivityManager {
     }
 
 
-    // === STATIC OPERATIONS ===
+    // === STATIC METHODS ===
 
     static get_svg_string(svg_node: Node): string {
         const serializer = new XMLSerializer();
@@ -105,7 +105,12 @@ export abstract class OutputContextLike extends ActivityManager {
         return svg_string;
     }
 
-    static create_cell_output(cell: XbCellElement, media_type: string): HTMLOutputElement {
+    /** create an output element for the given cell and source media type
+     * @param {XbCellElement} cell
+     * @param {string} source_media_type
+     * @return {HTMLOutputElement} output element
+     */
+    static create_cell_output(cell: XbCellElement, source_media_type: string): HTMLOutputElement {
         if (!cell.id) {
             throw new Error('cell must have an id');
         }
@@ -116,7 +121,7 @@ export abstract class OutputContextLike extends ActivityManager {
             attrs: {
                 class: 'xb-cell-output',
                 'data-source-element':    cell.id,
-                'data-source-media-type': media_type,
+                'data-source-media-type': source_media_type,
             },
         }) as HTMLOutputElement;
     }

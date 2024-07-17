@@ -11844,7 +11844,7 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
     static async next_micro_tick() {
         return (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .next_micro_tick */ .pX)();
     }
-    // === STATIC OPERATIONS ===
+    // === STATIC METHODS ===
     static get_svg_string(svg_node) {
         const serializer = new XMLSerializer();
         let svg_string = serializer.serializeToString(svg_node);
@@ -11852,7 +11852,12 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
         svg_string = svg_string.replace(/NS\d+:href/g, 'xlink:href'); // Safari NS namespace fix
         return svg_string;
     }
-    static create_cell_output(cell, media_type) {
+    /** create an output element for the given cell and source media type
+     * @param {XbCellElement} cell
+     * @param {string} source_media_type
+     * @return {HTMLOutputElement} output element
+     */
+    static create_cell_output(cell, source_media_type) {
         if (!cell.id) {
             throw new Error('cell must have an id');
         }
@@ -11863,7 +11868,7 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
             attrs: {
                 class: 'xb-cell-output',
                 'data-source-element': cell.id,
-                'data-source-media-type': media_type,
+                'data-source-media-type': source_media_type,
             },
         });
     }
@@ -12854,7 +12859,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
-            bg: bg, // don't wrap with AIS because that will cause an unhandled rejection if stopped
+            bg, // don't wrap with AIS because that will cause an unhandled rejection if stopped
             create_worker: ocx.AIS(create_worker),
             import_lib: ocx.AIS(import_lib),
             import_src: ocx.AIS(import_src),
@@ -12862,7 +12867,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             vars: ocx.AIS(vars),
             // external
             sprintf: ocx.sprintf.bind(ocx),
-            // sprintf, sleep, etc
+            // sleep, etc
             sleep: ocx.sleep.bind(ocx),
             delay_ms: ocx.delay_ms.bind(ocx),
             next_tick: ocx.next_tick.bind(ocx),
