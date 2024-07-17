@@ -8992,7 +8992,6 @@ function is_scrollable(element) {
 /** return the first scollable parent of element
  * @param {Element} element
  * @return {null|Element} first parent element that is scrollable, or null if none
- * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
  */
 function scrollable_parent(element) {
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {

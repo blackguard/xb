@@ -1,3 +1,4 @@
+choose menu type in settings
 make help document
 update README.md
 beforeunload: make less strict
@@ -7,7 +8,7 @@ improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
 mobile: menus are not updated after reloaded
 save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
-what about x- media-types?  E.g., "x-tex" instead of "tex"
+what about x- media-types?  E.g., "x-tex" instead of "tex" (see also: https://stackoverflow.com/questions/54548502/what-is-the-correct-mimetype-for-tex-files)
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
