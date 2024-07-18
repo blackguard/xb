@@ -148,7 +148,7 @@ const standard_themes_spec = {
     "--theme-cl-bdc":                  [ '#ccc',                          '#4a4a4a' ],
     "--theme-cl-bdc-active":           [ '#898989',                       'hsl(  0deg   0%  55% / 100%)' ],
     "--theme-cl-bdc-focus":            [ 'black',                         'hsl(  0deg   0%  65% / 100%)' ],
-    "--theme-cl-fgc":                  [ 'black',                         '#eee' ],
+    "--theme-cl-fgc":                  [ 'black',                         '#ddd' ],
     "--theme-cl-bgc":                  [ 'hsl(  0deg   0%  99% / 100%)',  '#111' ],
     "--theme-cl-p-inter":              [ '0.25em',                        '0.25em' ],
     "--theme-cl-ctc":                  [ 'red',                           'red' ],

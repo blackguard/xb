@@ -1,14 +1,15 @@
 choose menu type in settings
 make help document
 update README.md
+save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
+what about x- media-types?  E.g., "x-tex" instead of "tex" (see also: https://stackoverflow.com/questions/54548502/what-is-the-correct-mimetype-for-tex-files)
 beforeunload: make less strict
 mobile: menu element can scroll out of view (interaction with on-screen keyboard?)
 fix syntax coloring in CodeMirror
 improve appearance of AlertDialog, ConfirmDialog and SettingsDialog
 improve appearance of notifications
 mobile: menus are not updated after reloaded
-save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
-what about x- media-types?  E.g., "x-tex" instead of "tex" (see also: https://stackoverflow.com/questions/54548502/what-is-the-correct-mimetype-for-tex-files)
+settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
 test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
@@ -18,10 +19,7 @@ think about: maintain (weak) list of XbManager instances, require non-overlappin
 how does parent ActivityManager get notified if a child stops?  necessary?
 CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
 KeySpec.#is_on_macos needs to be fixed
-settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
-should the loading origin be relative to the bootscrap script instead of the main document?  (see also: dom-tools: load_script() and load_script_and_wait_for_condition())
 determine if the component attribute observers would be useful in CellElement
-copy/paste: readText() not available in Firefox in an unsecure context
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 implement recents?  or not?
 tsconfig: module, moduleResolution
@@ -29,6 +27,8 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* copy/paste: readText() not available in Firefox in an unsecure context (available after interaction; good enough?)
+* should the loading origin be relative to the bootstrap script instead of the main document?  (see also: dom-tools: load_script() and load_script_and_wait_for_condition())
 * manage scroll position better
 * scroll/focus active cell for commands where it is appropriate
 * mobile: need long-press (right-click) menu
