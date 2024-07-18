@@ -169,6 +169,21 @@ export class OutputContext extends OutputContextLike {
         return child_ocx;
     }
 
+    is_visible(element: Element, vpos: undefined|null|number, hpos: undefined|null|number): boolean {
+        this.abort_if_stopped();
+        return this.CLASS.element_is_visible(this.element, vpos, hpos);
+    }
+
+    is_scrollable(): boolean {
+        this.abort_if_stopped();
+        return this.CLASS.element_is_scrollable(this.element);
+    }
+
+    scrollable_parent(): null|Element {
+        this.abort_if_stopped();
+        return this.CLASS.element_scrollable_parent(this.element);
+    }
+
 
     // === ADVANCED OPERATIONS ===
 

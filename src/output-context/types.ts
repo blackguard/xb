@@ -15,6 +15,9 @@ import {
     create_element_or_mapping,
     create_element,
     create_element_mapping,
+    is_visible,
+    is_scrollable,
+    scrollable_parent,
     delay_ms        as tools_delay_ms,
     next_tick       as tools_next_tick,
     next_micro_tick as tools_next_micro_tick,
@@ -242,6 +245,39 @@ export abstract class OutputContextLike extends ActivityManager {
         return this.create_element_child_or_mapping(element, options, true);
     }
 
+    /** Test if element is in DOM and visible.
+     * @param {Element} element
+     * @param {undefined|null|number} vpos
+     * @param {undefined|null|number} hpos
+     * @return {Boolean} visible with respect to vpos and hpos
+     * vpos and hpos specify which point in the element should be tested
+     * where null specifies not checking that direction (v or h) at all,
+     * undefined (or parameter omitted) specifies checking that the element
+     * is fully visible, and a number specifies a fraction used to check that
+     * a single point is visible where the point the fraction of the length in
+     * that dimension.  For example, hpos === 0 means check at the beginning,
+     * hpos === 1 means check at the end, and hpos === 0.5 means check the middle.
+     */
+    static element_is_visible(element: Element, vpos: undefined|null|number, hpos: undefined|null|number): boolean {
+        return is_visible(element, vpos, hpos);
+    }
+
+    /** return a boolean indicating whether the given element is scrollable or not
+     * @param {Element} element
+     * @return {Boolean} element is scrollable
+     */
+    static element_is_scrollable(element: Element): boolean {
+        return is_scrollable(element);
+    }
+
+    /** return the first scollable parent of element
+     * @param {Element} element
+     * @return {null|Element} first parent element that is scrollable, or null if none
+     */
+    static element_scrollable_parent(element: Element): null|Element {
+        return scrollable_parent(element);
+    }
+
 
     // === ABORT IF STOPPED ===
 
@@ -336,6 +372,9 @@ export abstract class OutputContextLike extends ActivityManager {
     abstract create_child_mapping(options?: object): object;
     abstract create_new_ocx(element: Element, parent?: OutputContextLike): OutputContextLike;
     abstract create_child_ocx(options?: object): OutputContextLike;
+    abstract is_visible(element: Element, vpos: undefined|null|number, hpos: undefined|null|number): boolean;
+    abstract is_scrollable(): boolean;
+    abstract scrollable_parent(): null|Element;
 
 
     // === ADVANCED OPERATIONS ===

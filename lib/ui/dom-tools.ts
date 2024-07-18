@@ -138,32 +138,6 @@ export function clear_element(element: Node): void {
     }
 }
 
-/** return a boolean indicating whether the given element is scrollable or not
- * @param {Element} element
- * @return {Boolean} element is scrollable
- * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
- */
-export function is_scrollable(element: Element): boolean {
-    const style = getComputedStyle(element);
-    return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
-        const value = style.getPropertyValue(propertyName);
-        return value === 'auto' || value === 'scroll';
-    });
-}
-
-/** return the first scollable parent of element
- * @param {Element} element
- * @return {null|Element} first parent element that is scrollable, or null if none
- */
-export function scrollable_parent(element: Element): null|Element {
-    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-        if (is_scrollable(parent)) {
-            return parent;
-        }
-    }
-    return null;
-}
-
 /** Test if element is in DOM and visible.
  * @param {Element} element
  * @param {undefined|null|number} vpos
@@ -212,6 +186,32 @@ export function is_visible(element: Element, vpos: undefined|null|number, hpos: 
     }
 
     return true;  // visible all the way up the parent chain according to criteria
+}
+
+/** return a boolean indicating whether the given element is scrollable or not
+ * @param {Element} element
+ * @return {Boolean} element is scrollable
+ * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
+ */
+export function is_scrollable(element: Element): boolean {
+    const style = getComputedStyle(element);
+    return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === 'auto' || value === 'scroll';
+    });
+}
+
+/** return the first scollable parent of element
+ * @param {Element} element
+ * @return {null|Element} first parent element that is scrollable, or null if none
+ */
+export function scrollable_parent(element: Element): null|Element {
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        if (is_scrollable(parent)) {
+            return parent;
+        }
+    }
+    return null;
 }
 
 /** set attributes on an element which are taken from an object.

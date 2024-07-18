@@ -158,10 +158,10 @@ const standard_themes_spec = {
     "--theme-ou-bgc":                  [ 'white',                         'black' ],
 
     "--theme-ty-bgc":                  [ 'hsl(  0deg   0%  97% / 100%)',  'hsl(  0deg   0%  97% / 100%)' ],
-    "--theme-ty-fgc-tex":              [ 'black',                         'white' ],
-    "--theme-ty-bgc-tex":              [ 'hsl(205deg  85%  85% / 100%)',  'hsl(205deg  80%  12% / 100%)' ],
     "--theme-ty-fgc-markdown":         [ 'black',                         'white' ],
-    "--theme-ty-bgc-markdown":         [ 'hsl( 45deg  55%  80% / 100%)',  'hsl( 45deg  35%  21% / 100%)' ],
+    "--theme-ty-bgc-markdown":         [ 'hsl(205deg  85%  88% / 100%)',  'hsl(205deg  80%  20% / 100%)' ],
+    "--theme-ty-fgc-tex":              [ 'black',                         'white' ],
+    "--theme-ty-bgc-tex":              [ 'hsl(325deg  30%  85% / 100%)',  'hsl(325deg  30%  24% / 100%)' ],
     "--theme-ty-fgc-plain":            [ 'black',                         'white' ],
     "--theme-ty-bgc-plain":            [ 'lightgrey',                     'hsl(  0deg   0%  20% / 100%)' ],
     "--theme-ty-fgc-javascript":       [ 'black',                         'white' ],

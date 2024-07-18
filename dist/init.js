@@ -8849,17 +8849,20 @@ function create_select_element(parent, id, opts) {
 /* harmony export */   DV: () => (/* binding */ create_element_mapping),
 /* harmony export */   Dz: () => (/* binding */ set_element_attrs),
 /* harmony export */   E9: () => (/* binding */ make_string_literal),
+/* harmony export */   Fy: () => (/* binding */ is_visible),
 /* harmony export */   Hp: () => (/* binding */ update_element_style),
 /* harmony export */   LM: () => (/* binding */ create_element_or_mapping),
 /* harmony export */   T1: () => (/* binding */ create_element),
 /* harmony export */   V1: () => (/* binding */ move_node),
+/* harmony export */   Yo: () => (/* binding */ scrollable_parent),
+/* harmony export */   f2: () => (/* binding */ is_scrollable),
 /* harmony export */   gX: () => (/* binding */ clear_element),
 /* harmony export */   h0: () => (/* binding */ load_script),
 /* harmony export */   li: () => (/* binding */ delay_ms),
 /* harmony export */   pX: () => (/* binding */ next_micro_tick),
 /* harmony export */   rf: () => (/* binding */ next_tick)
 /* harmony export */ });
-/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, is_scrollable, scrollable_parent, is_visible, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
+/* unused harmony exports escape_unescaped_$, escape_for_html, setup_textarea_auto_resize, trigger_textarea_auto_resize, find_matching_ancestor, safe_setAttributeNS, validate_parent_and_before_from_options, mapping_default_key, create_stylesheet_link, create_inline_stylesheet, create_script, create_inline_script, load_script_and_wait_for_condition, find_child_offset */
 /* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6667);
 /* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1517);
 const current_script_url = "file:///home/ed/code/xb/lib/ui/dom-tools.ts"; // save for later
@@ -8977,30 +8980,6 @@ function clear_element(element) {
         throw new Error('element must be an instance of Node');
     }
 }
-/** return a boolean indicating whether the given element is scrollable or not
- * @param {Element} element
- * @return {Boolean} element is scrollable
- * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
- */
-function is_scrollable(element) {
-    const style = getComputedStyle(element);
-    return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
-        const value = style.getPropertyValue(propertyName);
-        return value === 'auto' || value === 'scroll';
-    });
-}
-/** return the first scollable parent of element
- * @param {Element} element
- * @return {null|Element} first parent element that is scrollable, or null if none
- */
-function scrollable_parent(element) {
-    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
-        if (is_scrollable(parent)) {
-            return parent;
-        }
-    }
-    return null;
-}
 /** Test if element is in DOM and visible.
  * @param {Element} element
  * @param {undefined|null|number} vpos
@@ -9042,6 +9021,30 @@ function is_visible(element, vpos, hpos) {
         }
     }
     return true; // visible all the way up the parent chain according to criteria
+}
+/** return a boolean indicating whether the given element is scrollable or not
+ * @param {Element} element
+ * @return {Boolean} element is scrollable
+ * adapted from: https://stackoverflow.com/questions/35939886/find-first-scrollable-parent / Gabriel Jablonski answer
+ */
+function is_scrollable(element) {
+    const style = getComputedStyle(element);
+    return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
+        const value = style.getPropertyValue(propertyName);
+        return value === 'auto' || value === 'scroll';
+    });
+}
+/** return the first scollable parent of element
+ * @param {Element} element
+ * @return {null|Element} first parent element that is scrollable, or null if none
+ */
+function scrollable_parent(element) {
+    for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+        if (is_scrollable(parent)) {
+            return parent;
+        }
+    }
+    return null;
 }
 /** set attributes on an element which are taken from an object.
  *  @param {Element} element
@@ -11687,6 +11690,18 @@ class OutputContext extends _types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContext
         const child_ocx = new OutputContext(this.xb, this.create_child(options), this);
         return child_ocx;
     }
+    is_visible(element, vpos, hpos) {
+        this.abort_if_stopped();
+        return this.CLASS.element_is_visible(this.element, vpos, hpos);
+    }
+    is_scrollable() {
+        this.abort_if_stopped();
+        return this.CLASS.element_is_scrollable(this.element);
+    }
+    scrollable_parent() {
+        this.abort_if_stopped();
+        return this.CLASS.element_scrollable_parent(this.element);
+    }
     // === ADVANCED OPERATIONS ===
     async render_text(text, options) {
         this.abort_if_stopped();
@@ -11979,6 +11994,36 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
      */
     static create_element_child_mapping(element, options) {
         return this.create_element_child_or_mapping(element, options, true);
+    }
+    /** Test if element is in DOM and visible.
+     * @param {Element} element
+     * @param {undefined|null|number} vpos
+     * @param {undefined|null|number} hpos
+     * @return {Boolean} visible with respect to vpos and hpos
+     * vpos and hpos specify which point in the element should be tested
+     * where null specifies not checking that direction (v or h) at all,
+     * undefined (or parameter omitted) specifies checking that the element
+     * is fully visible, and a number specifies a fraction used to check that
+     * a single point is visible where the point the fraction of the length in
+     * that dimension.  For example, hpos === 0 means check at the beginning,
+     * hpos === 1 means check at the end, and hpos === 0.5 means check the middle.
+     */
+    static element_is_visible(element, vpos, hpos) {
+        return (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .is_visible */ .Fy)(element, vpos, hpos);
+    }
+    /** return a boolean indicating whether the given element is scrollable or not
+     * @param {Element} element
+     * @return {Boolean} element is scrollable
+     */
+    static element_is_scrollable(element) {
+        return (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .is_scrollable */ .f2)(element);
+    }
+    /** return the first scollable parent of element
+     * @param {Element} element
+     * @return {null|Element} first parent element that is scrollable, or null if none
+     */
+    static element_scrollable_parent(element) {
+        return (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .scrollable_parent */ .Yo)(element);
     }
     // === ABORT IF STOPPED ===
     /** abort by throwing an error if this.stopped, otherwise do nothing.
@@ -32774,7 +32819,7 @@ const db_key_themes = 'themes';
 const db_key_recents = 'recents';
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = '11d2a124-90ef-45c6-be02-6ca6d3fc487c';
+const uuid = 'ef26eac3-12e7-4300-957c-5fffc4d496f3';
 const database_name = `settings-database-${uuid}`;
 const database_store_name = `settings-database-store-${uuid}`;
 const storage_db = new IndexedDBInterface(database_name, database_store_name);
@@ -32917,10 +32962,10 @@ const standard_themes_spec = {
     "--theme-ou-fgc": ['black', '#eee'],
     "--theme-ou-bgc": ['white', 'black'],
     "--theme-ty-bgc": ['hsl(  0deg   0%  97% / 100%)', 'hsl(  0deg   0%  97% / 100%)'],
-    "--theme-ty-fgc-tex": ['black', 'white'],
-    "--theme-ty-bgc-tex": ['hsl(205deg  85%  85% / 100%)', 'hsl(205deg  80%  12% / 100%)'],
     "--theme-ty-fgc-markdown": ['black', 'white'],
-    "--theme-ty-bgc-markdown": ['hsl( 45deg  55%  80% / 100%)', 'hsl( 45deg  35%  21% / 100%)'],
+    "--theme-ty-bgc-markdown": ['hsl(205deg  85%  88% / 100%)', 'hsl(205deg  80%  20% / 100%)'],
+    "--theme-ty-fgc-tex": ['black', 'white'],
+    "--theme-ty-bgc-tex": ['hsl(325deg  30%  85% / 100%)', 'hsl(325deg  30%  24% / 100%)'],
     "--theme-ty-fgc-plain": ['black', 'white'],
     "--theme-ty-bgc-plain": ['lightgrey', 'hsl(  0deg   0%  20% / 100%)'],
     "--theme-ty-fgc-javascript": ['black', 'white'],
