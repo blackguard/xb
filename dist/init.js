@@ -32188,6 +32188,12 @@ const sections = [
                 options: (0,_settings__WEBPACK_IMPORTED_MODULE_3__/* .get_valid_theme_values */ .OJ)().map(value => ({ value, label: value })),
                 settings_path: ['theme'],
                 analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_theme */ .$A, // (value, label) => complaint
+            }, {
+                id: 'classic_menu',
+                label: 'Use classic menu',
+                type: 'checkbox',
+                settings_path: ['classic_menu'],
+                analyze: _settings__WEBPACK_IMPORTED_MODULE_3__/* .analyze_classic_menu */ .rS, // (value, label) => complaint
             }],
     }, {
         name: 'Editor',
@@ -32391,6 +32397,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   hh: () => (/* binding */ analyze_editor_options_mode),
 /* harmony export */   m3: () => (/* binding */ analyze_render_options_reset_before_render),
 /* harmony export */   oj: () => (/* binding */ get_settings),
+/* harmony export */   rS: () => (/* binding */ analyze_classic_menu),
 /* harmony export */   xR: () => (/* binding */ analyze_editor_options_limited_size),
 /* harmony export */   zi: () => (/* binding */ analyze_editor_options_tab_key_indents)
 /* harmony export */ });
@@ -32409,6 +32416,7 @@ const theme_light = 'light';
 const theme_dark = 'dark';
 const initial_settings = {
     theme: theme_system,
+    classic_menu: false,
     editor_options: {
         indent: 4,
         tab_size: 8,
@@ -32643,13 +32651,19 @@ function get_valid_theme_values() {
 function analyze_theme(value, name) {
     return analyze_contained(value, valid_theme_values, (name ?? 'theme'));
 }
+function analyze_classic_menu(value, name) {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'classic_menu'} must be a boolean value`;
+    }
+    return undefined;
+}
 function analyze_settings(settings, name) {
     if (typeof settings !== 'object') {
         return `${name ?? 'settings'} must be an object`;
     }
     const keys = Object.keys(settings);
-    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme'].includes(k))) {
-        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", 'render_options' and "theme"`;
+    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme', 'classic_menu'].includes(k))) {
+        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", "render_options", "theme" or "classic_menu"`;
     }
     if (!('editor_options' in settings)) {
         return `${name ?? 'settings'} must contain an "editor_options" property`;
@@ -32683,6 +32697,15 @@ function analyze_settings(settings, name) {
     }
     else {
         const complaint = analyze_theme(settings.theme);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    if (!('classic_menu' in settings)) {
+        return `${name ?? 'settings'} must contain a "classic_menu" property`;
+    }
+    else {
+        const complaint = analyze_classic_menu(settings.classic_menu);
         if (complaint) {
             return complaint;
         }
@@ -32824,7 +32847,7 @@ const db_key_themes = 'themes';
 const db_key_recents = 'recents';
 // database_name and database_store_name use UUIDs, but these must be constant,
 // not generated each time the system is loaded.
-const uuid = '1bfb0487-7df5-4fba-8825-be10e52298c2';
+const uuid = '2a0102d1-210b-4f03-bd99-e251974e5ed7';
 const database_name = `settings-database-${uuid}`;
 const database_store_name = `settings-database-store-${uuid}`;
 const storage_db = new IndexedDBInterface(database_name, database_store_name);

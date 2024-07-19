@@ -27,6 +27,8 @@ import {
 import {
     get_settings,
     update_settings,
+    analyze_theme,
+    analyze_classic_menu,
     analyze_editor_options_indent,
     analyze_editor_options_tab_size,
     analyze_editor_options_indent_with_tabs,
@@ -39,7 +41,6 @@ import {
     analyze_formatting_options_flush_left,
     analyze_render_options_reset_before_render,
     get_valid_theme_values,
-    analyze_theme,
 } from '../settings';
 
 import {
@@ -63,6 +64,12 @@ const sections = [
             options: get_valid_theme_values().map(value =>({ value, label: value })),
             settings_path: [ 'theme' ],
             analyze: analyze_theme,  // (value, label) => complaint
+        }, {
+            id: 'classic_menu',
+            label: 'Use classic menu',
+            type: 'checkbox',
+            settings_path: [ 'classic_menu' ],
+            analyze: analyze_classic_menu,  // (value, label) => complaint
         }],
     }, {
         name: 'Editor',

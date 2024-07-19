@@ -20,6 +20,7 @@ export const theme_dark   = 'dark';
 
 const initial_settings = {
     theme: theme_system,
+    classic_menu: false,
     editor_options: {
         indent:           4,
         tab_size:         8,
@@ -279,13 +280,21 @@ export function analyze_theme(value: any, name?: string): undefined|string {
     return analyze_contained(value, valid_theme_values, (name ?? 'theme'));
 }
 
+export function analyze_classic_menu(value: any, name?: string): undefined|string {
+    if (typeof value !== 'boolean') {
+        return `${name ?? 'classic_menu'} must be a boolean value`;
+    }
+    return undefined;
+}
+
+
 export function analyze_settings(settings: any, name?: string): undefined|string {
     if (typeof settings !== 'object') {
         return `${name ?? 'settings'} must be an object`;
     }
     const keys = Object.keys(settings);
-    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme'].includes(k))) {
-        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", 'render_options' and "theme"`;
+    if (!keys.every(k => ['editor_options', 'formatting_options', 'render_options', 'theme', 'classic_menu'].includes(k))) {
+        return `${name ?? 'settings'} may only have the keys "editor_options", "formatting_options", "render_options", "theme" or "classic_menu"`;
     }
     if (!('editor_options' in settings)) {
         return `${name ?? 'settings'} must contain an "editor_options" property`;
@@ -315,6 +324,14 @@ export function analyze_settings(settings: any, name?: string): undefined|string
         return `${name ?? 'settings'} must contain a "theme" property`;
     } else {
         const complaint = analyze_theme(settings.theme);
+        if (complaint) {
+            return complaint;
+        }
+    }
+    if (!('classic_menu' in settings)) {
+        return `${name ?? 'settings'} must contain a "classic_menu" property`;
+    } else {
+        const complaint = analyze_classic_menu(settings.classic_menu);
         if (complaint) {
             return complaint;
         }
