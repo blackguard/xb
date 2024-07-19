@@ -68,6 +68,7 @@ import {
     get_global_command_bindings,
     get_global_initial_key_map_bindings,
     get_menubar_spec,
+    get_context_menu_spec,
 } from 'src/global-bindings';
 
 import {
@@ -116,8 +117,6 @@ export class XbManager {
     }
 
     constructor() {
-        const with_menubar = false;
-
         this.#eval_states.subscribe(this.#eval_states_observer.bind(this));  //!!! never unsubscribed
 
         this.#command_bindings = get_global_command_bindings();
@@ -125,6 +124,8 @@ export class XbManager {
         this.#key_event_manager = new KeyEventManager<XbManager>(this, window, this.#perform_command.bind(this));
 
         try {
+
+            const settings = get_settings();
 
             // must set xb on all incoming cells
             for (const cell of this.get_cells()) {
@@ -144,7 +145,7 @@ export class XbManager {
             this.set_editable(true);
 
             this.#setup_csp();
-            this.#setup_header(with_menubar);
+            this.#setup_header(!!(settings as any)?.classic_menu);
             this.#set_initial_active_cell();
 
             // add "changes may not be saved" prompt for when document is being closed while modified
@@ -166,6 +167,7 @@ export class XbManager {
     #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
     #key_event_manager: KeyEventManager<XbManager>;
+    #with_menubar: undefined|boolean = undefined;  // undefined until first time a menu is set up
     #menu: undefined|Menu<XbManager> = undefined;
     #menu_commands_subscription: undefined|Subscription = undefined;
     #menu_selects_subscription:  undefined|Subscription = undefined;
@@ -350,22 +352,7 @@ export class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null;//!!! implement this
-        if (with_menubar) {
-            // the class "with-menubar" facilitates layout without needing the
-            // css :has() pseudo-class, which is great, but is not supported
-            // at the time of writing by Firefox ESR (version 115).
-            document.body.classList.add('with-menubar');
-        }
-        this.#menu = Menu.create<XbManager>(this, this.header_element, get_menubar_spec(), {
-            as_menubar: with_menubar,
-            persistent: true,
-            get_command_bindings: get_global_initial_key_map_bindings,
-            /* get_recents */
-        });
-        //!!! this.#menu_commands_subscription is never unsubscribed
-        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
-        //!!! this.#menu_selects_subscription is never unsubscribed
-        this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
+        this.set_menu_style(with_menubar);
     }
 
     #set_initial_active_cell() {
@@ -381,6 +368,42 @@ export class XbManager {
         // and reset "active" on all other cells.
         this.set_active_cell(active_cell);
         this.#update_menu_state();
+    }
+
+
+    // === MENU ===
+
+    set_menu_style(with_menubar: boolean) {
+        if (with_menubar !== this.#with_menubar) {  // initial undefined value for this.#with_menubar will also trigger
+            this.#with_menubar = with_menubar;
+
+            // remove old menu
+            this.#menu_commands_subscription?.unsubscribe();
+            this.#menu_commands_subscription = undefined;
+            this.#menu_selects_subscription?.unsubscribe();
+            this.#menu_selects_subscription = undefined;
+            this.#menu?.remove();
+            this.#menu = undefined;
+
+            // setup new menu
+            const get_menu_spec = with_menubar ? get_menubar_spec : get_context_menu_spec;
+            this.#menu = Menu.create<XbManager>(this, this.header_element, get_menu_spec(), {
+                as_menubar: with_menubar,
+                persistent: true,
+                get_command_bindings: get_global_initial_key_map_bindings,
+                /* get_recents */
+            });
+            this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
+            this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
+            if (with_menubar) {
+                // the class "with-menubar" facilitates layout without needing the
+                // css :has() pseudo-class, which is great, but is not supported
+                // at the time of writing by Firefox ESR (version 115).
+                document.body.classList.add('with-menubar');
+            } else {
+                document.body.classList.remove('with-menubar');
+            }
+        }
     }
 
 
@@ -675,9 +698,11 @@ export class XbManager {
 
     update_from_settings() {
         const {
+            classic_menu,
             editor_options,
             render_options,
         } = (get_settings() ?? {}) as any;
+        this.set_menu_style(classic_menu);
         for (const cell of this.get_cells()) {
             cell.update_from_settings();
         }

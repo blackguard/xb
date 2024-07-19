@@ -93,14 +93,14 @@ export class Menu<DocumentManager> {
     #commands = new SerialDataSource<CommandContext<DocumentManager>>;
     get commands (){ return this.#commands; }
 
-    #selects  = new SerialDataSource<{ select: boolean, target: EventTarget }>();  // select: true is sent before, select: false is sent after
+    #selects = new SerialDataSource<{ select: boolean, target: EventTarget }>();  // select: true is sent before, select: false is sent after
     get selects (){ return this.#selects; }
 
     #get_command_bindings: undefined|null|MenuCommandBindingsGetter;  // set in constructor
     get get_command_bindings (){ return this.#get_command_bindings; }
 
     #menu_command_to_elements = new Map<string, Set<HTMLElement>>();
-    #menu_container: HTMLElement;  // set in constructor
+    #menu_container: undefined|HTMLElement;  // set in constructor, set back to undefined in this.remove()
 
     get element (){ return this.#menu_container; }
 
@@ -133,36 +133,47 @@ export class Menu<DocumentManager> {
         this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, options);
     }
 
+    remove() {
+        //!!! is this adequate?
+        //!!! remove event handlers, too?
+        this.#menu_container?.remove();
+        this.#menu_container = undefined;
+    }
+
     /** activate menu
      *  @param {Object} options: {
      *      set_focus?: Boolean,  // set focus, too?
      *  }
      */
     async activate(options?: object): Promise<void> {
-        const {
-            set_focus,
-        } = (options ?? {}) as any;
-        if (!this.#menu_container.querySelector('.selected')) {
-            // select the first menuitem of the menu
-            const menu_first_menuitem = this.#menu_container.querySelector('.menuitem') as HTMLElement;
-            if (menu_first_menuitem) {
-                this.#select_menuitem(menu_first_menuitem);
+        if (this.#menu_container) {
+            const {
+                set_focus,
+            } = (options ?? {}) as any;
+            if (!this.#menu_container.querySelector('.selected')) {
+                // select the first menuitem of the menu
+                const menu_first_menuitem = this.#menu_container.querySelector('.menuitem') as HTMLElement;
+                if (menu_first_menuitem) {
+                    this.#select_menuitem(menu_first_menuitem);
+                }
             }
-        }
-        if (set_focus) {
-            return new Promise<void>(resolve => setTimeout(() => {
-                this.#menu_container.focus();
-                resolve();
-            }));
-        } else {
-            return;  // resolved immediately
+            if (set_focus) {
+                return new Promise<void>(resolve => setTimeout(() => {
+                    this.#menu_container?.focus();
+                    resolve();
+                }));
+            } else {
+                return;  // resolved immediately
+            }
         }
     }
 
     /** deactivate menu
      */
     deactivate(): void {
-        this.#deactivate_menu(this.#menu_container);
+        if (this.#menu_container) {
+            this.#deactivate_menu(this.#menu_container);
+        }
     }
 
     set_menu_state(command: string, state_spec: { enabled?: boolean, checked?: boolean }) {
@@ -240,7 +251,7 @@ export class Menu<DocumentManager> {
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel-menu') && !this.#menu_container?.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -305,7 +316,7 @@ export class Menu<DocumentManager> {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel-menu') && !this.#menu_container?.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -452,7 +463,7 @@ export class Menu<DocumentManager> {
         menuitem.addEventListener('mousemove', (event) => {
             // don't pop open top-level menus unless one is already selected
             // this means that the user must click the top-level menu to get things started
-            if (!toplevel || this.#menu_container.querySelector('.selected')) {
+            if (!toplevel || this.#menu_container?.querySelector('.selected')) {
                 if (!menuitem.classList.contains('disabled')) {
                     this.#select_menuitem(menuitem);
                 }

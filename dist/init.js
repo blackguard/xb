@@ -10209,7 +10209,7 @@ class Menu {
     #get_command_bindings; // set in constructor
     get get_command_bindings() { return this.#get_command_bindings; }
     #menu_command_to_elements = new Map();
-    #menu_container; // set in constructor
+    #menu_container; // set in constructor, set back to undefined in this.remove()
     get element() { return this.#menu_container; }
     /** constructor for Menu class, used internally; call the static Menu.create() instead.
      *  @param {StaticDocumentManager} dm the document manager for this menu (used when sending commands)
@@ -10231,34 +10231,44 @@ class Menu {
         this.#get_command_bindings = get_command_bindings;
         this.#menu_container = this.#build_toplevel_menu(parent, toplevel_menu_spec, options);
     }
+    remove() {
+        //!!! is this adequate?
+        //!!! remove event handlers, too?
+        this.#menu_container?.remove();
+        this.#menu_container = undefined;
+    }
     /** activate menu
      *  @param {Object} options: {
      *      set_focus?: Boolean,  // set focus, too?
      *  }
      */
     async activate(options) {
-        const { set_focus, } = (options ?? {});
-        if (!this.#menu_container.querySelector('.selected')) {
-            // select the first menuitem of the menu
-            const menu_first_menuitem = this.#menu_container.querySelector('.menuitem');
-            if (menu_first_menuitem) {
-                this.#select_menuitem(menu_first_menuitem);
+        if (this.#menu_container) {
+            const { set_focus, } = (options ?? {});
+            if (!this.#menu_container.querySelector('.selected')) {
+                // select the first menuitem of the menu
+                const menu_first_menuitem = this.#menu_container.querySelector('.menuitem');
+                if (menu_first_menuitem) {
+                    this.#select_menuitem(menu_first_menuitem);
+                }
             }
-        }
-        if (set_focus) {
-            return new Promise(resolve => setTimeout(() => {
-                this.#menu_container.focus();
-                resolve();
-            }));
-        }
-        else {
-            return; // resolved immediately
+            if (set_focus) {
+                return new Promise(resolve => setTimeout(() => {
+                    this.#menu_container?.focus();
+                    resolve();
+                }));
+            }
+            else {
+                return; // resolved immediately
+            }
         }
     }
     /** deactivate menu
      */
     deactivate() {
-        this.#deactivate_menu(this.#menu_container);
+        if (this.#menu_container) {
+            this.#deactivate_menu(this.#menu_container);
+        }
     }
     set_menu_state(command, state_spec) {
         state_spec ??= {};
@@ -10334,7 +10344,7 @@ class Menu {
             if (!container) {
                 throw new Error('unexpected: container not found');
             }
-            if (container.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
+            if (container.classList.contains('toplevel-menu') && !this.#menu_container?.querySelector('.selected')) {
                 this.selects.dispatch({ select: true, target: menuitem_element });
             }
             // add .selected to menuitem_element
@@ -10394,7 +10404,7 @@ class Menu {
         if (menuitem_element.classList.contains('selected')) {
             menuitem_element.classList.remove('selected');
             const parent = menuitem_element.parentElement;
-            if (parent && parent.classList.contains('toplevel-menu') && !this.#menu_container.querySelector('.selected')) {
+            if (parent && parent.classList.contains('toplevel-menu') && !this.#menu_container?.querySelector('.selected')) {
                 this.selects.dispatch({ select: false, target: menuitem_element });
             }
         }
@@ -10527,7 +10537,7 @@ class Menu {
         menuitem.addEventListener('mousemove', (event) => {
             // don't pop open top-level menus unless one is already selected
             // this means that the user must click the top-level menu to get things started
-            if (!toplevel || this.#menu_container.querySelector('.selected')) {
+            if (!toplevel || this.#menu_container?.querySelector('.selected')) {
                 if (!menuitem.classList.contains('disabled')) {
                     this.#select_menuitem(menuitem);
                 }
@@ -11206,6 +11216,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   $R: () => (/* binding */ get_global_command_bindings),
 /* harmony export */   ZD: () => (/* binding */ get_global_initial_key_map_bindings),
+/* harmony export */   bP: () => (/* binding */ get_context_menu_spec),
 /* harmony export */   p7: () => (/* binding */ get_menubar_spec)
 /* harmony export */ });
 /* harmony import */ var _commands__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5049);
@@ -11229,21 +11240,56 @@ function get_menubar_spec() {
                 '---',
                 { label: 'Settings...', item: { command: 'settings' } },
             ] },
-        { label: 'Edit', collection: [
-                { label: 'Cut', item: { command: 'cut' } },
-                { label: 'Copy', item: { command: 'copy' } },
-                { label: 'Paste', item: { command: 'paste' } },
+        { label: 'Cell', collection: [
+                { label: 'Eval', item: { command: 'eval-and-refocus' } },
+                { label: 'Eval and stay', item: { command: 'eval' } },
+                { label: 'Eval before', item: { command: 'eval-before' } },
+                { label: 'Eval all', item: { command: 'eval-all' } },
                 '---',
-                { label: 'File', collection: [
-                        { label: 'Settings...', item: { command: 'settings' } },
-                        { label: 'Edit', collection: [
-                                { label: 'Cut', item: { command: 'cut' } },
-                                { label: 'Copy', item: { command: 'copy' } },
-                                { label: 'Paste', item: { command: 'paste' } },
-                                '---',
-                                { label: 'Settings...', item: { command: 'settings' } },
-                            ] },
+                { label: 'Stop cell', item: { command: 'stop' } },
+                { label: 'Stop all', item: { command: 'stop-all' } },
+                '---',
+                { label: 'Reset cell', item: { command: 'reset' } },
+                { label: 'Reset all', item: { command: 'reset-all' } },
+                '---',
+                { label: 'Focus up', item: { command: 'focus-up' } },
+                { label: 'Focus down', item: { command: 'focus-down' } },
+                '---',
+                { label: 'Move up', item: { command: 'move-up' } },
+                { label: 'Move down', item: { command: 'move-down' } },
+                { label: 'Add before', item: { command: 'add-before' } },
+                { label: 'Add after', item: { command: 'add-after' } },
+                { label: 'Delete', item: { command: 'delete' } },
+            ] },
+        { label: 'Mode', collection: [
+                { label: 'Plain text', item: { command: 'set-mode-plain' } },
+                { label: 'Markdown', item: { command: 'set-mode-markdown' } },
+                { label: 'TeX', item: { command: 'set-mode-tex' } },
+                { label: 'JavaScript', item: { command: 'set-mode-javascript' } },
+            ] },
+        { label: 'View', collection: [
+                { label: 'Normal', item: { command: 'set-view-normal' } },
+                { label: 'Hide', item: { command: 'set-view-hide' } },
+                { label: 'Full', item: { command: 'set-view-full' } },
+                { label: 'None', item: { command: 'set-view-none' } },
+                { label: 'Kiosk', item: { command: 'set-view-kiosk' } },
+            ] },
+        { label: 'Help', collection: [
+                { label: 'Help...', item: { command: 'help', } },
+            ] },
+    ];
+}
+function get_context_menu_spec() {
+    return [
+        { label: 'File', collection: [
+                { label: 'Recent documents', collection: [
+                    // ...
                     ] },
+                '---',
+                { label: 'Clear document', item: { command: 'clear-all' } },
+                '---',
+                { label: 'Save', item: { command: 'save' } },
+                { label: 'Save as...', item: { command: 'save-as' } },
                 '---',
                 { label: 'Settings...', item: { command: 'settings' } },
             ] },
@@ -33842,11 +33888,11 @@ class XbManager {
         return this.#singleton;
     }
     constructor() {
-        const with_menubar = false;
         this.#eval_states.subscribe(this.#eval_states_observer.bind(this)); //!!! never unsubscribed
         this.#command_bindings = (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_command_bindings */ .$R)();
         this.#key_event_manager = new lib_ui_key___WEBPACK_IMPORTED_MODULE_2__/* .KeyEventManager */ .Qm(this, window, this.#perform_command.bind(this));
         try {
+            const settings = (0,src_settings___WEBPACK_IMPORTED_MODULE_10__/* .get_settings */ .oj)();
             // must set xb on all incoming cells
             for (const cell of this.get_cells()) {
                 cell._set_xb(this);
@@ -33860,7 +33906,7 @@ class XbManager {
             this.#key_event_manager.attach();
             this.set_editable(true);
             this.#setup_csp();
-            this.#setup_header(with_menubar);
+            this.#setup_header(!!settings?.classic_menu);
             this.#set_initial_active_cell();
             // add "changes may not be saved" prompt for when document is being closed while modified
             window.addEventListener('beforeunload', (event) => {
@@ -33880,6 +33926,7 @@ class XbManager {
     #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_15__/* .SerialDataSource */ .B();
     #command_bindings;
     #key_event_manager;
+    #with_menubar = undefined; // undefined until first time a menu is set up
     #menu = undefined;
     #menu_commands_subscription = undefined;
     #menu_selects_subscription = undefined;
@@ -34046,22 +34093,7 @@ class XbManager {
             throw new Error(`bad format for document: header element does not exist`);
         }
         const get_recents = null; //!!! implement this
-        if (with_menubar) {
-            // the class "with-menubar" facilitates layout without needing the
-            // css :has() pseudo-class, which is great, but is not supported
-            // at the time of writing by Firefox ESR (version 115).
-            document.body.classList.add('with-menubar');
-        }
-        this.#menu = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .Menu */ .v.create(this, this.header_element, (0,src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_menubar_spec */ .p7)(), {
-            as_menubar: with_menubar,
-            persistent: true,
-            get_command_bindings: src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD,
-            /* get_recents */
-        });
-        //!!! this.#menu_commands_subscription is never unsubscribed
-        this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
-        //!!! this.#menu_selects_subscription is never unsubscribed
-        this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
+        this.set_menu_style(with_menubar);
     }
     #set_initial_active_cell() {
         const active_cell = (document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_8__/* .XbCellElement */ .d.custom_element_name}[data-active]`) ?? // cell currently set as active
@@ -34075,6 +34107,38 @@ class XbManager {
         // and reset "active" on all other cells.
         this.set_active_cell(active_cell);
         this.#update_menu_state();
+    }
+    // === MENU ===
+    set_menu_style(with_menubar) {
+        if (with_menubar !== this.#with_menubar) { // initial undefined value for this.#with_menubar will also trigger
+            this.#with_menubar = with_menubar;
+            // remove old menu
+            this.#menu_commands_subscription?.unsubscribe();
+            this.#menu_commands_subscription = undefined;
+            this.#menu_selects_subscription?.unsubscribe();
+            this.#menu_selects_subscription = undefined;
+            this.#menu?.remove();
+            this.#menu = undefined;
+            // setup new menu
+            const get_menu_spec = with_menubar ? src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_menubar_spec */ .p7 : src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_context_menu_spec */ .bP;
+            this.#menu = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .Menu */ .v.create(this, this.header_element, get_menu_spec(), {
+                as_menubar: with_menubar,
+                persistent: true,
+                get_command_bindings: src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_global_initial_key_map_bindings */ .ZD,
+                /* get_recents */
+            });
+            this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
+            this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
+            if (with_menubar) {
+                // the class "with-menubar" facilitates layout without needing the
+                // css :has() pseudo-class, which is great, but is not supported
+                // at the time of writing by Firefox ESR (version 115).
+                document.body.classList.add('with-menubar');
+            }
+            else {
+                document.body.classList.remove('with-menubar');
+            }
+        }
     }
     // === SAVE HANDLING ====
     async perform_save(perform_save_as = false) {
@@ -34326,7 +34390,8 @@ class XbManager {
         }
     }
     update_from_settings() {
-        const { editor_options, render_options, } = ((0,src_settings___WEBPACK_IMPORTED_MODULE_10__/* .get_settings */ .oj)() ?? {});
+        const { classic_menu, editor_options, render_options, } = ((0,src_settings___WEBPACK_IMPORTED_MODULE_10__/* .get_settings */ .oj)() ?? {});
+        this.set_menu_style(classic_menu);
         for (const cell of this.get_cells()) {
             cell.update_from_settings();
         }

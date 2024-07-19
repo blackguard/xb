@@ -18,21 +18,60 @@ export function get_menubar_spec() {
             { label: 'Settings...',     item: { command: 'settings'            } },
         ] },
 
-        { label: 'Edit', collection: [
-            { label: 'Cut',             item: { command: 'cut'                 } },
-            { label: 'Copy',            item: { command: 'copy'                } },
-            { label: 'Paste',           item: { command: 'paste'               } },
+        { label: 'Cell', collection: [
+            { label: 'Eval',            item: { command: 'eval-and-refocus'    } },
+            { label: 'Eval and stay',   item: { command: 'eval'                } },
+            { label: 'Eval before',     item: { command: 'eval-before'         } },
+            { label: 'Eval all',        item: { command: 'eval-all'            } },
             '---',
-            { label: 'File', collection: [
-                { label: 'Settings...',     item: { command: 'settings'            } },
-                { label: 'Edit', collection: [
-                    { label: 'Cut',             item: { command: 'cut'                 } },
-                    { label: 'Copy',            item: { command: 'copy'                } },
-                    { label: 'Paste',           item: { command: 'paste'               } },
-                    '---',
-                    { label: 'Settings...',     item: { command: 'settings'            } },
-                ] },
+            { label: 'Stop cell',       item: { command: 'stop'                } },
+            { label: 'Stop all',        item: { command: 'stop-all'            } },
+            '---',
+            { label: 'Reset cell',      item: { command: 'reset'               } },
+            { label: 'Reset all',       item: { command: 'reset-all'           } },
+            '---',
+            { label: 'Focus up',        item: { command: 'focus-up'            } },
+            { label: 'Focus down',      item: { command: 'focus-down'          } },
+            '---',
+            { label: 'Move up',         item: { command: 'move-up'             } },
+            { label: 'Move down',       item: { command: 'move-down'           } },
+            { label: 'Add before',      item: { command: 'add-before'          } },
+            { label: 'Add after',       item: { command: 'add-after'           } },
+            { label: 'Delete',          item: { command: 'delete'              } },
+        ] },
+
+        { label: 'Mode', collection: [
+            { label: 'Plain text',      item: { command: 'set-mode-plain'      } },
+            { label: 'Markdown',        item: { command: 'set-mode-markdown'   } },
+            { label: 'TeX',             item: { command: 'set-mode-tex'        } },
+            { label: 'JavaScript',      item: { command: 'set-mode-javascript' } },
+        ] },
+
+        { label: 'View', collection: [
+            { label: 'Normal',          item: { command: 'set-view-normal'     } },
+            { label: 'Hide',            item: { command: 'set-view-hide'       } },
+            { label: 'Full',            item: { command: 'set-view-full'       } },
+            { label: 'None',            item: { command: 'set-view-none'       } },
+            { label: 'Kiosk',           item: { command: 'set-view-kiosk'      } },
+        ] },
+
+        { label: 'Help', collection: [
+            { label: 'Help...',         item: { command: 'help',               } },
+        ] },
+    ];
+}
+
+export function get_context_menu_spec() {
+    return [
+        { label: 'File', collection: [
+            { label: 'Recent documents', collection: [
+                // ...
             ] },
+            '---',
+            { label: 'Clear document',  item: { command: 'clear-all'           } },
+            '---',
+            { label: 'Save',            item: { command: 'save'                } },
+            { label: 'Save as...',      item: { command: 'save-as'             } },
             '---',
             { label: 'Settings...',     item: { command: 'settings'            } },
         ] },
