@@ -68,7 +68,7 @@ import {
     get_global_command_bindings,
     get_global_initial_key_map_bindings,
     get_menubar_spec,
-    get_context_menu_spec,
+    get_ellipsis_menu_spec,
 } from 'src/global-bindings';
 
 import {
@@ -386,7 +386,7 @@ export class XbManager {
             this.#menu = undefined;
 
             // setup new menu
-            const get_menu_spec = with_menubar ? get_menubar_spec : get_context_menu_spec;
+            const get_menu_spec = with_menubar ? get_menubar_spec : get_ellipsis_menu_spec;
             this.#menu = Menu.create<XbManager>(this, this.header_element, get_menu_spec(), {
                 as_menubar: with_menubar,
                 persistent: true,

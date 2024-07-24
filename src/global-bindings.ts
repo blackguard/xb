@@ -61,7 +61,7 @@ export function get_menubar_spec() {
     ];
 }
 
-export function get_context_menu_spec() {
+export function get_ellipsis_menu_spec() {
     return [
         { label: 'File', collection: [
             { label: 'Recent documents', collection: [

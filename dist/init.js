@@ -11216,8 +11216,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   $R: () => (/* binding */ get_global_command_bindings),
 /* harmony export */   ZD: () => (/* binding */ get_global_initial_key_map_bindings),
-/* harmony export */   bP: () => (/* binding */ get_context_menu_spec),
-/* harmony export */   p7: () => (/* binding */ get_menubar_spec)
+/* harmony export */   p7: () => (/* binding */ get_menubar_spec),
+/* harmony export */   sq: () => (/* binding */ get_ellipsis_menu_spec)
 /* harmony export */ });
 /* harmony import */ var _commands__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5049);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_commands__WEBPACK_IMPORTED_MODULE_0__]);
@@ -11279,7 +11279,7 @@ function get_menubar_spec() {
             ] },
     ];
 }
-function get_context_menu_spec() {
+function get_ellipsis_menu_spec() {
     return [
         { label: 'File', collection: [
                 { label: 'Recent documents', collection: [
@@ -34120,7 +34120,7 @@ class XbManager {
             this.#menu?.remove();
             this.#menu = undefined;
             // setup new menu
-            const get_menu_spec = with_menubar ? src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_menubar_spec */ .p7 : src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_context_menu_spec */ .bP;
+            const get_menu_spec = with_menubar ? src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_menubar_spec */ .p7 : src_global_bindings__WEBPACK_IMPORTED_MODULE_11__/* .get_ellipsis_menu_spec */ .sq;
             this.#menu = lib_ui_menu___WEBPACK_IMPORTED_MODULE_7__/* .Menu */ .v.create(this, this.header_element, get_menu_spec(), {
                 as_menubar: with_menubar,
                 persistent: true,
