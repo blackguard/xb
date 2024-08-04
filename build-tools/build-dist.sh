@@ -57,7 +57,7 @@ mkdir -p "dist"
 #!!!/usr/bin/env node -e 'require("fs/promises").readFile("README.md").then(t => console.log(`<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n</head>\n<body>\n$${require("marked").marked(t.toString())}\n</body>\n</html>`))' > "${DIST_DIR}/help.html"
 
 # copy files before running webpack so that the dist directory is already available to code
-echo "copying files...."
+echo "copying files..."
 for file_index in "${!FILES_TO_COPY[@]}"; do
     declare file="${FILES_TO_COPY[file_index]}"
     cp -a "${file}" "${DIST_DIR}"
@@ -70,7 +70,7 @@ done
 
 if [[ -z "${copy_only}" ]]; then
 
-    echo "building...."
+    echo "building..."
     npx webpack --config ./webpack.config.js
 
 fi

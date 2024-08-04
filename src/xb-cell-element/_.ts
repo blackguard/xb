@@ -67,6 +67,7 @@ export class XbCellElement extends HTMLElement {
         this.#connect_focus_listeners();
     }
 
+
     // === UPDATE FROM SETTINGS ===
 
     update_from_settings(): void {
