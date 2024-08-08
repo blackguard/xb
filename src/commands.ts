@@ -50,6 +50,7 @@ export function command_handler__reset(command_context: CommandContext<XbManager
         return false;
     } else {
         command_context.target.reset();
+        command_context.dm.set_structure_modified();
         return true;
     }
 }
@@ -104,6 +105,7 @@ export async function command_handler__eval(command_context: CommandContext<XbMa
     if (!(cell instanceof XbCellElement)) {
         return false;
     } else {
+        command_context.dm.set_structure_modified();
         try {
             await command_context.dm.invoke_renderer_for_type(cell.type, undefined, cell);
         } catch (error: unknown) {
@@ -137,8 +139,9 @@ async function multi_eval_helper(command_context: CommandContext<XbManager>, eva
         const target_cell = command_context.target;
         const cells = command_context.dm.get_cells();
         if (!eval_all && cells.indexOf(target_cell) === -1) {
-            return true;  // don't fail, but also don't do anything if !eval_all and cell is not in cells
+            return true;  // don't fail, but also don't do anything if !eval_all and target_cell is not in cells
         } else {
+            command_context.dm.set_structure_modified();
             command_context.dm.stop();  // stop any previously-running renderers
             command_context.dm.reset_global_state();
             for (const iter_cell of cells) {
@@ -238,6 +241,7 @@ function move_helper(command_context: CommandContext<XbManager>, move_down: bool
             const parent = before ? before.parentElement : command_context.dm.cell_parent;
             move_node(cell, { parent, before });
             cell.scroll_into_view(true);
+            command_context.dm.set_structure_modified();
             return true;
         }
     }
@@ -255,6 +259,7 @@ function add_cell_helper(command_context: CommandContext<XbManager>, add_before:
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
+        command_context.dm.set_structure_modified();
         const this_cell = command_context.target;
         const before = add_before
             ? this_cell
@@ -282,6 +287,7 @@ export async function command_handler__delete(command_context: CommandContext<Xb
     if (!(command_context.target instanceof XbCellElement)) {
         return false;
     } else {
+        command_context.dm.set_structure_modified();
         const cell = command_context.target;
         if (cell.get_text().trim().length > 0) {
             if (!await ConfirmDialog.run('Cannot undo delete of non-empty cell.\nContinue?')) {
@@ -300,6 +306,7 @@ export async function command_handler__delete(command_context: CommandContext<Xb
 }
 
 function set_mode_helper(command_context: CommandContext<XbManager>, type: string) {
+    command_context.dm.set_structure_modified();
     _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof XbCellElement)) {
@@ -339,6 +346,7 @@ export function command_handler__set_mode_plain(command_context: CommandContext<
 }
 
 function set_view_helper(command_context: CommandContext<XbManager>, view: string): boolean {
+    command_context.dm.set_structure_modified();
     _scroll_target_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;

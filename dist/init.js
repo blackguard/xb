@@ -10881,6 +10881,7 @@ function command_handler__reset(command_context) {
     }
     else {
         command_context.target.reset();
+        command_context.dm.set_structure_modified();
         return true;
     }
 }
@@ -10931,6 +10932,7 @@ async function command_handler__eval(command_context) {
         return false;
     }
     else {
+        command_context.dm.set_structure_modified();
         try {
             await command_context.dm.invoke_renderer_for_type(cell.type, undefined, cell);
         }
@@ -10965,9 +10967,10 @@ async function multi_eval_helper(command_context, eval_all = false) {
         const target_cell = command_context.target;
         const cells = command_context.dm.get_cells();
         if (!eval_all && cells.indexOf(target_cell) === -1) {
-            return true; // don't fail, but also don't do anything if !eval_all and cell is not in cells
+            return true; // don't fail, but also don't do anything if !eval_all and target_cell is not in cells
         }
         else {
+            command_context.dm.set_structure_modified();
             command_context.dm.stop(); // stop any previously-running renderers
             command_context.dm.reset_global_state();
             for (const iter_cell of cells) {
@@ -11068,6 +11071,7 @@ function move_helper(command_context, move_down) {
             const parent = before ? before.parentElement : command_context.dm.cell_parent;
             (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .V1)(cell, { parent, before });
             cell.scroll_into_view(true);
+            command_context.dm.set_structure_modified();
             return true;
         }
     }
@@ -11083,6 +11087,7 @@ function add_cell_helper(command_context, add_before) {
         return false;
     }
     else {
+        command_context.dm.set_structure_modified();
         const this_cell = command_context.target;
         const before = add_before
             ? this_cell
@@ -11109,6 +11114,7 @@ async function command_handler__delete(command_context) {
         return false;
     }
     else {
+        command_context.dm.set_structure_modified();
         const cell = command_context.target;
         if (cell.get_text().trim().length > 0) {
             if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .ConfirmDialog */ .QH.run('Cannot undo delete of non-empty cell.\nContinue?')) {
@@ -11126,6 +11132,7 @@ async function command_handler__delete(command_context) {
     }
 }
 function set_mode_helper(command_context, type) {
+    command_context.dm.set_structure_modified();
     _scroll_target_into_view(command_context);
     const cell = command_context.target;
     if (!(cell instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .d)) {
@@ -11161,6 +11168,7 @@ function command_handler__set_mode_plain(command_context) {
     return set_mode_helper(command_context, 'plain');
 }
 function set_view_helper(command_context, view) {
+    command_context.dm.set_structure_modified();
     _scroll_target_into_view(command_context);
     document.documentElement.setAttribute('data-cell-view', view);
     return true;
@@ -33463,15 +33471,18 @@ class XbCellElement extends HTMLElement {
         return text ?? '';
     }
     // this works even if the cell is not editable
-    set_text(text) {
+    set_text(text, set_neutral = true) {
         if (!(this.#xb instanceof src_xb_manager__WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .g)) {
             throw new Error('xb not set!');
         }
-        if (this.#has_text_container()) {
-            this.#codemirror?.set_text(text);
+        if (this.#codemirror) {
+            this.#codemirror.set_text(text);
         }
         else {
             this.textContent = text;
+        }
+        if (set_neutral) {
+            this.set_neutral();
         }
     }
     #has_text_container() { return !!this.#codemirror; }
@@ -33479,16 +33490,38 @@ class XbCellElement extends HTMLElement {
         if (!this.#has_text_container()) {
             this.#codemirror = _codemirror__WEBPACK_IMPORTED_MODULE_2__/* .CodemirrorInterface */ .l.create(this);
         }
+        // this.#is_neutral_without_text_container remains the same
     }
     #remove_text_container() {
-        if (this.#has_text_container()) {
+        if (this.#codemirror) {
             const text = this.get_text();
+            this.#is_neutral_without_text_container &&= this.#codemirror.is_neutral();
             this.#codemirror = undefined;
             (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .clear_element */ .gX)(this); // remove text_container element, etc
             this.set_text(text); // will be added directly to this because no text_container
         }
     }
-    /** override focus() so that we can direct focus to the contained textarea
+    is_neutral() {
+        return this.#codemirror
+            ? this.#is_neutral_without_text_container && this.#codemirror.is_neutral()
+            : this.#is_neutral_without_text_container;
+    }
+    #is_neutral_without_text_container = true; // once set to false, will stay false until set back to true by this.set_neutral()
+    set_neutral() {
+        this.#is_neutral_without_text_container = true;
+        if (this.#codemirror) {
+            this.#codemirror.set_neutral();
+        }
+    }
+    get_undo_info() {
+        if (this.#codemirror) {
+            return this.#codemirror.get_undo_info();
+        }
+        else {
+            return (0,_codemirror__WEBPACK_IMPORTED_MODULE_2__/* .create_null_codemirror_undo_info */ .D)(this.is_neutral());
+        }
+    }
+    /** override focus() so that we can direct focus to the contained "textarea"
      *  if necessary.  Setting a tabindex="0" attribute on this cell solves the
      *  problem but then causes another: SHIFT-Tab out of a textarea with a
      *  tabindex="0" parent fails.  So we just have to do it the hard way.
@@ -33665,14 +33698,15 @@ __webpack_async_result__();
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   D: () => (/* binding */ create_null_codemirror_undo_info),
 /* harmony export */   l: () => (/* binding */ CodemirrorInterface)
 /* harmony export */ });
 /* harmony import */ var codemirror__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3358);
 /* harmony import */ var _codemirror_state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8120);
-/* harmony import */ var _codemirror_view__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6485);
+/* harmony import */ var _codemirror_view__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6485);
 /* harmony import */ var _codemirror_commands__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5383);
 /* harmony import */ var _replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1226);
-/* harmony import */ var _codemirror_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9119);
+/* harmony import */ var _codemirror_language__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9119);
 /* harmony import */ var _codemirror_lang_javascript__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8679);
 /* harmony import */ var _codemirror_lang_markdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4054);
 /* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8401);
@@ -33691,6 +33725,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 
 
 
+function create_null_codemirror_undo_info(is_neutral) {
+    return {
+        undo_depth: 0,
+        redo_depth: 0,
+        is_neutral,
+    };
+}
 class CodemirrorInterface {
     static create(cell) {
         const codemirror_interface = new this(cell);
@@ -33714,22 +33755,28 @@ class CodemirrorInterface {
         const state = _codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.create({
             doc: text,
             extensions: [
+                _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .EditorView */ .tk.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        this.#handle_doc_update_event(update);
+                    }
+                }),
                 this.#keymap_compartment.of([]),
                 this.#tab_size_compartment.of(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(8)),
-                this.#indent_unit_compartment.of(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(' '.repeat(2))),
-                this.#tab_key_indents_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc])),
-                this.#line_numbers_compartment.of((0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)()),
-                this.#line_wrapping_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.lineWrapping),
+                this.#indent_unit_compartment.of(_codemirror_language__WEBPACK_IMPORTED_MODULE_5__/* .indentUnit */ .c.of(' '.repeat(2))),
+                this.#tab_key_indents_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc])),
+                this.#line_numbers_compartment.of((0,_codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .lineNumbers */ .Eu)()),
+                this.#line_wrapping_compartment.of(_codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .EditorView */ .tk.lineWrapping),
                 this.#language_compartment.of([]),
-                _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .defaultKeymap */ .wQ),
+                _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .defaultKeymap */ .wQ),
                 codemirror__WEBPACK_IMPORTED_MODULE_7__/* .basicSetup */ .Xy,
             ],
         });
         (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_0__/* .clear_element */ .gX)(cell);
-        this.#view = new _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk({
+        this.#view = new _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .EditorView */ .tk({
             parent: cell,
             state,
         });
+        this.#neutral_state_doc = this.#view.state.doc; // used for is_neutral calculation
         setTimeout(() => {
             this.update_from_settings();
         });
@@ -33748,17 +33795,38 @@ class CodemirrorInterface {
         // no longer works (typescript?): this.#view.dispatch({ from: 0, to: this.#view.state.doc.length, insert: text });
         this.#view.state.update({ changes: { from: 0, to: this.#view.state.doc.length, insert: text } });
     }
+    is_neutral() {
+        if (typeof this.#cached__is_neutral !== 'undefined') {
+            return this.#cached__is_neutral;
+        }
+        else {
+            // recompute is_neutral
+            const is_neutral = this.#neutral_state_doc?.eq(this.view.state.doc) ?? false;
+            this.#cached__is_neutral = is_neutral;
+            return is_neutral;
+        }
+    }
+    set_neutral() {
+        this.#cached__is_neutral = undefined; // force recompute on next call to this.is_neutral()
+        this.#neutral_state_doc = this.view.state.doc;
+    }
+    #handle_doc_update_event(update) {
+        this.#cached__is_neutral = undefined; // force recompute on next call to this.is_neutral()
+    }
+    #cached__is_neutral = undefined; // undefined: is_neutral must be computed; boolean: is_neutral value
+    #neutral_state_doc = undefined; //!!!
     get_undo_info() {
         return {
             undo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .undoDepth */ .of)(this.#view.state),
             redo_depth: (0,_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .redoDepth */ .AH)(this.#view.state),
+            is_neutral: this.is_neutral(),
         };
     }
     focus() {
         this.#view.focus();
     }
     scroll_into_view() {
-        this.#view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.scrollIntoView(this.#view.state.selection.main) });
+        this.#view.dispatch({ effects: _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .EditorView */ .tk.scrollIntoView(this.#view.state.selection.main) });
     }
     set_language_from_type(type) {
         switch (type) {
@@ -33778,7 +33846,7 @@ class CodemirrorInterface {
         let keymap_config;
         switch (mode) {
             case 'emacs':
-                keymap_config = _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .emacsStyleKeymap */ .BL);
+                keymap_config = _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .keymap */ .$f.of(_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .emacsStyleKeymap */ .BL);
                 break;
             case 'vim':
                 keymap_config = (0,_replit_codemirror_vim__WEBPACK_IMPORTED_MODULE_10__/* .vim */ .dV)();
@@ -33791,10 +33859,10 @@ class CodemirrorInterface {
         this.#view.dispatch({ effects: [
                 this.#keymap_compartment.reconfigure(keymap_config),
                 this.#tab_size_compartment.reconfigure(_codemirror_state__WEBPACK_IMPORTED_MODULE_3__/* .EditorState */ .yy.tabSize.of(tab_size)),
-                this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_4__/* .indentUnit */ .c.of(indent_unit_string)),
-                this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc]) : []),
-                this.#line_numbers_compartment.reconfigure(line_numbers ? (0,_codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .lineNumbers */ .Eu)() : []),
-                this.#line_wrapping_compartment.reconfigure(line_wrapping ? _codemirror_view__WEBPACK_IMPORTED_MODULE_5__/* .EditorView */ .tk.lineWrapping : []),
+                this.#indent_unit_compartment.reconfigure(_codemirror_language__WEBPACK_IMPORTED_MODULE_5__/* .indentUnit */ .c.of(indent_unit_string)),
+                this.#tab_key_indents_compartment.reconfigure(tab_key_indents ? _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .keymap */ .$f.of([_codemirror_commands__WEBPACK_IMPORTED_MODULE_6__/* .indentWithTab */ .oc]) : []),
+                this.#line_numbers_compartment.reconfigure(line_numbers ? (0,_codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .lineNumbers */ .Eu)() : []),
+                this.#line_wrapping_compartment.reconfigure(line_wrapping ? _codemirror_view__WEBPACK_IMPORTED_MODULE_4__/* .EditorView */ .tk.lineWrapping : []),
             ] });
         // Note: the line_numbers setting above does not work, so we resort to this:
         const css_class_hide_line_numbers = 'codemirror-hide-line-numbers';
@@ -33910,11 +33978,14 @@ class XbManager {
             this.#set_initial_active_cell();
             // add "changes may not be saved" prompt for when document is being closed while modified
             window.addEventListener('beforeunload', (event) => {
+                console.log('BEFOREUNLOAD', 'neutral', this.is_neutral(), 'modified', this.#structure_modified); //!!!
                 if (this.cell_view_mode !== 'kiosk') {
-                    const warn = true; //!!! always warn for now
-                    event.preventDefault();
-                    event.returnValue = !warn; // indicate: if false, default action prevented
-                    return warn; // indicate: if true, default action prevented
+                    const warn = !this.is_neutral();
+                    if (warn) {
+                        event.preventDefault();
+                        event.returnValue = !warn; // indicate: if false, default action prevented
+                        return warn; // indicate: if true, default action prevented
+                    }
                 }
             }); //!!! event handler never removed
         }
@@ -34002,6 +34073,7 @@ class XbManager {
                 console.error('error calling cell.reset()', error, cell);
             }
         }
+        this.set_structure_modified();
         return this;
     }
     /** clear the current document
@@ -34013,6 +34085,7 @@ class XbManager {
         }
         const first_cell = this.create_cell();
         first_cell.focus();
+        this.set_structure_modified();
     }
     stop() {
         try {
@@ -34140,8 +34213,30 @@ class XbManager {
             }
         }
     }
+    // === NEUTRAL STATE ===
+    is_neutral() {
+        return !this.#structure_modified && this.get_cells().every(cell => cell.is_neutral());
+    }
+    // this.set_neutral() also sets this.#structure_modified = false;
+    set_neutral() {
+        for (const cell of this.get_cells()) {
+            cell.set_neutral();
+        }
+        this.#structure_modified = false;
+    }
+    set_structure_modified() {
+        this.#structure_modified = true;
+    }
+    #structure_modified = false;
     // === SAVE HANDLING ====
     async perform_save(perform_save_as = false) {
+        if (!perform_save_as) {
+            const is_neutral = this.active_cell?.get_undo_info().is_neutral ?? false;
+            if (is_neutral && this.#file_handle) {
+                // no need to actually save
+                return true; // indicate: not canceled
+            }
+        }
         const save_result = await lib_sys_fs_interface__WEBPACK_IMPORTED_MODULE_1__/* .fs_interface */ .H.save(src_init__WEBPACK_IMPORTED_MODULE_0__/* .save_serializer */ .h, {
             file_handle: perform_save_as ? undefined : this.#file_handle,
             prompt_options: {
@@ -34153,8 +34248,8 @@ class XbManager {
             this.notification_manager.add('save canceled');
         }
         else {
-            //!!!
             this.#file_handle = file_handle ?? undefined;
+            this.set_neutral();
             this.notification_manager.add('document saved');
         }
         return !canceled;
@@ -34354,11 +34449,11 @@ class XbManager {
             const cell_mode = active_cell?.type;
             const cell_view_mode = this.cell_view_mode;
             const has_save_handle = !!this.#file_handle;
+            const is_neutral = this.is_neutral();
             menu.set_menu_state('reset', { enabled: editable });
             menu.set_menu_state('reset-all', { enabled: editable });
             menu.set_menu_state('clear-all', { enabled: editable });
-            const neutral = false; //!!! until we figure out how to detect a changed document
-            menu.set_menu_state('save', { enabled: !neutral && has_save_handle });
+            menu.set_menu_state('save', { enabled: !is_neutral && has_save_handle });
             // no update to command 'save-as'
             menu.set_menu_state('eval', { enabled: !!(editable && active_cell) });
             menu.set_menu_state('eval-and-refocus', { enabled: !!(editable && active_cell) });

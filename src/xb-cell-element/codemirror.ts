@@ -9,6 +9,7 @@ import {
 
 import {
     EditorView,
+    ViewUpdate,
     keymap,
     lineNumbers,
 } from "@codemirror/view";
@@ -50,6 +51,21 @@ import {
 } from './_';
 
 
+export type CodemirrorUndoInfo = {
+    undo_depth: number,
+    redo_depth: number,
+    is_neutral: boolean,
+};
+
+export function create_null_codemirror_undo_info(is_neutral: boolean): CodemirrorUndoInfo {
+    return {
+        undo_depth: 0,
+        redo_depth: 0,
+        is_neutral,
+    };
+}
+
+
 export class CodemirrorInterface {
 
     static create(cell: XbCellElement) {
@@ -79,6 +95,12 @@ export class CodemirrorInterface {
         const state = EditorState.create({
             doc: text,
             extensions: [
+                EditorView.updateListener.of((update: ViewUpdate) => {
+                    if (update.docChanged) {
+                        this.#handle_doc_update_event(update);
+                    }
+                }),
+
                 this.#keymap_compartment.of([]),
                 this.#tab_size_compartment.of(EditorState.tabSize.of(8)),
                 this.#indent_unit_compartment.of(indentUnit.of(' '.repeat(2))),
@@ -98,6 +120,8 @@ export class CodemirrorInterface {
             parent: cell,
             state,
         });
+
+        this.#neutral_state_doc = this.#view.state.doc;  // used for is_neutral calculation
 
         setTimeout(() => {  // must defer so that classList setting happens
             this.update_from_settings();
@@ -120,10 +144,31 @@ export class CodemirrorInterface {
         this.#view.state.update({ changes: { from: 0, to: this.#view.state.doc.length, insert: text } });
     }
 
-    get_undo_info(): { undo_depth: number, redo_depth: number } {
+    is_neutral(): boolean {
+        if (typeof this.#cached__is_neutral !== 'undefined') {
+            return this.#cached__is_neutral;
+        } else {
+            // recompute is_neutral
+            const is_neutral: boolean = (this.#neutral_state_doc as any)?.eq(this.view.state.doc) ?? false;
+            this.#cached__is_neutral = is_neutral;
+            return is_neutral;
+        }
+    }
+    set_neutral() {
+        this.#cached__is_neutral = undefined;  // force recompute on next call to this.is_neutral()
+        this.#neutral_state_doc = this.view.state.doc;
+    }
+    #handle_doc_update_event(update: ViewUpdate) {
+        this.#cached__is_neutral = undefined;  // force recompute on next call to this.is_neutral()
+    }
+    #cached__is_neutral: undefined|boolean = undefined;  // undefined: is_neutral must be computed; boolean: is_neutral value
+    #neutral_state_doc: unknown = undefined;//!!!
+
+    get_undo_info(): CodemirrorUndoInfo {
         return {
             undo_depth: undoDepth(this.#view.state),
             redo_depth: redoDepth(this.#view.state),
+            is_neutral: this.is_neutral(),
         };
     }
 

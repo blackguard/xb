@@ -14,6 +14,8 @@ import {
 } from 'lib/sys/event-listener-manager';
 
 import {
+    CodemirrorUndoInfo,
+    create_null_codemirror_undo_info,
     CodemirrorInterface,
 } from './codemirror';
 
@@ -90,14 +92,17 @@ export class XbCellElement extends HTMLElement {
     }
 
     // this works even if the cell is not editable
-    set_text(text: string): void {
+    set_text(text: string, set_neutral = true): void {
         if (!(this.#xb instanceof XbManager)) {
             throw new Error('xb not set!');
         }
-        if (this.#has_text_container()) {
-            this.#codemirror?.set_text(text);
+        if (this.#codemirror) {
+            this.#codemirror.set_text(text);
         } else {
             this.textContent = text;
+        }
+        if (set_neutral) {
+            this.set_neutral();
         }
     }
 
@@ -107,18 +112,42 @@ export class XbCellElement extends HTMLElement {
         if (!this.#has_text_container()) {
             this.#codemirror = CodemirrorInterface.create(this);
         }
+        // this.#is_neutral_without_text_container remains the same
     }
 
     #remove_text_container(): void {
-        if (this.#has_text_container()) {
+        if (this.#codemirror) {
             const text = this.get_text();
+            this.#is_neutral_without_text_container &&= this.#codemirror.is_neutral();
             this.#codemirror = undefined;
             clear_element(this);  // remove text_container element, etc
             this.set_text(text);  // will be added directly to this because no text_container
         }
     }
 
-    /** override focus() so that we can direct focus to the contained textarea
+    is_neutral() {
+        return this.#codemirror
+            ? this.#is_neutral_without_text_container && this.#codemirror.is_neutral()
+            : this.#is_neutral_without_text_container;
+    }
+    #is_neutral_without_text_container: boolean = true;  // once set to false, will stay false until set back to true by this.set_neutral()
+
+    set_neutral() {
+        this.#is_neutral_without_text_container = true;
+        if (this.#codemirror) {
+            this.#codemirror.set_neutral();
+        }
+    }
+
+    get_undo_info(): CodemirrorUndoInfo {
+        if (this.#codemirror) {
+            return this.#codemirror.get_undo_info();
+        } else {
+            return create_null_codemirror_undo_info(this.is_neutral());
+        }
+    }
+
+    /** override focus() so that we can direct focus to the contained "textarea"
      *  if necessary.  Setting a tabindex="0" attribute on this cell solves the
      *  problem but then causes another: SHIFT-Tab out of a textarea with a
      *  tabindex="0" parent fails.  So we just have to do it the hard way.

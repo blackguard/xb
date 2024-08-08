@@ -150,11 +150,14 @@ export class XbManager {
 
             // add "changes may not be saved" prompt for when document is being closed while modified
             window.addEventListener('beforeunload', (event: Event): any => {
+console.log('BEFOREUNLOAD', 'neutral', this.is_neutral(), 'modified', this.#structure_modified);//!!!
                 if (this.cell_view_mode !== 'kiosk') {
-                   const warn = true;  //!!! always warn for now
-                   event.preventDefault();
-                   event.returnValue = !warn;  // indicate: if false, default action prevented
-                   return warn;                // indicate: if true, default action prevented
+                    const warn = !this.is_neutral();
+                    if (warn) {
+                        event.preventDefault();
+                        event.returnValue = !warn;  // indicate: if false, default action prevented
+                        return warn;                // indicate: if true, default action prevented
+                    }
                 }
             });  //!!! event handler never removed
 
@@ -250,6 +253,7 @@ export class XbManager {
                 console.error('error calling cell.reset()', error, cell);
             }
         }
+        this.set_structure_modified();
         return this;
     }
 
@@ -262,6 +266,7 @@ export class XbManager {
         }
         const first_cell = this.create_cell();
         first_cell.focus();
+        this.set_structure_modified();
     }
 
     stop(): void {
@@ -407,9 +412,37 @@ export class XbManager {
     }
 
 
+    // === NEUTRAL STATE ===
+
+    is_neutral() {
+        return !this.#structure_modified && this.get_cells().every(cell => cell.is_neutral());
+    }
+
+    // this.set_neutral() also sets this.#structure_modified = false;
+    set_neutral() {
+        for (const cell of this.get_cells()) {
+            cell.set_neutral();
+        }
+        this.#structure_modified = false;
+    }
+
+    set_structure_modified() {
+        this.#structure_modified = true;
+    }
+    #structure_modified: boolean = false;
+
+
     // === SAVE HANDLING ====
 
     async perform_save(perform_save_as: boolean = false): Promise<boolean> {
+        if (!perform_save_as) {
+            const is_neutral = this.active_cell?.get_undo_info().is_neutral ?? false;
+            if (is_neutral && this.#file_handle) {
+                // no need to actually save
+                return true;  // indicate: not canceled
+            }
+        }
+
         const save_result = await fs_interface.save(save_serializer, {
             file_handle: perform_save_as ? undefined : this.#file_handle,
             prompt_options: {
@@ -424,8 +457,8 @@ export class XbManager {
         if (canceled) {
             this.notification_manager.add('save canceled');
         } else {
-            //!!!
             this.#file_handle = file_handle ?? undefined;
+            this.set_neutral();
             this.notification_manager.add('document saved');
         }
         return !canceled;
@@ -643,20 +676,20 @@ export class XbManager {
         //!!! review this !!!
         const menu = this.#menu;
         if (menu) {
-            const cells           = this.get_cells();
-            const active_cell     = this.active_cell;
-            const active_index    = active_cell ? cells.indexOf(active_cell) : -1;
-            const editable        = this.editable;
-            const cell_mode       = active_cell?.type;
-            const cell_view_mode  = this.cell_view_mode;
-            const has_save_handle = !!this.#file_handle;
+            const cells            = this.get_cells();
+            const active_cell      = this.active_cell;
+            const active_index     = active_cell ? cells.indexOf(active_cell) : -1;
+            const editable         = this.editable;
+            const cell_mode        = active_cell?.type;
+            const cell_view_mode   = this.cell_view_mode;
+            const has_save_handle  = !!this.#file_handle;
+            const is_neutral       = this.is_neutral();
 
             menu.set_menu_state('reset',               { enabled: editable });
             menu.set_menu_state('reset-all',           { enabled: editable });
             menu.set_menu_state('clear-all',           { enabled: editable });
 
-            const neutral = false;  //!!! until we figure out how to detect a changed document
-            menu.set_menu_state('save', { enabled: !neutral && has_save_handle });
+            menu.set_menu_state('save', { enabled: !is_neutral && has_save_handle });
             // no update to command 'save-as'
 
             menu.set_menu_state('eval',                { enabled: !!(editable && active_cell) });
