@@ -33978,7 +33978,6 @@ class XbManager {
             this.#set_initial_active_cell();
             // add "changes may not be saved" prompt for when document is being closed while modified
             window.addEventListener('beforeunload', (event) => {
-                console.log('BEFOREUNLOAD', 'neutral', this.is_neutral(), 'modified', this.#structure_modified); //!!!
                 if (this.cell_view_mode !== 'kiosk') {
                     const warn = !this.is_neutral();
                     if (warn) {
