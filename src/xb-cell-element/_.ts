@@ -92,17 +92,17 @@ export class XbCellElement extends HTMLElement {
     }
 
     // this works even if the cell is not editable
-    set_text(text: string, set_neutral = true): void {
+    set_text(text: string, set_neutral: boolean = true): void {
         if (!(this.#xb instanceof XbManager)) {
             throw new Error('xb not set!');
         }
         if (this.#codemirror) {
-            this.#codemirror.set_text(text);
+            this.#codemirror.set_text(text, set_neutral);
         } else {
             this.textContent = text;
-        }
-        if (set_neutral) {
-            this.set_neutral();
+            if (set_neutral) {
+                this.set_neutral();
+            }
         }
     }
 

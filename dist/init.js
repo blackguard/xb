@@ -33476,13 +33476,13 @@ class XbCellElement extends HTMLElement {
             throw new Error('xb not set!');
         }
         if (this.#codemirror) {
-            this.#codemirror.set_text(text);
+            this.#codemirror.set_text(text, set_neutral);
         }
         else {
             this.textContent = text;
-        }
-        if (set_neutral) {
-            this.set_neutral();
+            if (set_neutral) {
+                this.set_neutral();
+            }
         }
     }
     #has_text_container() { return !!this.#codemirror; }
@@ -33791,9 +33791,12 @@ class CodemirrorInterface {
     get_text() {
         return this.#view.state.doc.toString();
     }
-    set_text(text) {
+    set_text(text, set_neutral = true) {
         // no longer works (typescript?): this.#view.dispatch({ from: 0, to: this.#view.state.doc.length, insert: text });
         this.#view.state.update({ changes: { from: 0, to: this.#view.state.doc.length, insert: text } });
+        if (set_neutral) {
+            this.set_neutral();
+        }
     }
     is_neutral() {
         if (typeof this.#cached__is_neutral !== 'undefined') {

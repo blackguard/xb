@@ -139,9 +139,12 @@ export class CodemirrorInterface {
         return this.#view.state.doc.toString();
     }
 
-    set_text(text: string): void {
+    set_text(text: string, set_neutral: boolean = true): void {
         // no longer works (typescript?): this.#view.dispatch({ from: 0, to: this.#view.state.doc.length, insert: text });
         this.#view.state.update({ changes: { from: 0, to: this.#view.state.doc.length, insert: text } });
+        if (set_neutral) {
+            this.set_neutral();
+        }
     }
 
     is_neutral(): boolean {
